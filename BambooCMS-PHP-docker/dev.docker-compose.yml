@@ -1,0 +1,99 @@
+services:
+    bamboocms-php-apache:
+        container_name: bamboocms-php-apache
+        image: bamboocms-php-apache
+        volumes:
+            - ../:/home/wwwroot/BambooCMS-PHP
+            - ./php/custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini
+            - ./php/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+            - "/home/php/extension:/root/.vscode-server/extensions"
+            - "/home/php/extension-insiders:/root/.vscode-server-insiders/extensions"
+        build:
+            context: .
+            dockerfile: ./php/dev.Dockerfile
+        ports:
+            - 31111:80
+        stdin_open: true
+        deploy:
+            resources:
+                limits:
+                    cpus: "6.0"
+                    memory: 10000M
+        networks:
+            bamboocms-php-net:
+                ipv4_address: 172.16.111.11
+
+    bamboocms-php-mysql:
+        container_name: bamboocms-php-mysql
+        image: mysql:8.0
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: db
+            MYSQL_USER: user
+            MYSQL_PASSWORD: pass
+            TZ: 'Etc/UTC'
+        ports:
+            - 31112:3306
+        volumes:
+            - /home/mysql/bamboocms-php-mysql:/var/lib/mysql
+        deploy:
+            resources:
+                limits:
+                    cpus: "1.0"
+                    memory: 1000M
+        networks:
+            bamboocms-php-net:
+                ipv4_address: 172.16.111.12
+
+    bamboocms-php-phpmyadmin:
+        container_name: bamboocms-php-phpmyadmin
+        image: phpmyadmin
+        restart: always
+        ports:
+            - 31113:80
+        environment:
+            - PMA_HOST=172.16.111.12
+            - PMA_PORT=3306
+            - PMA_USER=user
+            - PMA_PASSWORD=pass
+        depends_on:
+            - bamboocms-php-mysql
+        deploy:
+            resources:
+                limits:
+                    cpus: "1.0"
+                    memory: 1000M
+        networks:
+            bamboocms-php-net:
+                ipv4_address: 172.16.111.13
+
+    bamboocms-php-testing-mysql:
+        container_name: bamboocms-php-testing-mysql
+        image: mysql:8.0
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: test
+            MYSQL_USER: test
+            MYSQL_PASSWORD: test
+            TZ: 'Etc/UTC'
+        ports:
+            - 31114:3306
+        volumes:
+            - /home/mysql/bamboocms-php-testing-mysql:/var/lib/mysql
+        deploy:
+            resources:
+                limits:
+                    cpus: "1.0"
+                    memory: 1000M
+        networks:
+            bamboocms-php-net:
+                ipv4_address: 172.16.111.14
+
+networks:
+    bamboocms-php-net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.111.0/24

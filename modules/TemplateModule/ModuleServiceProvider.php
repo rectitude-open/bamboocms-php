@@ -1,19 +1,13 @@
 <?php
 
-namespace Foo\Bar;
+namespace Modules\TemplateModule;
 
 use Illuminate\Support\ServiceProvider;
 
-class BarServiceProvider extends ServiceProvider
+class ModuleServiceProvider extends ServiceProvider
 {
-    /**
-     * Boot the application events.
-     */
     public function boot(): void {}
 
-    /**
-     * Register the service provider.
-     */
     public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);

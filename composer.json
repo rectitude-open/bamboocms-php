@@ -1,5 +1,5 @@
 {
-    "name": "RectitudeTech/BambooCMS-PHP",
+    "name": "rectitude-tech/bamboocms-php",
     "type": "project",
     "description": "",
     "keywords": [],
@@ -8,7 +8,8 @@
         "php": "^8.2",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "wikimedia/composer-merge-plugin": "^2.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

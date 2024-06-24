@@ -9,10 +9,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        $this->app->register(\Modules\TemplateModule\TemplateModuleServiceProvider::class);
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.

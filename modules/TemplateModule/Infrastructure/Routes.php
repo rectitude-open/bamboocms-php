@@ -2,6 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('Template Module', function () {
+Route::get('template-modules', function () {
     return 'Template Module ok';
 });

@@ -8,7 +8,11 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
-    public function boot(): void {}
+    public function boot(): void
+    {
+        $this->loadMigrationsFrom(__DIR__.'/Migrations');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../Lang');
+    }
 
     public function register(): void
     {

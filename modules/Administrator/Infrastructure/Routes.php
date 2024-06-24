@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 //     return 'Administrators OK';
 // });
 
-Route::middleware(['auth:admin'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('adminstrators', function () {
         return 'Administrators sanctum OK';
     });

@@ -3,7 +3,7 @@ services:
         container_name: bamboocms-php-apache
         image: bamboocms-php-apache
         volumes:
-            - ../:/home/wwwroot/BambooCMS-PHP
+            - ../:/home/wwwroot/bamboocms-php
             - ./php/custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini
             - ./php/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
             - "/home/php/extension:/root/.vscode-server/extensions"

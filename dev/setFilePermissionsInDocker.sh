@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
-cd /home/wwwroot/BambooCMS-PHP || exit
-chown -R www-data:www-data /home/wwwroot/BambooCMS-PHP && \
-find /home/wwwroot/BambooCMS-PHP -type f -exec chmod 644 {} \; && \
-find /home/wwwroot/BambooCMS-PHP -type d -exec chmod 755 {} \; && \
-chmod -R +777 /home/wwwroot/BambooCMS-PHP/storage /home/wwwroot/BambooCMS-PHP/bootstrap/cache && \
-chmod -R +x /home/wwwroot/BambooCMS-PHP/vendor/bin/ && \
-chmod -R +x /home/wwwroot/BambooCMS-PHP/dev/
+cd /home/wwwroot/bamboocms-php || exit
+chown -R www-data:www-data /home/wwwroot/bamboocms-php && \
+find /home/wwwroot/bamboocms-php -type f -exec chmod 644 {} \; && \
+find /home/wwwroot/bamboocms-php -type d -exec chmod 755 {} \; && \
+chmod -R +777 /home/wwwroot/bamboocms-php/storage /home/wwwroot/bamboocms-php/bootstrap/cache && \
+chmod -R +x /home/wwwroot/bamboocms-php/vendor/bin/ && \
+chmod -R +x /home/wwwroot/bamboocms-php/dev/

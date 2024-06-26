@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Modules\Administrator\Domain\Models\Administrator;
 
 it('cannot login if not logged in', function () {

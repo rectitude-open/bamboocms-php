@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Administrator\Infrastructure;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;

@@ -27,7 +27,7 @@ class ServiceProvider extends BaseServiceProvider
 
             public function map(): void
             {
-                Route::middleware('api')->prefix('api')->name('api.')->group(__DIR__.'/Routes.php');
+                Route::middleware('api')->group(__DIR__.'/Routes.php');
             }
         });
     }

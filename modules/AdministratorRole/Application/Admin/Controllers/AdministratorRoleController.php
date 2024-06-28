@@ -32,19 +32,9 @@ class AdministratorRoleController extends BaseAdministratorController
     {
         $result = $this->administratorRoleAppService->create($request->validated());
 
-        return $this->success()
+        return $this->success($result, AdministratorRoleResource::class)
             ->message(__('Success! The record has been added.'))
             ->send(201);
-
-        // return $this->success($result)
-        //     ->message(__('Success! The record has been added.'))
-        //     ->code(200);
-
-        // return new AdministratorRoleResource($result);
-
-        // return $this->success($result, AdministratorRoleTransformer::class)
-        //     ->meta(['message' => __('Success! The record has been added.')])
-        //     ->respond(201);
     }
 
     // public function show(ShowRequest $request)

@@ -12,6 +12,7 @@ use Modules\AdministratorRole\Application\Admin\AppServices\AdministratorRoleApp
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\IndexRequest;
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\StoreRequest;
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\UpdateRequest;
+use Modules\AdministratorRole\Application\Admin\Resources\AdministratorRoleResource;
 use Modules\AdministratorRole\Application\Admin\Transformers\AdministratorRole\AdministratorRoleTransformer;
 
 class AdministratorRoleController extends BaseAdministratorController
@@ -31,7 +32,15 @@ class AdministratorRoleController extends BaseAdministratorController
     {
         $result = $this->administratorRoleAppService->create($request->validated());
 
-        return response()->json(['data' => $result]);
+        return $this->success()
+            ->message(__('Success! The record has been added.'))
+            ->send(201);
+
+        // return $this->success($result)
+        //     ->message(__('Success! The record has been added.'))
+        //     ->code(200);
+
+        // return new AdministratorRoleResource($result);
 
         // return $this->success($result, AdministratorRoleTransformer::class)
         //     ->meta(['message' => __('Success! The record has been added.')])

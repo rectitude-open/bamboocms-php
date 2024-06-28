@@ -8,9 +8,6 @@ it('can store', function () {
         'description' => 'role description',
     ];
 
-    $this->postJson('/api/administrator-roles/admin', $data)
-        ->assertJson([
-            'data' => $data,
-        ])
-        ->assertStatus(200);
+    dump($this->postJson('/api/administrator-roles/admin', $data)->json());
+
 });

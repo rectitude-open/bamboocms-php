@@ -12,7 +12,7 @@ class IndexRequest extends BaseFormRequest
     {
         return [
             ...$this->baseIndexRules(),
-            'name' => ['string', 'max:255', 'unique:administrator_roles,name'],
+            'name' => ['string', 'max:255'],
             'description' => ['string', 'max:255'],
         ];
     }

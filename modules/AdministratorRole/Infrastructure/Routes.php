@@ -8,7 +8,7 @@ use Modules\AdministratorRole\Application\Admin\Controllers\AdministratorRoleCon
 Route::middleware([])->name('AdministratorRole.')->group(function () {
     Route::prefix('admin')->name('Admin.')->group(function () {
         Route::controller(AdminAdministratorRoleController::class)->prefix('administrator-roles')->name('AdministratorRole.')->group(function () {
-            // Route::get('', 'index')->name('index');
+            Route::get('', 'index')->name('index');
             Route::post('', 'store')->name('store');
             // Route::get('{id}', 'show')->name('show');
             // Route::put('{id}', 'update')->name('update');

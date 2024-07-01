@@ -14,6 +14,34 @@ $dataset = [
     ],
 ];
 
+dataset('index', [
+    'search by id' => [
+        ['id' => 100],
+        ['data' => [['id' => 100]]],
+        1,
+        function () {
+            AdministratorRole::factory(10)->create();
+            AdministratorRole::factory()->create(['id' => 100]);
+        },
+    ],
+    'search by name (fuzzy)' => [
+        ['name' => 'foo'],
+        ['data' => [['name' => 'fooName']]],
+        1,
+        function () {
+            AdministratorRole::factory()->create(['name' => 'whatever1']);
+            AdministratorRole::factory()->create(['name' => 'whatever2']);
+            AdministratorRole::factory()->create(['name' => 'fooName']);
+        },
+    ],
+    'pagnated list' => [
+        [],
+        ['meta' => ['total' => 10]],
+        10,
+        fn () => AdministratorRole::factory(10)->create(),
+    ],
+]);
+
 dataset('store', [
     'valid store' => [
         $dataset['valid'],

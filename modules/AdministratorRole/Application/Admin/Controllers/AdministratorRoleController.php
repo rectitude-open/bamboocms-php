@@ -21,12 +21,12 @@ class AdministratorRoleController extends BaseAdministratorController
         private AdministratorRoleAppService $administratorRoleAppService
     ) {}
 
-    // public function index(IndexRequest $request)
-    // {
-    //     $result = $this->administratorRoleAppService->getAll($request->validated());
+    public function index(IndexRequest $request)
+    {
+        $result = $this->administratorRoleAppService->getAll($request->validated());
 
-    //     return $this->success($result, AdministratorRoleTransformer::class)->respond();
-    // }
+        return $this->success($result, AdministratorRoleResource::class)->send();
+    }
 
     public function store(StoreRequest $request)
     {

@@ -3,46 +3,41 @@
 declare(strict_types=1);
 use Modules\AdministratorRole\Domain\Models\AdministratorRole;
 
-function getValidItem()
-{
-    return [
+$dataset = [
+    'valid' => [
         'name' => 'init name',
         'description' => 'init description',
-    ];
-}
-
-function getInvalidItem()
-{
-    return [
+    ],
+    'invalid' => [
         'name' => 123456,
         'description' => 123456,
-    ];
-}
+    ],
+];
 
 dataset('store', [
     'valid store' => [
-        getValidItem(),
-        getValidItem(),
+        $dataset['valid'],
+        $dataset['valid'],
     ],
 ]);
 
 dataset('storeInvalidData', [
     'duplicate name' => [
-        getValidItem(),
+        $dataset['valid'],
         ['name' => ['The name has already been taken.']],
         1,
-        fn () => AdministratorRole::factory()->create(getValidItem()),
+        fn () => AdministratorRole::factory()->create($dataset['valid']),
     ],
     'empty name' => [
         [],
         ['name' => ['The name field is required.']],
     ],
     'invalid name' => [
-        ['name' => getInvalidItem()['name']],
+        ['name' => $dataset['invalid']['name']],
         ['name' => ['The name field must be a string.']],
     ],
     'invalid description' => [
-        ['description' => getInvalidItem()['description']],
+        ['description' => $dataset['invalid']['description']],
         ['description' => ['The description field must be a string.']],
     ],
 ]);

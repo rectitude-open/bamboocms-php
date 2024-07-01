@@ -40,6 +40,18 @@ dataset('index', [
         10,
         fn () => AdministratorRole::factory(10)->create(),
     ],
+    'pagnated list with page and per_page' => [
+        ['page' => 2, 'per_page' => 5],
+        ['meta' => ['total' => 13]],
+        5,
+        fn () => AdministratorRole::factory(13)->create(),
+    ],
+    'list without pagination' => [
+        ['pagination' => 'false'],
+        [],
+        21,
+        fn () => AdministratorRole::factory(21)->create(),
+    ],
 ]);
 
 dataset('store', [

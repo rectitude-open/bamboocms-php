@@ -78,7 +78,7 @@ abstract class BaseAdministratorAppService
                 return $this->repository->getAll($params);
             }
 
-            // return $this->repository->getPaginated($params);
+            return $this->repository->getPaginated($params);
         });
     }
 

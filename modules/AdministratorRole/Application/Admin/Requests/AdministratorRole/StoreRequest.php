@@ -12,7 +12,7 @@ class StoreRequest extends BaseFormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:administrator_roles,name'],
-            'description' => ['required', 'string', 'max:255'],
+            'description' => ['string', 'max:255'],
         ];
     }
 }

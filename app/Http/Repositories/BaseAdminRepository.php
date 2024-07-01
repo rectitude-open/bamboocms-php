@@ -48,15 +48,18 @@ abstract class BaseAdminRepository
 
     public function getAll(array $params): Collection
     {
-        $query = $this->model->search($params)->sortable();
+        $query = $this->model->search($params);
 
         return $query->get();
     }
 
-    public function getPaginated(array $params, int $pageSize): LengthAwarePaginator
+    public function getPaginated(array $params): LengthAwarePaginator
     {
-        $query = $this->model->search($params)->sortable();
+        $query = $this->model->search($params);
 
-        return $query->paginate($pageSize, ['*'], 'current');
+        $perPage = $params['per_page'] ?? 10;
+        $currentPage = $params['current_page'] ?? 1;
+
+        return $query->paginate($perPage, ['*'], 'current_page', $currentPage);
     }
 }

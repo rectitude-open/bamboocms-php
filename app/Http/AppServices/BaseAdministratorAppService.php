@@ -80,7 +80,7 @@ abstract class BaseAdministratorAppService
                 return $this->repository->getAll($params);
             }
 
-            return $this->repository->getPaginated($params, $params['page_size'] ?? 10);
+            return $this->repository->getPaginated($params);
         });
     }
 

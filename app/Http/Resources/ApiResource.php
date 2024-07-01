@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -90,6 +91,10 @@ class ApiResource
     private function makeResource()
     {
         static::checkResourceClass($this->resourceClass);
+
+        if ($this->data instanceof LengthAwarePaginator) {
+            return $this->resourceClass::collection($this->data);
+        }
 
         return new $this->resourceClass($this->data);
     }

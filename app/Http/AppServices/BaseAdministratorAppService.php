@@ -16,9 +16,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 abstract class BaseAdministratorAppService
 {
-    public function __construct(
-        protected $repository
-    ) {}
+    public function __construct(protected $repository) {}
 
     protected function handleExceptionAndTransaction(\Closure $function): mixed
     {
@@ -80,7 +78,7 @@ abstract class BaseAdministratorAppService
                 return $this->repository->getAll($params);
             }
 
-            return $this->repository->getPaginated($params);
+            // return $this->repository->getPaginated($params);
         });
     }
 

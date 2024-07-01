@@ -141,7 +141,7 @@ class ModuleDuplicate extends Command
                 "namespace Modules\\{$this->fromModuleName}\\Domain" => "namespace Modules\\{$this->toModuleName}\\Domain",
                 "namespace Modules\\{$this->fromModuleName}\\Infrastructure" => "namespace Modules\\{$this->toModuleName}\\Infrastructure",
                 "use Modules\\{$this->fromModuleName}\\" => "use Modules\\{$this->toModuleName}\\",
-                "{$this->fromModuleName}.{$this->fromModelName}.{$this->fromRoleName}.store" => "{$this->toModuleName}.{$this->toModelName}.{$this->toRoleName}.store",
+                "{$this->fromModuleName}.{$this->fromRoleName}.{$this->fromModelName}.store" => "{$this->toModuleName}.{$this->toRoleName}.{$this->toModelName}.store",
                 Str::plural($this->fromModelName) => Str::plural($this->toModelName),
                 $this->fromModelName => $this->toModelName,
                 Str::plural(Str::lcfirst($this->fromModelName)) => Str::plural(Str::lcfirst($this->toModelName)),

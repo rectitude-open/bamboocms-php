@@ -7,7 +7,7 @@ require_once __DIR__.'/AdministratorRoleDataset.php';
 
 beforeEach(function () {
     $this->routes = [
-        'store' => 'AdministratorRole.AdministratorRole.Admin.store',
+        'store' => 'AdministratorRole.Admin.AdministratorRole.store',
     ];
     $this->modelClass = AdministratorRole::class;
     $this->tableName = (new $this->modelClass)->getTable();

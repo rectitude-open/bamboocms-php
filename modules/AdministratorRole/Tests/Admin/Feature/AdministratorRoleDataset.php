@@ -54,6 +54,33 @@ dataset('index', [
     ],
 ]);
 
+dataset('indexInvalidData', [
+    'invalid id' => [
+        ['id' => 'foo'],
+        ['id' => ['The id field must be an integer.']],
+    ],
+    'invalid id < 0' => [
+        ['id' => -1],
+        ['id' => ['The id field must be greater than or equal to 1.']],
+    ],
+    'invalid per_page' => [
+        ['per_page' => 'foo'],
+        ['per_page' => ['The per page field must be an integer.']],
+    ],
+    'invalid per_page < 1' => [
+        ['per_page' => 0],
+        ['per_page' => ['The per page field must be greater than or equal to 1.']],
+    ],
+    'invalid per_page > 100' => [
+        ['per_page' => 101],
+        ['per_page' => ['The per page field must be less than or equal to 100.']],
+    ],
+    'invalid current_page' => [
+        ['current_page' => 'foo'],
+        ['current_page' => ['The current page field must be greater than or equal to 1.']],
+    ],
+]);
+
 dataset('store', [
     'valid store' => [
         $dataset['valid'],

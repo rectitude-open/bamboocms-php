@@ -29,6 +29,15 @@ it('can display list', function ($data, $expected, $expectedCount = 10, $factory
         ->assertStatus(200);
 })->with('index');
 
+it('cannot display list with invalid data', function ($data, $expected, $expectedCount = 0, $factory = null) {
+    ($factory ?? fn () => null)();
+
+    $this->getJson($this->getRoute('index', $data))
+        ->assertJsonValidationErrors($expected)
+        ->assertStatus(422);
+    $this->assertDatabaseCount($this->tableName, $expectedCount);
+})->with('indexInvalidData');
+
 it('can store', function ($data, $expected, $expectedCount = 1, $factory = null) {
     ($factory ?? fn () => null)();
 

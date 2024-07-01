@@ -16,11 +16,11 @@ class BaseFormRequest extends FormRequest
     public function baseIndexRules(): array
     {
         return [
-            'id' => ['numeric', 'gte:0'],
+            'id' => ['integer', 'gte:1'],
             'sort' => ['string', 'min:2', 'max:255'],
             'order' => ['string', 'regex:/^(desc|asc)$/i'],
-            'per_page' => ['numeric', 'gte:0', 'lte:100'],
-            'current_page' => ['numeric', 'gte:0'],
+            'per_page' => ['integer', 'gte:1', 'lte:100'],
+            'current_page' => ['integer', 'gte:1'],
             'pagination' => ['in:true,false'],
             'with_trashed' => ['in:true,false'],
             'start_date' => ['date_format:Y-m-d H:i:s,Y-m-d', 'before_or_equal:end_date'],

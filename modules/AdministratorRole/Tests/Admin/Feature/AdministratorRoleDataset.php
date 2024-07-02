@@ -8,6 +8,10 @@ $dataset = [
         'name' => 'init name',
         'description' => 'init description',
     ],
+    'valid_update' => [
+        'name' => 'update name',
+        'description' => 'update description',
+    ],
     'invalid' => [
         'name' => 123456,
         'description' => 123456,
@@ -125,5 +129,38 @@ dataset('showInvalidData', [
     'invalid id < 1' => [
         ['id' => 0],
         ['id' => ['The id field must be greater than or equal to 1.']],
+    ],
+]);
+
+dataset('update', [
+    'valid update' => [
+        100,
+        $dataset['valid_update'],
+        $dataset['valid_update'],
+        fn () => AdministratorRole::factory()->create(['id' => 100]),
+    ],
+]);
+
+dataset('updateInvalidData', [
+    'duplicate name' => [
+        100,
+        ['name' => $dataset['valid']['name']],
+        ['name' => ['The name has already been taken.']],
+        function () use ($dataset) {
+            AdministratorRole::factory()->create(['id' => 100]);
+            AdministratorRole::factory()->create($dataset['valid']);
+        },
+    ],
+    'invalid name' => [
+        100,
+        ['name' => $dataset['invalid']['name']],
+        ['name' => ['The name field must be a string.']],
+        fn () => AdministratorRole::factory()->create(['id' => 100]),
+    ],
+    'invalid description' => [
+        100,
+        ['description' => $dataset['invalid']['description']],
+        ['description' => ['The description field must be a string.']],
+        fn () => AdministratorRole::factory()->create(['id' => 100]),
     ],
 ]);

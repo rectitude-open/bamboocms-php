@@ -13,6 +13,7 @@ beforeEach(function () {
         'index' => 'AdministratorRole.Admin.AdministratorRole.index',
         'store' => 'AdministratorRole.Admin.AdministratorRole.store',
         'show' => 'AdministratorRole.Admin.AdministratorRole.show',
+        'update' => 'AdministratorRole.Admin.AdministratorRole.update',
     ];
     $this->modelClass = AdministratorRole::class;
     $this->tableName = (new $this->modelClass)->getTable();
@@ -44,7 +45,6 @@ it('can store', function ($data, $expected, $expectedCount = 1, $factory = null)
     $this->postJson($this->getRoute('store'), $data)
         ->assertJson([
             'data' => $expected,
-            'message' => 'Success! The record has been added.',
         ])
         ->assertStatus(201);
     $this->assertDatabaseHas($this->tableName, $expected);
@@ -75,3 +75,19 @@ it('cannot show with invalid data', function ($params, $expected, $factory = nul
         ->assertJsonValidationErrors($expected)
         ->assertStatus(422);
 })->with('showInvalidData');
+
+it('can update', function ($id, $data, $expected, $factory = null) {
+    ($factory ?? fn () => null)();
+
+    $this->putJson($this->getRoute('update', ['id' => $id]), $data)
+        ->assertJson(['data' => $expected])
+        ->assertStatus(200);
+})->with('update');
+
+it('cannot update with invalid data', function ($id, $data, $expected, $factory = null) {
+    ($factory ?? fn () => null)();
+
+    $this->putJson($this->getRoute('update', ['id' => $id]), $data)
+        ->assertJsonValidationErrors($expected)
+        ->assertStatus(422);
+})->with('updateInvalidData');

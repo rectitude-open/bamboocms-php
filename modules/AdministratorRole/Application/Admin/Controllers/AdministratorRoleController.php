@@ -13,7 +13,6 @@ use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\Index
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\StoreRequest;
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\UpdateRequest;
 use Modules\AdministratorRole\Application\Admin\Resources\AdministratorRoleResource;
-use Modules\AdministratorRole\Application\Admin\Transformers\AdministratorRole\AdministratorRoleTransformer;
 
 class AdministratorRoleController extends BaseAdministratorController
 {
@@ -44,14 +43,14 @@ class AdministratorRoleController extends BaseAdministratorController
         return $this->success($result, AdministratorRoleResource::class)->send();
     }
 
-    // public function update(UpdateRequest $request)
-    // {
-    //     $result = $this->administratorRoleAppService->update($request->validated());
+    public function update(UpdateRequest $request)
+    {
+        $result = $this->administratorRoleAppService->update($request->validated());
 
-    //     return $this->success($result, AdministratorRoleTransformer::class)
-    //         ->meta(['message' => __('Success! The record has been updated.')])
-    //         ->respond();
-    // }
+        return $this->success($result, AdministratorRoleResource::class)
+            ->message(__('Success! The record has been updated.'))
+            ->send();
+    }
 
     // public function destroy(DestroyRequest $request)
     // {

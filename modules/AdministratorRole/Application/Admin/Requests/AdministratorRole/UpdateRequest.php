@@ -17,7 +17,7 @@ class UpdateRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'id' => ['integer', 'gte: 0'],
+            'id' => ['integer', 'gte: 1'],
             'name' => ['string', 'max:255', 'unique:administrator_roles,name,'.$this->id],
             'description' => ['string', 'max:255'],
         ];

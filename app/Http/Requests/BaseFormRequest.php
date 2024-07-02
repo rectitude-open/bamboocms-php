@@ -36,10 +36,9 @@ class BaseFormRequest extends FormRequest
 
         $casts = [
             'id' => 'int',
-            'page_size' => 'int',
-            'current' => 'int',
+            'per_page' => 'int',
+            'current_page' => 'int',
             'pagination' => 'boolean',
-            'with_trashed' => 'boolean',
         ];
 
         foreach ($casts as $field => $type) {

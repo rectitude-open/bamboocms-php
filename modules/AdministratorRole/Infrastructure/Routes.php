@@ -10,7 +10,7 @@ Route::middleware([])->name('AdministratorRole.')->group(function () {
         Route::controller(AdminAdministratorRoleController::class)->prefix('administrator-roles')->name('AdministratorRole.')->group(function () {
             Route::get('', 'index')->name('index');
             Route::post('', 'store')->name('store');
-            // Route::get('{id}', 'show')->name('show');
+            Route::get('{id}', 'show')->name('show');
             // Route::put('{id}', 'update')->name('update');
             // Route::delete('bulk', 'bulkDestroy')->name('bulkDestroy');
             // Route::delete('{id}', 'destroy')->name('destroy');

@@ -7,7 +7,7 @@ namespace Modules\AdministratorRole\Application\Admin\Controllers;
 use App\Http\Controllers\BaseAdministratorController;
 use App\Http\Requests\BulkDestroyRequest;
 use App\Http\Requests\DestroyRequest;
-use App\Http\Requests\ShowRequest;
+use App\Http\Requests\SingleResourceRequest;
 use Modules\AdministratorRole\Application\Admin\AppServices\AdministratorRoleAppService;
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\IndexRequest;
 use Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole\StoreRequest;
@@ -37,12 +37,12 @@ class AdministratorRoleController extends BaseAdministratorController
             ->send(201);
     }
 
-    // public function show(ShowRequest $request)
-    // {
-    //     $result = $this->administratorRoleAppService->show($request->validated());
+    public function show(SingleResourceRequest $request)
+    {
+        $result = $this->administratorRoleAppService->show($request->validated());
 
-    //     return $this->success($result, AdministratorRoleTransformer::class)->respond();
-    // }
+        return $this->success($result, AdministratorRoleResource::class)->send();
+    }
 
     // public function update(UpdateRequest $request)
     // {

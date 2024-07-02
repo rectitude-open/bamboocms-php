@@ -59,7 +59,7 @@ dataset('indexInvalidData', [
         ['id' => 'foo'],
         ['id' => ['The id field must be an integer.']],
     ],
-    'invalid id < 0' => [
+    'invalid id < 1' => [
         ['id' => -1],
         ['id' => ['The id field must be greater than or equal to 1.']],
     ],
@@ -106,5 +106,24 @@ dataset('storeInvalidData', [
     'invalid description' => [
         ['description' => $dataset['invalid']['description']],
         ['description' => ['The description field must be a string.']],
+    ],
+]);
+
+dataset('show', [
+    'valid show' => [
+        ['id' => 100],
+        ['id' => 100],
+        fn () => AdministratorRole::factory()->create(['id' => 100]),
+    ],
+]);
+
+dataset('showInvalidData', [
+    'invalid id' => [
+        ['id' => 'foo'],
+        ['id' => ['The id field must be an integer.']],
+    ],
+    'invalid id < 1' => [
+        ['id' => 0],
+        ['id' => ['The id field must be greater than or equal to 1.']],
     ],
 ]);

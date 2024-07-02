@@ -32,25 +32,25 @@ abstract class BaseAdministratorAppService
 
     protected function handleException(\Closure $function): mixed
     {
-        try {
-            return $function();
-        } catch (ValidationException $e) {
-            throw $e;
-        } catch (ThrottleRequestsException $e) {
-            throw $e;
-        } catch (AccessDeniedHttpException $e) {
-            throw $e;
-        } catch (AuthenticationException $e) {
-            throw $e;
-        } catch (AuthorizationException $e) {
-            throw $e;
-        } catch (ModelNotFoundException $e) {
-            throw new BizException();
-        } catch (BizException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new SysException();
-        }
+        // try {
+        return $function();
+        // } catch (ValidationException $e) {
+        //     throw $e;
+        // } catch (ThrottleRequestsException $e) {
+        //     throw $e;
+        // } catch (AccessDeniedHttpException $e) {
+        //     throw $e;
+        // } catch (AuthenticationException $e) {
+        //     throw $e;
+        // } catch (AuthorizationException $e) {
+        //     throw $e;
+        // } catch (ModelNotFoundException $e) {
+        //     throw new BizException();
+        // } catch (BizException $e) {
+        //     throw $e;
+        // } catch (\Throwable $e) {
+        //     throw new SysException();
+        // }
     }
 
     protected function verifyResourcePermission($resource)
@@ -89,27 +89,27 @@ abstract class BaseAdministratorAppService
         });
     }
 
-    public function show($data)
+    public function show(array $data)
     {
         return $this->handleExceptionAndTransaction(function () use ($data) {
-            $item = $this->repository->find($data['id']);
+            $item = $this->repository->find((int) $data['id']);
             $this->verifyResourcePermission($item);
 
             return $item;
         });
     }
 
-    public function update($data)
+    public function update(array $data)
     {
         return $this->handleExceptionAndTransaction(function () use ($data) {
-            $item = $this->repository->find($data['id']);
+            $item = $this->repository->find((int) $data['id']);
             $this->verifyResourcePermission($item);
 
-            return $this->repository->update($data['id'], $data);
+            return $this->repository->update((int) $data['id'], $data);
         });
     }
 
-    public function delete($data)
+    public function delete(array $data)
     {
         return $this->handleExceptionAndTransaction(function () use ($data) {
             $ids = $data['id'] ?? $data['ids'] ?? [];

@@ -76,6 +76,12 @@ it('cannot show with invalid data', function ($params, $expected, $factory = nul
         ->assertStatus(422);
 })->with('showInvalidData');
 
+it('cannot show a resource does not exist', function () {
+    $this->getJson($this->getRoute('show', ['id' => 999]))
+        ->assertJson(['message' => 'Sorry, the requested resource does not exist.'])
+        ->assertStatus(404);
+});
+
 it('can update', function ($id, $data, $expected, $factory = null) {
     ($factory ?? fn () => null)();
 
@@ -91,3 +97,9 @@ it('cannot update with invalid data', function ($id, $data, $expected, $factory 
         ->assertJsonValidationErrors($expected)
         ->assertStatus(422);
 })->with('updateInvalidData');
+
+it('cannot update a resource does not exist', function () {
+    $this->putJson($this->getRoute('update', ['id' => 999]), [])
+        ->assertJson(['message' => 'Sorry, the requested resource does not exist.'])
+        ->assertStatus(404);
+});

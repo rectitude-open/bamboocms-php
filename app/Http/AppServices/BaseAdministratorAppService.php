@@ -6,6 +6,7 @@ namespace App\Http\AppServices;
 
 use App\Exceptions\BizException;
 use App\Exceptions\SysException;
+use App\Http\Support\BizExceptionBuilder;
 use DB;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -32,25 +33,29 @@ abstract class BaseAdministratorAppService
 
     protected function handleException(\Closure $function): mixed
     {
-        // try {
-        return $function();
-        // } catch (ValidationException $e) {
-        //     throw $e;
-        // } catch (ThrottleRequestsException $e) {
-        //     throw $e;
-        // } catch (AccessDeniedHttpException $e) {
-        //     throw $e;
-        // } catch (AuthenticationException $e) {
-        //     throw $e;
-        // } catch (AuthorizationException $e) {
-        //     throw $e;
-        // } catch (ModelNotFoundException $e) {
-        //     throw new BizException();
-        // } catch (BizException $e) {
-        //     throw $e;
-        // } catch (\Throwable $e) {
-        //     throw new SysException();
-        // }
+        try {
+            return $function();
+            // } catch (ValidationException $e) {
+            //     throw $e;
+            // } catch (ThrottleRequestsException $e) {
+            //     throw $e;
+            // } catch (AccessDeniedHttpException $e) {
+            //     throw $e;
+            // } catch (AuthenticationException $e) {
+            //     throw $e;
+            // } catch (AuthorizationException $e) {
+            //     throw $e;
+        } catch (ModelNotFoundException $e) {
+            BizExceptionBuilder::make(__('Sorry, the requested resource does not exist.'))
+                ->logMessage('ModelNotFoundException')
+                ->code(404)
+                ->previous($e)
+                ->throw();
+            // } catch (BizException $e) {
+            //     throw $e;
+            // } catch (\Throwable $e) {
+            //     throw new SysException();
+        }
     }
 
     protected function verifyResourcePermission($resource)
@@ -65,7 +70,7 @@ abstract class BaseAdministratorAppService
 
     protected function deleteSingleResource(int $id)
     {
-        $item = $this->repository->find($id);
+        $item = $this->findOrFail($id);
         $this->verifyResourcePermission($item);
         $this->repository->delete([$id]);
     }
@@ -89,10 +94,26 @@ abstract class BaseAdministratorAppService
         });
     }
 
+    protected function findOrFail(int $id)
+    {
+        try {
+            $item = $this->repository->find((int) $id);
+
+            return $item;
+        } catch (ModelNotFoundException $e) {
+            BizExceptionBuilder::make(__('Sorry, the requested resource does not exist.'))
+                ->logMessage('ModelNotFoundException')
+                ->code(404)
+                ->context(['id' => $id, 'repository' => get_class($this->repository)])
+                ->throw();
+        }
+    }
+
     public function show(array $data)
     {
         return $this->handleExceptionAndTransaction(function () use ($data) {
-            $item = $this->repository->find((int) $data['id']);
+            $item = $this->findOrFail((int) $data['id']);
+
             $this->verifyResourcePermission($item);
 
             return $item;
@@ -102,7 +123,7 @@ abstract class BaseAdministratorAppService
     public function update(array $data)
     {
         return $this->handleExceptionAndTransaction(function () use ($data) {
-            $item = $this->repository->find((int) $data['id']);
+            $item = $this->findOrFail((int) $data['id']);
             $this->verifyResourcePermission($item);
 
             return $this->repository->update((int) $data['id'], $data);

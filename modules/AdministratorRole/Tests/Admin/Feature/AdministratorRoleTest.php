@@ -88,6 +88,7 @@ it('can update', function ($id, $data, $expected, $factory = null) {
     $this->putJson($this->getRoute('update', ['id' => $id]), $data)
         ->assertJson(['data' => $expected])
         ->assertStatus(200);
+    $this->assertDatabaseHas($this->tableName, $expected);
 })->with('update');
 
 it('cannot update with invalid data', function ($id, $data, $expected, $factory = null) {

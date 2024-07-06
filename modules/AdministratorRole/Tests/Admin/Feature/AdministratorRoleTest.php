@@ -14,6 +14,8 @@ beforeEach(function () {
         'store' => 'AdministratorRole.Admin.AdministratorRole.store',
         'show' => 'AdministratorRole.Admin.AdministratorRole.show',
         'update' => 'AdministratorRole.Admin.AdministratorRole.update',
+        'destroy' => 'AdministratorRole.Admin.AdministratorRole.destroy',
+        'bulkDestroy' => 'AdministratorRole.Admin.AdministratorRole.bulkDestroy',
     ];
     $this->modelClass = AdministratorRole::class;
     $this->tableName = (new $this->modelClass)->getTable();
@@ -104,3 +106,29 @@ it('cannot update a resource does not exist', function () {
         ->assertJson(['message' => 'Sorry, the requested resource does not exist.'])
         ->assertStatus(404);
 });
+
+it('can delete', function ($data, $factory = null) {
+    ($factory ?? fn () => null)();
+
+    $this->deleteJson($this->getRoute('destroy', $data))
+        ->assertJson(['message' => 'Success! The record has been deleted.'])
+        ->assertStatus(200);
+    $this->assertDatabaseMissing($this->tableName, $data);
+})->with('destroy');
+
+it('cannot delete a resource does not exist', function () {
+    $this->deleteJson($this->getRoute('destroy', ['id' => 999]))
+        ->assertJson(['message' => 'Sorry, the requested resource does not exist.'])
+        ->assertStatus(404);
+});
+
+it('can bulk delete', function ($data, $factory = null) {
+    ($factory ?? fn () => null)();
+
+    $this->deleteJson($this->getRoute('bulkDestroy'), $data)
+        ->assertJson(['message' => 'Success! The records has been deleted.'])
+        ->assertStatus(200);
+    foreach ($data['ids'] as $id) {
+        $this->assertDatabaseMissing($this->tableName, ['id' => $id]);
+    }
+})->with('bulkDestroy');

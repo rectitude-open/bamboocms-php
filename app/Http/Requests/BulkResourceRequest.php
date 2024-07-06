@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-class BulkResourceRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class BulkResourceRequest extends FormRequest
 {
     public function rules(): array
     {

@@ -164,3 +164,21 @@ dataset('updateInvalidData', [
         fn () => AdministratorRole::factory()->create(['id' => 100]),
     ],
 ]);
+
+dataset('destroy', [
+    'valid destroy' => [
+        ['id' => 100],
+        fn () => AdministratorRole::factory()->create(['id' => 100]),
+    ],
+]);
+
+dataset('bulkDestroy', [
+    'valid bulk destroy' => [
+        ['ids' => [100, 101, 102]],
+        function () {
+            AdministratorRole::factory()->create(['id' => 100]);
+            AdministratorRole::factory()->create(['id' => 101]);
+            AdministratorRole::factory()->create(['id' => 102]);
+        },
+    ],
+]);

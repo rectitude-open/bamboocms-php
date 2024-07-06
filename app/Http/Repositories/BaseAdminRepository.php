@@ -33,7 +33,7 @@ abstract class BaseAdminRepository
         return $moduleTemplate;
     }
 
-    public function delete(array $ids): bool
+    public function delete(array $ids): bool|int
     {
         return $this->model->whereIn('id', $ids)->delete();
     }

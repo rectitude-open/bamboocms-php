@@ -89,6 +89,10 @@ class ModuleDuplicate extends Command
                 "modules/{$toModuleName}/Infrastructure/Repositories/{$toModelName}Repository.php",
             ],
             [
+                "modules/{$fromModuleName}/Infrastructure/Scopes/{$fromModelName}SearchScope.php",
+                "modules/{$toModuleName}/Infrastructure/Scopes/{$toModelName}SearchScope.php",
+            ],
+            [
                 "modules/{$fromModuleName}/Tests/{$fromRoleName}/Feature/{$fromModelName}Test.php",
                 "modules/{$toModuleName}/Tests/{$toRoleName}/Feature/{$toModelName}Test.php",
             ],
@@ -133,6 +137,10 @@ class ModuleDuplicate extends Command
 
     private function replaceFileContent(\SplFileInfo $file): void
     {
+        if (! $file->isFile()) {
+            return;
+        }
+
         $filePath = $file->getPathname();
         $content = File::get($filePath);
         $content = Str::swap(

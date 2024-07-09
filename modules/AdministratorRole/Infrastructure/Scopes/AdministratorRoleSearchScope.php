@@ -6,7 +6,7 @@ namespace Modules\AdministratorRole\Infrastructure\Scopes;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class SearchScope
+class AdministratorRoleSearchScope
 {
     public static function apply(Builder $query, array $params = [])
     {

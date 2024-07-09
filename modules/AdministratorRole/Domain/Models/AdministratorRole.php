@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\AdministratorRole\Infrastructure\Factories\AdministratorRoleFactory;
-use Modules\AdministratorRole\Infrastructure\Scopes\SearchScope;
+use Modules\AdministratorRole\Infrastructure\Scopes\AdministratorRoleSearchScope;
 
 class AdministratorRole extends Model
 {
@@ -24,7 +24,7 @@ class AdministratorRole extends Model
 
     public function scopeSearch(Builder $query, array $params = [])
     {
-        return SearchScope::apply($query, $params);
+        return AdministratorRoleSearchScope::apply($query, $params);
     }
 
     protected static function newFactory(): Factory

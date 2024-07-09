@@ -89,12 +89,12 @@ class ModuleDuplicate extends Command
                 "modules/{$toModuleName}/Infrastructure/Repositories/{$toModelName}Repository.php",
             ],
             [
-                "modules/{$fromModuleName}/Tests/Feature/{$fromModelName}Test.php",
-                "modules/{$toModuleName}/Tests/Feature/{$toModelName}Test.php",
+                "modules/{$fromModuleName}/Tests/{$fromRoleName}/Feature/{$fromModelName}Test.php",
+                "modules/{$toModuleName}/Tests/{$toRoleName}/Feature/{$toModelName}Test.php",
             ],
             [
-                "modules/{$fromModuleName}/Tests/Feature/{$fromModelName}Dataset.php",
-                "modules/{$toModuleName}/Tests/Feature/{$toModelName}Dataset.php",
+                "modules/{$fromModuleName}/Tests/{$fromRoleName}/Feature/{$fromModelName}Dataset.php",
+                "modules/{$toModuleName}/Tests/{$toRoleName}/Feature/{$toModelName}Dataset.php",
             ],
             [
                 "modules/{$fromModuleName}/Application/{$fromRoleName}/Requests/{$fromModelName}/",
@@ -168,8 +168,8 @@ class ModuleDuplicate extends Command
     {
         if (File::exists($fromFile)) {
             $this->makeFileDirectory($toFile);
+            File::copy($fromFile, $toFile);
         }
-        File::copy($fromFile, $toFile);
     }
 
     private function makeFileDirectory(string $file)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Administrator\Domain\Models;
 
+use App\Http\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +14,7 @@ use Modules\Administrator\Infrastructure\Factories\AdministratorFactory;
 
 class Administrator extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasSortingScopeTrait, Notifiable;
 
     protected $guard_name = 'admin';
 

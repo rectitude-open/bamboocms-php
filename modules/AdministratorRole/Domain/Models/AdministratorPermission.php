@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Modules\AdministratorRole\Domain\Models;
 
+use App\Http\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Modules\AdministratorRole\Infrastructure\Factories\AdministratorPermissionFactory;
 use Modules\AdministratorRole\Infrastructure\Scopes\AdministratorPermissionSearchScope;
 
-class AdministratorPermission extends Model
+class AdministratorPermission extends BaseModel
 {
     use HasFactory;
 

@@ -4,32 +4,35 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidSorting;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BaseFormRequest extends FormRequest
 {
-    protected function prepareForValidation()
-    {
-        parent::prepareForValidation();
+    protected array $casts = [
+        'id' => 'int',
+        'per_page' => 'int',
+        'current_page' => 'int',
+        'pagination' => 'boolean',
+        'sorting' => 'sorting',
+    ];
 
-        $this->castInputValues();
+    public function validated($key = null, $default = null)
+    {
+        $data = parent::validated($key, $default);
+
+        return $this->castInputValues($data);
     }
 
-    protected function castInputValues()
+    protected function castInputValues(array $data)
     {
-        $casts = [
-            'id' => 'int',
-            'per_page' => 'int',
-            'current_page' => 'int',
-            'pagination' => 'boolean',
-            'sorting' => 'sorting',
-        ];
-
-        foreach ($casts as $field => $type) {
-            if ($this->has($field)) {
-                $this->merge([$field => $this->castValue($this->input($field), $type)]);
+        foreach ($this->casts as $field => $type) {
+            if (isset($data[$field])) {
+                $data[$field] = $this->castValue($data[$field], $type);
             }
         }
+
+        return $data;
     }
 
     public function baseIndexRules(): array
@@ -43,9 +46,7 @@ class BaseFormRequest extends FormRequest
             'end_date' => ['date_format:Y-m-d H:i:s,Y-m-d', 'after_or_equal:start_date'],
             'start_time' => ['date_format:Y-m-d H:i:s,Y-m-d', 'before_or_equal:end_time'],
             'end_time' => ['date_format:Y-m-d H:i:s,Y-m-d', 'after_or_equal:start_time'],
-            'sorting' => ['nullable', 'array'],
-            'sorting.*.id' => ['required', 'string'],
-            'sorting.*.desc' => ['required', 'boolean'],
+            'sorting' => ['nullable', 'string', new ValidSorting],
         ];
     }
 

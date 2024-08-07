@@ -55,7 +55,7 @@ abstract class BaseAdminRepository
 
     public function getPaginated(array $params): LengthAwarePaginator
     {
-        $query = $this->model->search($params);
+        $query = $this->model->search($params)->sorting($params);
 
         $perPage = $params['per_page'] ?? 10;
         $currentPage = $params['current_page'] ?? 1;

@@ -16,4 +16,12 @@ class IndexRequest extends BaseFormRequest
             'description' => ['string', 'max:255'],
         ];
     }
+
+    public function filterRules()
+    {
+        return [
+            'id' => ['integer', 'gte:1'],
+            'name' => ['string', 'max:255'],
+        ];
+    }
 }

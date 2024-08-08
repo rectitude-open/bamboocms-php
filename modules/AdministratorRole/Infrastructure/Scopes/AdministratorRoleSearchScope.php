@@ -10,12 +10,24 @@ class AdministratorRoleSearchScope
 {
     public static function apply(Builder $query, array $params = [])
     {
-        $query->when(isset($params['id']), function ($query) use ($params) {
-            $query->where('id', $params['id']);
-        });
+        foreach ($params['filters'] ?? [] as $filter) {
+            $field = $filter['id'];
+            $value = $filter['value'];
 
-        $query->when(isset($params['name']), function ($query) use ($params) {
-            $query->where('name', 'like', '%'.$params['name'].'%');
-        });
+            switch ($field) {
+                case 'id':
+                    $query->when((int) $value > 0, function ($query) use ($value) {
+                        $query->where('id', $value);
+                    });
+                    break;
+                case 'name':
+                    $query->when(! empty($value), function ($query) use ($value) {
+                        $query->where('name', 'like', '%'.$value.'%');
+                    });
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

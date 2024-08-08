@@ -31,7 +31,9 @@ class ValidFilterValue implements DataAwareRule, ValidationRule
         if ($filterId && isset($this->filterRules[$filterId])) {
             $validator = Validator::make(
                 ['value' => $value],
-                ['value' => $this->filterRules[$filterId]]
+                ['value' => $this->filterRules[$filterId]],
+                [],
+                ['value' => $filterId]
             );
 
             if ($validator->fails()) {
@@ -40,7 +42,7 @@ class ValidFilterValue implements DataAwareRule, ValidationRule
                 }
             }
         } else {
-            $fail("Invalid filter id: $filterId");
+            $fail('validation.invalid_filter')->translate(['name' => $filterId]);
         }
     }
 }

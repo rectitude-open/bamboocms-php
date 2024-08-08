@@ -35,8 +35,8 @@ abstract class BaseAdministratorAppService
     {
         try {
             return $function();
-            // } catch (ValidationException $e) {
-            //     throw $e;
+        } catch (ValidationException $e) {
+            throw $e;
             // } catch (ThrottleRequestsException $e) {
             //     throw $e;
             // } catch (AccessDeniedHttpException $e) {

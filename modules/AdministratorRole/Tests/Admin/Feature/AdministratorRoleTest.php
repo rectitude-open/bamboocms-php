@@ -36,7 +36,7 @@ it('cannot display list with invalid data', function ($params, $expected, $expec
     ($factory ?? fn () => null)();
 
     $this->getJson($this->getRoute('index', $params))
-        ->assertJsonValidationErrors($expected)
+        ->assertJsonValidationErrors(['messages' => $expected], 'error')
         ->assertStatus(422);
     $this->assertDatabaseCount($this->tableName, $expectedCount);
 })->with('indexInvalidData');
@@ -57,7 +57,7 @@ it('cannot store with invalid data', function ($data, $expected, $expectedCount 
     ($factory ?? fn () => null)();
 
     $this->postJson($this->getRoute('store'), $data)
-        ->assertJsonValidationErrors($expected)
+        ->assertJsonValidationErrors(['messages' => $expected], 'error')
         ->assertStatus(422);
     $this->assertDatabaseCount($this->tableName, $expectedCount);
 })->with('storeInvalidData');
@@ -74,7 +74,7 @@ it('cannot show with invalid data', function ($params, $expected, $factory = nul
     ($factory ?? fn () => null)();
 
     $this->getJson($this->getRoute('show', $params))
-        ->assertJsonValidationErrors($expected)
+        ->assertJsonValidationErrors(['messages' => $expected], 'error')
         ->assertStatus(422);
 })->with('showInvalidData');
 
@@ -97,7 +97,7 @@ it('cannot update with invalid data', function ($id, $data, $expected, $factory 
     ($factory ?? fn () => null)();
 
     $this->putJson($this->getRoute('update', ['id' => $id]), $data)
-        ->assertJsonValidationErrors($expected)
+        ->assertJsonValidationErrors(['messages' => $expected], 'error')
         ->assertStatus(422);
 })->with('updateInvalidData');
 

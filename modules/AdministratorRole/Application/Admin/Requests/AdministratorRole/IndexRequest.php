@@ -4,20 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\AdministratorRole\Application\Admin\Requests\AdministratorRole;
 
-use App\Http\Requests\BaseFormRequest;
+use App\Http\Requests\BaseIndexRequest;
 
-class IndexRequest extends BaseFormRequest
+class IndexRequest extends BaseIndexRequest
 {
-    public function rules(): array
-    {
-        return [
-            ...$this->baseIndexRules(),
-            'name' => ['string', 'max:255'],
-            'description' => ['string', 'max:255'],
-        ];
-    }
-
-    public function filterRules()
+    public function filterRules(): array
     {
         return [
             'id' => ['integer', 'gte:1'],

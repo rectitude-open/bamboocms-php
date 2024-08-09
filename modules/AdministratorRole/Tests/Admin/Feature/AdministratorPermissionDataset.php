@@ -17,7 +17,7 @@ $dataset = [
 
 dataset('index', [
     'search by id' => [
-        ['id' => 100],
+        ['filters' => [['id' => 'id', 'value' => 100]]],
         ['data' => [['id' => 100]]],
         1,
         function () {
@@ -26,7 +26,7 @@ dataset('index', [
         },
     ],
     'search by name' => [
-        ['name' => 'fooName'],
+        ['filters' => [['id' => 'name', 'value' => 'fooName']]],
         ['data' => [['name' => 'fooName']]],
         1,
         function () {
@@ -58,27 +58,27 @@ dataset('index', [
 dataset('indexInvalidData', [
     'invalid id' => [
         ['id' => 'foo'],
-        ['id' => ['The id field must be an integer.']],
+        ['The id field must be an integer.', 'The id field must be greater than or equal to 1.'],
     ],
     'invalid id < 1' => [
         ['id' => -1],
-        ['id' => ['The id field must be greater than or equal to 1.']],
+        ['The id field must be greater than or equal to 1.'],
     ],
     'invalid per_page' => [
         ['per_page' => 'foo'],
-        ['per_page' => ['The per page field must be an integer.']],
+        ['The per page field must be an integer.'],
     ],
     'invalid per_page < 1' => [
         ['per_page' => 0],
-        ['per_page' => ['The per page field must be greater than or equal to 1.']],
+        ['The per page field must be greater than or equal to 1.'],
     ],
     'invalid per_page > 100' => [
         ['per_page' => 101],
-        ['per_page' => ['The per page field must be less than or equal to 100.']],
+        ['The per page field must be less than or equal to 100.'],
     ],
     'invalid current_page' => [
         ['current_page' => 'foo'],
-        ['current_page' => ['The current page field must be greater than or equal to 1.']],
+        ['The current page field must be an integer.', 'The current page field must be greater than or equal to 1.'],
     ],
 ]);
 
@@ -92,17 +92,17 @@ dataset('store', [
 dataset('storeInvalidData', [
     'duplicate name' => [
         $dataset['valid'],
-        ['name' => ['The name has already been taken.']],
+        ['The name has already been taken.'],
         1,
         fn () => AdministratorPermission::factory()->create($dataset['valid']),
     ],
     'empty name' => [
         [],
-        ['name' => ['The name field is required.']],
+        ['The name field is required.'],
     ],
     'invalid name' => [
         ['name' => $dataset['invalid']['name']],
-        ['name' => ['The name field must be a string.']],
+        ['The name field must be a string.'],
     ],
 ]);
 
@@ -117,11 +117,11 @@ dataset('show', [
 dataset('showInvalidData', [
     'invalid id' => [
         ['id' => 'foo'],
-        ['id' => ['The id field must be an integer.']],
+        ['The id field must be an integer.'],
     ],
     'invalid id < 1' => [
         ['id' => 0],
-        ['id' => ['The id field must be greater than or equal to 1.']],
+        ['The id field must be greater than or equal to 1.'],
     ],
 ]);
 
@@ -138,7 +138,7 @@ dataset('updateInvalidData', [
     'duplicate name' => [
         100,
         ['name' => $dataset['valid']['name']],
-        ['name' => ['The name has already been taken.']],
+        ['The name has already been taken.'],
         function () use ($dataset) {
             AdministratorPermission::factory()->create(['id' => 100]);
             AdministratorPermission::factory()->create($dataset['valid']);
@@ -147,7 +147,7 @@ dataset('updateInvalidData', [
     'invalid name' => [
         100,
         ['name' => $dataset['invalid']['name']],
-        ['name' => ['The name field must be a string.']],
+        ['The name field must be a string.'],
         fn () => AdministratorPermission::factory()->create(['id' => 100]),
     ],
 ]);

@@ -4,30 +4,24 @@ declare(strict_types=1);
 
 namespace Modules\AdministratorRole\Infrastructure\Scopes;
 
+use App\Http\Scopes\BaseSearchScope;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class AdministratorRoleSearchScope
+class AdministratorRoleSearchScope extends BaseSearchScope
 {
-    public static function apply(Builder $query, array $params = [])
+    protected static function getFiltersConfig(): array
     {
-        foreach ($params['filters'] ?? [] as $filter) {
-            $field = $filter['id'];
-            $value = $filter['value'];
-
-            switch ($field) {
-                case 'id':
-                    $query->when((int) $value > 0, function ($query) use ($value) {
-                        $query->where('id', $value);
-                    });
-                    break;
-                case 'name':
-                    $query->when(! empty($value), function ($query) use ($value) {
-                        $query->where('name', 'like', '%'.$value.'%');
-                    });
-                    break;
-                default:
-                    break;
-            }
-        }
+        return [
+            'id' => function (Builder $query, $value) {
+                $query->when((int) $value > 0, function ($query) use ($value) {
+                    $query->where('id', $value);
+                });
+            },
+            'name' => function (Builder $query, $value) {
+                $query->when(! empty($value), function ($query) use ($value) {
+                    $query->where('name', 'like', '%'.$value.'%');
+                });
+            },
+        ];
     }
 }

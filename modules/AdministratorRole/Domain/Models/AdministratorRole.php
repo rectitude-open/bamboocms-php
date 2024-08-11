@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\AdministratorRole\Domain\Models;
 
 use App\Http\Models\BaseModel;
-use App\Http\Scopes\SortingScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\AdministratorRole\Infrastructure\Factories\AdministratorRoleFactory;
@@ -23,11 +22,6 @@ class AdministratorRole extends BaseModel
     public function scopeSearch(Builder $query, array $params = [])
     {
         return AdministratorRoleSearchScope::apply($query, $params);
-    }
-
-    public function scopeSorting(Builder $query, array $params = [])
-    {
-        return SortingScope::apply($query, $params);
     }
 
     protected static function newFactory(): Factory

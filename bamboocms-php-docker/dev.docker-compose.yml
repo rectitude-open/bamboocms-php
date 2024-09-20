@@ -1,7 +1,7 @@
 services:
-    bamboocms-php-apache:
-        container_name: bamboocms-php-apache
-        image: bamboocms-php-apache
+    bamboocms-php-nginx:
+        container_name: bamboocms-php-nginx
+        image: bamboocms-php-nginx
         volumes:
             - ../:/home/wwwroot/bamboocms-php
             - ./php/custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini

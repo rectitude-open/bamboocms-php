@@ -1,16 +1,19 @@
-FROM php:8.3-apache
+FROM php:8.3-fpm
 
-ENV APACHE_DOCUMENT_ROOT /home/wwwroot/bamboocms-php/public
+ARG WORKDIR=/home/wwwroot/bamboocms-php
+ENV DOCUMENT_ROOT=${WORKDIR}
+ENV NODE_VERSION=20.x
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+ARG GROUP_ID=1000
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+ARG GROUP_NAME=www-data
 
 ARG TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# RUN sed -i 's#deb.debian.org/debian$#mirrors.tuna.tsinghua.edu.cn/debian#' /etc/apt/sources.list.d/debian.sources
+RUN service cron start
+RUN update-rc.d cron defaults
 
 RUN apt-get clean
 RUN apt-get update
@@ -19,36 +22,40 @@ RUN apt-get install -y \
     apt-utils \
     vim \
     wget \
-    curl \
     git \
-    htop
-
-RUN apt-get install -y \
-    libjpeg62-turbo-dev \
+    curl \
+    htop \
     libfreetype6-dev \
+    libjpeg62-turbo-dev \
     zlib1g-dev \
+    libmemcached-dev \
+    libzip-dev \
     libpng-dev \
     libwebp-dev \
-    libzip-dev \
-    zip\
+    libonig-dev \
+    libxml2-dev \
+    librdkafka-dev \
+    libpq-dev \
+    openssh-server \
+    zip \
+    unzip \
+    supervisor \
+    sqlite3  \
+    nano \
     cron
-
-RUN service cron start
-RUN update-rc.d cron defaults
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-RUN docker-php-ext-install pdo pdo_mysql && \
-    a2enmod rewrite
-# composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | sudo bash -
+RUN apt-get install -y nodejs
+
+RUN apt-get install -y nginx
 
 RUN yes | docker-php-ext-install mysqli && \
     docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/ && \
-    docker-php-ext-install gd zip pcntl bcmath && \
+    docker-php-ext-install gd zip pcntl bcmath mbstring exif && \
     docker-php-ext-enable opcache
 
 RUN yes | pecl install xdebug && \
     docker-php-ext-enable xdebug
 
-
-# * * * * * cd /var/www && /usr/local/bin/php artisan schedule:run >> /var/log/cron.log 2>&1

@@ -19,14 +19,14 @@ class ValidSorting implements ValidationRule
         $decoded = json_decode($value, true);
 
         if (! is_array($decoded)) {
-            $fail('validation.sorting')->translate(['attribute' => $attribute]);
+            $fail('validation.invalid_sorting_format')->translate();
 
             return;
         }
 
         foreach ($decoded as $item) {
             if (! isset($item['id'], $item['desc']) || ! is_string($item['id']) || ! is_bool($item['desc'])) {
-                $fail('validation.sorting')->translate(['attribute' => $attribute]);
+                $fail('validation.invalid_sorting_format_name')->translate(['name' => $attribute]);
 
                 return;
             }

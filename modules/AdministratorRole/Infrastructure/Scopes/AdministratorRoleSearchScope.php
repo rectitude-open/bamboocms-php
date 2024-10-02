@@ -22,6 +22,14 @@ class AdministratorRoleSearchScope extends BaseSearchScope
                     $query->where('name', 'like', '%'.$value.'%');
                 });
             },
+            'created_at' => function (Builder $query, $value) {
+                $query->when(! empty($value), function ($query) use ($value) {
+                    if (! $value[0] || ! $value[1]) {
+                        return;
+                    }
+                    $query->whereBetween('created_at', $value);
+                });
+            },
         ];
     }
 }

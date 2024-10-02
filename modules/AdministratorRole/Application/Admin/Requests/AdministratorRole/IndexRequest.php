@@ -13,6 +13,7 @@ class IndexRequest extends BaseIndexRequest
         return [
             'id' => ['integer', 'gte:1'],
             'name' => ['string', 'max:255'],
+            'created_at' => ['array', 'size:2'],
         ];
     }
 }

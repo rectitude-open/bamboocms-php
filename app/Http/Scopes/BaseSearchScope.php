@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Scopes;
 
+use App\Exceptions\SysException;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 abstract class BaseSearchScope
@@ -19,7 +20,7 @@ abstract class BaseSearchScope
             if (isset($filtersConfig[$field])) {
                 $filtersConfig[$field]($query, $value);
             } else {
-                throw new \InvalidArgumentException(__('Invalid filter :field: ', ['field' => $field]));
+                throw new SysException('Undefined filter rule: '.$field);
             }
         }
     }

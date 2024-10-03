@@ -6,7 +6,7 @@ ENV NODE_VERSION=20.x
 
 ARG GROUP_ID=1000
 ARG USER_ID=1000
-ENV USER_NAME=www-data
+ARG USER_NAME=www-data
 ARG GROUP_NAME=www-data
 
 ARG TZ=UTC
@@ -59,3 +59,8 @@ RUN yes | docker-php-ext-install mysqli && \
 RUN yes | pecl install xdebug && \
     docker-php-ext-enable xdebug
 
+
+USER ${USER_NAME}
+WORKDIR /var/www
+
+CMD ["php-fpm"]

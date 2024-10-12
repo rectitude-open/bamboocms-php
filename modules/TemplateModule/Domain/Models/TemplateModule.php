@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Modules\TemplateModule\Domain\Models;
 
+use App\Http\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\TemplateModule\Infrastructure\Factories\TemplateModuleFactory;
+use Modules\TemplateModule\Infrastructure\Scopes\TemplateModuleSearchScope;
 
-class TemplateModule
+class TemplateModule extends BaseModel
 {
-    use HasFactory;
+    protected $fillable = ['string', 'integer'];
 
-    protected $fillable = [];
-
-    protected $casts = [];
+    public function scopeSearch(Builder $query, array $params = [])
+    {
+        return TemplateModuleSearchScope::apply($query, $params);
+    }
 
     protected static function newFactory(): Factory
     {

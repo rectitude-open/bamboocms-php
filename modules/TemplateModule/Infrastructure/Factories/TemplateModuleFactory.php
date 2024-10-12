@@ -14,6 +14,8 @@ class TemplateModuleFactory extends Factory
     public function definition(): array
     {
         return [
+            'string' => $this->faker->word(),
+            'integer' => $this->faker->randomNumber(),
         ];
     }
 }

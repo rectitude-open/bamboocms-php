@@ -14,7 +14,7 @@ class TemplateModuleResource extends JsonResource
         return [
             'id' => (int) $this->id,
 
-            'string' => (string) $this->name,
+            'string' => (string) $this->string,
             'integer' => (int) $this->integer,
 
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),

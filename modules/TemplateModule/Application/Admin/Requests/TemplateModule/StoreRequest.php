@@ -11,7 +11,7 @@ class StoreRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'string' => ['required', 'string', 'max:255'],
+            'string' => ['required', 'string', 'max:255', 'unique:template_modules,string'],
             'integer' => ['integer', 'gte:1'],
         ];
     }

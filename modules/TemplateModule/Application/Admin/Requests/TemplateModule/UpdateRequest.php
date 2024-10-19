@@ -18,7 +18,7 @@ class UpdateRequest extends BaseFormRequest
     {
         return [
             'id' => ['integer', 'gte: 1'],
-            'string' => ['string', 'max:255'],
+            'string' => ['string', 'max:255', 'unique:template_modules,string,'.$this->id],
             'integer' => ['integer', 'gte:1'],
         ];
     }

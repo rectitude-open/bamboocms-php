@@ -70,10 +70,10 @@ return [
     */
 
     'providers' => [
-        'administrators' => [
-            'driver' => 'eloquent',
-            'model' => Modules\Administrator\Domain\Models\Administrator::class,
-        ],
+        // 'administrators' => [
+        //     'driver' => 'eloquent',
+        //     'model' => Modules\Administrator\Domain\Models\Administrator::class,
+        // ],
         // 'users' => [
         //     'driver' => 'eloquent',
         //     'model' => env('AUTH_MODEL', App\Models\User::class),

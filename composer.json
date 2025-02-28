@@ -21,7 +21,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-            "Modules\\": "modules/",
+            "Contexts\\": "contexts/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
@@ -54,7 +54,7 @@
         },
         "merge-plugin": {
             "include": [
-                "modules/*/composer.json"
+                "contexts/*/composer.json"
             ]
         }
     },

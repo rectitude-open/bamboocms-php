@@ -21,4 +21,18 @@ abstract class TestCase extends BaseTestCase
 
         return route($routeName, $params);
     }
+
+    public function assertValidationError($response, $field, $messageContains = null)
+    {
+        $response->assertStatus(422);
+        $error = $response->json('error.message');
+
+        expect($error)->toContain($field);
+
+        if ($messageContains) {
+            expect($error)->toContain($messageContains);
+        }
+
+        return $response;
+    }
 }

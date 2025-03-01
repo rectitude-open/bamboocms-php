@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Infrastructure\Records;
 
 use App\Http\Models\BaseModel;
-use Carbon\Traits\Timestamp;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $content
+ * @property Carbon $created_at
+ * @property Carbon|null $updated_at
+ */
 class ArticleRecord extends BaseModel
 {
     protected $table = 'articles';

@@ -22,7 +22,7 @@ class ArticleResource extends JsonResource
             'title' => (string) $article->getTitle(),
             'content' => (string) $article->getContent(),
 
-            'created_at' => $article->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'created_at' => $article->getCreatedAt()->format('Y-m-d H:i:s'),
             'updated_at' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
     }

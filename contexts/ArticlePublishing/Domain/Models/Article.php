@@ -12,9 +12,10 @@ class Article
         public ArticleId $id,
         private string $title,
         private string $content,
-        private CarbonImmutable $created_at,
+        private ?CarbonImmutable $created_at = null,
         private ?CarbonImmutable $updated_at = null
     ) {
+        $this->created_at = $created_at ?? CarbonImmutable::now();
     }
 
     public function getTitle(): string

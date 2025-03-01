@@ -22,7 +22,7 @@ class ArticlePublishingCoordinator
             new ArticleId(0),
             $data['title'],
             $data['content'],
-            new CarbonImmutable($data['created_at'] ?? 'now'),
+            isset($data['created_at']) ? new CarbonImmutable($data['created_at']) : null,
         );
         $result = $this->repository->create($article);
 

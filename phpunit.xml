@@ -6,12 +6,12 @@
 >
     <testsuites>
         <testsuite name="Unit">
+            <directory>contexts/*/Tests/Unit</directory>
             <!-- <directory>tests/Unit</directory> -->
         </testsuite>
         <testsuite name="Feature">
+            <directory>contexts/*/Tests/Feature</directory>
             <!-- <directory>tests/Feature</directory> -->
-            <directory>contexts/*/Tests/*/Feature</directory>
-            <!-- <exclude>contexts/TemplateModule</exclude> -->
         </testsuite>
     </testsuites>
     <source>

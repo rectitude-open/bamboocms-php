@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Domain\Models;
 
+use Carbon\CarbonImmutable;
+
 class Article
 {
-    private string $title;
-    private string $content;
-
-    public function __construct(string $title, string $content)
-    {
-        $this->title = $title;
-        $this->content = $content;
+    public function __construct(
+        public ArticleId $id,
+        private string $title,
+        private string $content,
+        private CarbonImmutable $created_at,
+        private ?CarbonImmutable $updated_at = null
+    ) {
     }
 
     public function getTitle(): string
@@ -23,5 +25,15 @@ class Article
     public function getContent(): string
     {
         return $this->content;
+    }
+
+    public function getCreatedAt(): CarbonImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt(): ?CarbonImmutable
+    {
+        return $this->updated_at;
     }
 }

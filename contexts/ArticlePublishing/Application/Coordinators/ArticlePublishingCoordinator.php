@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Application\Coordinators;
 
+use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Domain\Models\Article;
+use Carbon\CarbonImmutable;
 
 class ArticlePublishingCoordinator
 {
@@ -16,9 +18,14 @@ class ArticlePublishingCoordinator
 
     public function create(array $data)
     {
-        $article = new Article($data['title'], $data['content']);
-        $this->repository->create($article);
+        $article = new Article(
+            new ArticleId(0),
+            $data['title'],
+            $data['content'],
+            new CarbonImmutable($data['created_at'] ?? 'now'),
+        );
+        $result = $this->repository->create($article);
 
-        return $article;
+        return $result;
     }
 }

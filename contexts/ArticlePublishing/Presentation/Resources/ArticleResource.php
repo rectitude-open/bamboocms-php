@@ -11,14 +11,19 @@ class ArticleResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        /**
+         * @var \Contexts\ArticlePublishing\Domain\Models\Article $article
+         */
+        $article = $this->resource;
+
         return [
-            'id' => (int) $this->id,
+            'id' => (int) $article->id->value,
 
-            'title' => (string) $this->name,
-            'content' => (string) $this->description,
+            'title' => (string) $article->getTitle(),
+            'content' => (string) $article->getContent(),
 
-            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'created_at' => $article->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 }

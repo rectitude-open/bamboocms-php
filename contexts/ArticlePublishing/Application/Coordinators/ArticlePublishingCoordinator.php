@@ -8,6 +8,7 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Carbon\CarbonImmutable;
+use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 
 class ArticlePublishingCoordinator
 {
@@ -16,13 +17,13 @@ class ArticlePublishingCoordinator
     ) {
     }
 
-    public function create(array $data)
+    public function create(CreateArticleDTO $data): Article
     {
         $article = new Article(
             new ArticleId(0),
-            $data['title'],
-            $data['content'],
-            isset($data['created_at']) ? new CarbonImmutable($data['created_at']) : null,
+            $data->title,
+            $data->content,
+            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
         $result = $this->repository->create($article);
 

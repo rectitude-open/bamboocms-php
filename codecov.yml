@@ -1,0 +1,4 @@
+ignore:
+  - "contexts/*/Tests/"
+coverage:
+  range: "80...100"

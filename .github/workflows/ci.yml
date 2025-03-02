@@ -64,6 +64,9 @@ jobs:
       - name: Set environment to testing
         run: echo "APP_ENV=testing" >> $GITHUB_ENV
 
+      - name: Configure database connection for CI
+        run: sed -i 's/DB_HOST=bamboocms-php-testing-mysql/DB_HOST=127.0.0.1/g' .env.testing
+
       - name: Install Dependencies
         if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install

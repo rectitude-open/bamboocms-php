@@ -75,7 +75,7 @@ jobs:
         run: php artisan migrate --seed
 
       - name: Run tests
-        run: ./vendor/bin/phpunit --configuration ./phpunit.xml --coverage-clover runtime/.phpunit.cache/coverage.xml
+        run: ./vendor/bin/pest --configuration ./phpunit.xml --coverage-clover runtime/.phpunit.cache/coverage.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

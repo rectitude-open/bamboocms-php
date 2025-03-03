@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Infrastructure;
 
+use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
+use Illuminate\Support\Facades\Event;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -14,6 +17,10 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/Migrations');
         $this->loadJsonTranslationsFrom(__DIR__.'/Lang');
+        Event::listen(
+            ArticlePublishedEvent::class,
+            ConsoleOutputListener::class
+        );
     }
 
     public function register(): void
@@ -30,6 +37,8 @@ class ServiceProvider extends BaseServiceProvider
             }
         });
     }
+
+
 
     public function provides(): array
     {

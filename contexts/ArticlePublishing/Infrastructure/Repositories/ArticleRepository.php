@@ -18,6 +18,6 @@ class ArticleRepository
             'created_at' => $article->getCreatedAt(),
         ]);
 
-        return $record->toDomain();
+        return $record->toDomain($article->getDomainEvents());
     }
 }

@@ -48,7 +48,7 @@ class ArticleRecord extends BaseModel
         return array_search($status->getValue(), self::STATUS_MAPPING);
     }
 
-    public function toDomain(): Article
+    public function toDomain(array $events): Article
     {
         return Article::reconstitute(
             new ArticleId($this->id),
@@ -57,6 +57,7 @@ class ArticleRecord extends BaseModel
             self::mapStatusToDomain($this->status),
             $this->created_at->toImmutable(),
             $this->updated_at?->toImmutable(),
+            events: $events
         );
     }
 }

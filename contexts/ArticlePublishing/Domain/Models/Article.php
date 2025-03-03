@@ -28,9 +28,14 @@ class Article
         string $body,
         ArticleStatus $status,
         ?CarbonImmutable $created_at = null,
-        ?CarbonImmutable $updated_at = null
+        ?CarbonImmutable $updated_at = null,
+        array $events = []
     ): self {
-        return new self($id, $title, $body, $status, $created_at, $updated_at);
+        $article = new self($id, $title, $body, $status, $created_at, $updated_at);
+        foreach ($events as $event) {
+            $article->recordEvent($event);
+        }
+        return $article;
     }
 
     public static function createDraft(
@@ -64,6 +69,11 @@ class Article
     private function recordEvent(object $event): void
     {
         $this->domainEvents[] = $event;
+    }
+
+    public function getDomainEvents()
+    {
+        return $this->domainEvents;
     }
 
     public function releaseEvents(): array

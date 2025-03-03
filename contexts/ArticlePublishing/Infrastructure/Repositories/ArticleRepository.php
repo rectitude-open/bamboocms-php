@@ -13,7 +13,7 @@ class ArticleRepository
     {
         $record = ArticleRecord::create([
             'title' => $article->getTitle(),
-            'content' => $article->getContent(),
+            'body' => $article->getbody(),
             'created_at' => $article->getCreatedAt(),
         ]);
 

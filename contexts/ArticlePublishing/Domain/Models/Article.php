@@ -11,7 +11,7 @@ class Article
     public function __construct(
         public ArticleId $id,
         private string $title,
-        private string $content,
+        private string $body,
         private ?CarbonImmutable $created_at = null,
         private ?CarbonImmutable $updated_at = null
     ) {
@@ -23,9 +23,9 @@ class Article
         return $this->title;
     }
 
-    public function getContent(): string
+    public function getbody(): string
     {
-        return $this->content;
+        return $this->body;
     }
 
     public function getCreatedAt(): CarbonImmutable

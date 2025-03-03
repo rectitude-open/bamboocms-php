@@ -22,7 +22,7 @@ class ArticlePublishingCoordinator
         $article = new Article(
             new ArticleId(0),
             $data->title,
-            $data->content,
+            $data->body,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
         $result = $this->repository->create($article);

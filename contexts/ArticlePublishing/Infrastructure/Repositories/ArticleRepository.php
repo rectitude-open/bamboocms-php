@@ -14,6 +14,7 @@ class ArticleRepository
         $record = ArticleRecord::create([
             'title' => $article->getTitle(),
             'body' => $article->getbody(),
+            'status' => ArticleRecord::mapStatusToRecord($article->getStatus()),
             'created_at' => $article->getCreatedAt(),
         ]);
 

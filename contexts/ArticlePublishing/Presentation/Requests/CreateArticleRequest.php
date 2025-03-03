@@ -13,6 +13,7 @@ class CreateArticleRequest extends BaseFormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'body' => ['string', 'max:20000'],
+            'status' => ['required', 'string', 'in:draft,published'],
             'created_at' => ['date', 'date_format: Y-m-d H:i:s'],
         ];
     }

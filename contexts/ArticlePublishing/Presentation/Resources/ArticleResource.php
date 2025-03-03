@@ -21,6 +21,7 @@ class ArticleResource extends JsonResource
 
             'title' => (string) $article->getTitle(),
             'body' => (string) $article->getbody(),
+            'status' => (string) $article->getStatus()->getValue(),
 
             'created_at' => $article->getCreatedAt()->format('Y-m-d H:i:s'),
             'updated_at' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),

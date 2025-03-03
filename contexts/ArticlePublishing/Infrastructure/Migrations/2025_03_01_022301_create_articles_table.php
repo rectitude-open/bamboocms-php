@@ -12,8 +12,9 @@ return new class () extends Migration {
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->text('body');
+            $table->string('title')->default('');
+            $table->text('body')->nullable();
+            $table->tinyInteger('status')->default(0)->comment('0: draft, 1: published, 2: archived, 3: deleted');
             $table->timestamps();
         });
     }

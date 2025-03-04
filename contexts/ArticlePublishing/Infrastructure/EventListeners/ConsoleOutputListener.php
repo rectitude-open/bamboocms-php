@@ -10,6 +10,6 @@ class ConsoleOutputListener
 {
     public function handle(ArticlePublishedEvent $event): void
     {
-        echo "Article published: {$event->getArticleId()->value}\n";
+        echo "Article published: {$event->getArticleId()->getValue()}\n";
     }
 }

@@ -24,14 +24,14 @@ class ArticleRepository
 
     public function getById(ArticleId $articleId): Article
     {
-        $record = ArticleRecord::findOrFail($articleId->value);
+        $record = ArticleRecord::findOrFail($articleId->getValue());
 
         return $record->toDomain();
     }
 
     public function update(Article $article): Article
     {
-        $record = ArticleRecord::findOrFail($article->id->value);
+        $record = ArticleRecord::findOrFail($article->getId()->getValue());
 
         $record->update([
             'title' => $article->getTitle(),

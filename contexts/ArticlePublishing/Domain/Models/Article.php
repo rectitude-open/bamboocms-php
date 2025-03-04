@@ -83,6 +83,11 @@ class Article
         return $events;
     }
 
+    public function getId(): ArticleId
+    {
+        return $this->id;
+    }
+
     public function getTitle(): string
     {
         return $this->title;

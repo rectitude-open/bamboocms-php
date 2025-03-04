@@ -46,7 +46,7 @@ it('can retrieve an article by ID', function () {
     $retrievedArticle = $articleRepository->getById($savedArticle->id);
 
     // Assert the retrieved article matches the created one
-    expect($retrievedArticle->id->value)->toBe($savedArticle->id->value);
+    expect($retrievedArticle->getId()->getValue())->toBe($savedArticle->getId()->getValue());
     expect($retrievedArticle->getTitle())->toBe('Test Article');
     expect($retrievedArticle->getBody())->toBe('Test Content');
     expect($retrievedArticle->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
@@ -71,7 +71,7 @@ it('can update an article', function () {
 
     // Verify database was updated
     $this->assertDatabaseHas('articles', [
-        'id' => $savedArticle->id->value,
+        'id' => $savedArticle->getId()->getValue(),
         'title' => 'Updated Title',
         'body' => 'Updated Content',
         'status' => ArticleRecord::mapStatusToRecord(ArticleStatus::published()),

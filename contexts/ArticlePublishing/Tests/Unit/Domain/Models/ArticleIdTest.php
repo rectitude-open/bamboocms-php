@@ -6,7 +6,7 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 it('can be created', function (int $validId) {
     $articleId = new ArticleId($validId);
 
-    expect($articleId->value)->toBe($validId);
+    expect($articleId->getValue())->toBe($validId);
 })->with([1,100]);
 
 it('throws an exception when the ID is invalid', function (int $invalidId) {

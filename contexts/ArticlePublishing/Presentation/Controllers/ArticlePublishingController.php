@@ -11,6 +11,8 @@ use Contexts\ArticlePublishing\Presentation\Resources\ArticleResource;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Presentation\Requests\PublishDraftRequest;
 use Contexts\ArticlePublishing\Presentation\Requests\GetArticleRequest;
+use Contexts\ArticlePublishing\Presentation\Requests\GetArticleListRequest;
+use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 
 class ArticlePublishingController extends BaseController
 {
@@ -37,6 +39,15 @@ class ArticlePublishingController extends BaseController
     {
         $id = (int)($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->getArticle($id);
+
+        return $this->success($result, ArticleResource::class)->send();
+    }
+
+    public function getArticleList(GetArticleListRequest $request)
+    {
+        $result = app(ArticlePublishingCoordinator::class)->getArticleList(
+            GetArticleListDTO::fromRequest($request->validated())
+        );
 
         return $this->success($result, ArticleResource::class)->send();
     }

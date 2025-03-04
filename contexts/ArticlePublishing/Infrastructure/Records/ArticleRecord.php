@@ -9,6 +9,7 @@ use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property int $id
@@ -59,5 +60,27 @@ class ArticleRecord extends BaseModel
             $this->updated_at?->toImmutable(),
             events: $events
         );
+    }
+
+    public function scopeSearch(Builder $query, array $criteria = [])
+    {
+        $query->when(isset($criteria['id']), function ($query) use ($criteria) {
+            $query->where('id', $criteria['id']);
+        });
+
+        $query->when(isset($criteria['title']), function ($query) use ($criteria) {
+            $query->where('title', 'like', "%{$criteria['title']}%");
+        });
+
+        $query->when(isset($criteria['status']), function ($query) use ($criteria) {
+            $query->where('status', $criteria['status']);
+        });
+
+        $query->when(isset($criteria['created_at_range']), function ($query) use ($criteria) {
+            [$start, $end] = $criteria['created_at_range'];
+            $query->whereBetween('created_at', [$start, $end]);
+        });
+
+        return $query;
     }
 }

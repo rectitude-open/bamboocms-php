@@ -10,6 +10,8 @@ use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
+use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ArticlePublishingCoordinator extends BaseCoordinator
 {
@@ -67,5 +69,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function getArticle(int $id): Article
     {
         return $this->repository->getById(new ArticleId($id));
+    }
+
+    public function getArticleList(GetArticleListDTO $data): LengthAwarePaginator
+    {
+        return $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
     }
 }

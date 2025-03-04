@@ -51,3 +51,27 @@ it('can publish a draft article', function () {
 
     $response->assertStatus(200);
 });
+
+it('can get an article', function () {
+    $response = $this->postJson('articles', [
+        'title' => 'My Article',
+        'body' => 'This is my article body',
+        'status' => 'draft',
+    ]);
+
+    $response->assertStatus(201);
+
+    $id = $response->json('data.id');
+
+    $response = $this->get("articles/{$id}");
+
+    $response->assertStatus(200);
+    $response->assertJson([
+        'data' => [
+            'id' => $id,
+            'title' => 'My Article',
+            'body' => 'This is my article body',
+            'status' => 'draft',
+        ],
+    ]);
+});

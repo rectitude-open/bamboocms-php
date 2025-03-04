@@ -63,4 +63,9 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $this->dispatchDomainEvents($article);
     }
+
+    public function getArticle(int $id): Article
+    {
+        return $this->repository->getById(new ArticleId($id));
+    }
 }

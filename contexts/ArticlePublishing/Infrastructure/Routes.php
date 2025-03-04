@@ -7,6 +7,7 @@ use Contexts\ArticlePublishing\Presentation\Controllers\ArticlePublishingControl
 
 Route::middleware([])->name('ArticlePublishing.')->group(function () {
     Route::controller(ArticlePublishingController::class)->prefix('articles')->name('ArticlePublishing.')->group(function () {
+        Route::get('{id}', 'getArticle')->name('getArticle');
         Route::post('', 'createArticle')->name('createArticle');
         Route::put('{id}/publish', 'publishDraft')->name('publishDraft');
     });

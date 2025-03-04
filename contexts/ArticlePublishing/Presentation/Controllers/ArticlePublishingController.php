@@ -10,6 +10,7 @@ use Contexts\ArticlePublishing\Application\Coordinators\ArticlePublishingCoordin
 use Contexts\ArticlePublishing\Presentation\Resources\ArticleResource;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Presentation\Requests\PublishDraftRequest;
+use Contexts\ArticlePublishing\Presentation\Requests\GetArticleRequest;
 
 class ArticlePublishingController extends BaseController
 {
@@ -30,5 +31,13 @@ class ArticlePublishingController extends BaseController
         app(ArticlePublishingCoordinator::class)->publishDraft($id);
 
         return $this->success('Article published successfully')->send();
+    }
+
+    public function getArticle(GetArticleRequest $request)
+    {
+        $id = (int)($request->validated()['id']);
+        $result = app(ArticlePublishingCoordinator::class)->getArticle($id);
+
+        return $this->success($result, ArticleResource::class)->send();
     }
 }

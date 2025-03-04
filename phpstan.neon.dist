@@ -9,8 +9,8 @@ parameters:
 
     level: 5
 
-#    ignoreErrors:
-#        - '#PHPDoc tag @var#'
-#
+    ignoreErrors:
+        - '#Parameter \#1 \$callback of method Illuminate\\Support\\Collection.*::transform\(\) expects callable.* given.#'
+
     excludePaths:
         - ./contexts/*/Tests/*

@@ -6,4 +6,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BaseFormRequest extends FormRequest {}
+class BaseFormRequest extends FormRequest
+{
+    protected function prepareForValidation()
+    {
+        parent::prepareForValidation();
+        $this->route('id') && $this->merge(['id' => $this->route('id')]);
+    }
+}

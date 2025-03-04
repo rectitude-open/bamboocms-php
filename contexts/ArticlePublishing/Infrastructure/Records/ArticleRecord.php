@@ -48,7 +48,7 @@ class ArticleRecord extends BaseModel
         return array_search($status->getValue(), self::STATUS_MAPPING);
     }
 
-    public function toDomain(array $events): Article
+    public function toDomain(array $events = []): Article
     {
         return Article::reconstitute(
             new ArticleId($this->id),

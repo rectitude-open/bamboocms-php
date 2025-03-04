@@ -53,11 +53,15 @@ class ArticlePublishingCoordinator
         return $this->repository->create($article);
     }
 
-    // TODO
-    // public function publishDraft(ArticleId $id): void
-    // {
+    public function publishDraft(int $id): void
+    {
+        $article = $this->repository->getById(new ArticleId($id));
+        $article->publish();
 
-    // }
+        $this->repository->update($article);
+
+        $this->dispatchDomainEvents($article);
+    }
 
     private function dispatchDomainEvents(Article $article): void
     {

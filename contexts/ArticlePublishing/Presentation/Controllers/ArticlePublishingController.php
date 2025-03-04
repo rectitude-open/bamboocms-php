@@ -9,6 +9,7 @@ use Contexts\ArticlePublishing\Presentation\Requests\CreateArticleRequest;
 use Contexts\ArticlePublishing\Application\Coordinators\ArticlePublishingCoordinator;
 use Contexts\ArticlePublishing\Presentation\Resources\ArticleResource;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
+use Contexts\ArticlePublishing\Presentation\Requests\PublishDraftRequest;
 
 class ArticlePublishingController extends BaseController
 {
@@ -18,6 +19,16 @@ class ArticlePublishingController extends BaseController
             CreateArticleDTO::fromRequest($request->validated())
         );
 
-        return $this->success($result, ArticleResource::class)->send(201);
+        return $this->success($result, ArticleResource::class)
+                    ->message('Article created successfully')
+                    ->send(201);
+    }
+
+    public function publishDraft(PublishDraftRequest $request)
+    {
+        $id = (int)($request->validated()['id']);
+        app(ArticlePublishingCoordinator::class)->publishDraft($id);
+
+        return $this->success('Article published successfully')->send();
     }
 }

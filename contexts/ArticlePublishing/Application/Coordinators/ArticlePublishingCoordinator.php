@@ -6,12 +6,14 @@ namespace Contexts\ArticlePublishing\Application\Coordinators;
 
 use App\Http\Coordinators\BaseCoordinator;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
+use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
 
 class ArticlePublishingCoordinator extends BaseCoordinator
 {
@@ -74,5 +76,22 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function getArticleList(GetArticleListDTO $data): LengthAwarePaginator
     {
         return $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
+    }
+
+    public function updateArticle(int $id, UpdateArticleDTO $data): Article
+    {
+        $article = $this->repository->getById(new ArticleId($id));
+        $article->revise(
+            $data->title,
+            $data->body,
+            $data->status ? ArticleStatus::fromString($data->status) : null,
+            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+        );
+
+        $this->repository->update($article);
+
+        $this->dispatchDomainEvents($article);
+
+        return $article;
     }
 }

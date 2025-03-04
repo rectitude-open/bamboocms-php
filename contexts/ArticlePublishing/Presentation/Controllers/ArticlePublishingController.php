@@ -13,6 +13,8 @@ use Contexts\ArticlePublishing\Presentation\Requests\PublishDraftRequest;
 use Contexts\ArticlePublishing\Presentation\Requests\GetArticleRequest;
 use Contexts\ArticlePublishing\Presentation\Requests\GetArticleListRequest;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
+use Contexts\ArticlePublishing\Presentation\Requests\UpdateArticleRequest;
+use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
 
 class ArticlePublishingController extends BaseController
 {
@@ -50,5 +52,18 @@ class ArticlePublishingController extends BaseController
         );
 
         return $this->success($result, ArticleResource::class)->send();
+    }
+
+    public function updateArticle(UpdateArticleRequest $request)
+    {
+        $id = (int)($request->validated()['id']);
+        $result = app(ArticlePublishingCoordinator::class)->updateArticle(
+            $id,
+            UpdateArticleDTO::fromRequest($request->validated())
+        );
+
+        return $this->success($result, ArticleResource::class)
+                    ->message('Article updated successfully')
+                    ->send();
     }
 }

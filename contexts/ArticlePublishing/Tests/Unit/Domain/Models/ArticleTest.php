@@ -72,3 +72,59 @@ it('can release events and clear them from the article', function () {
     $emptyEvents = $article->releaseEvents();
     expect($emptyEvents)->toBeEmpty();
 });
+
+it('can revise an article title', function () {
+    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article->revise('New Title', null, null);
+
+    expect($article->getTitle())->toBe('New Title');
+    expect($article->getBody())->toBe('Original Body');
+    expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
+});
+
+it('can revise an article body', function () {
+    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article->revise(null, 'New Body Content', null);
+
+    expect($article->getTitle())->toBe('Original Title');
+    expect($article->getBody())->toBe('New Body Content');
+    expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
+});
+
+it('can revise an article status', function () {
+    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article->revise(null, null, ArticleStatus::published());
+
+    expect($article->getTitle())->toBe('Original Title');
+    expect($article->getBody())->toBe('Original Body');
+    expect($article->getStatus()->equals(ArticleStatus::published()))->toBeTrue();
+    expect($article->releaseEvents())->toHaveCount(1);
+});
+
+it('can revise multiple article properties at once', function () {
+    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article->revise('New Title', 'New Body', ArticleStatus::published());
+
+    expect($article->getTitle())->toBe('New Title');
+    expect($article->getBody())->toBe('New Body');
+    expect($article->getStatus()->equals(ArticleStatus::published()))->toBeTrue();
+    expect($article->releaseEvents())->toHaveCount(1);
+});
+
+it('can revise article created_at date', function () {
+    $originalDate = CarbonImmutable::now()->subDays(5);
+    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body', $originalDate);
+
+    $newDate = CarbonImmutable::now()->subDays(10);
+    $article->revise(null, null, null, $newDate);
+
+    expect($article->getCreatedAt())->toEqual($newDate);
+});
+
+it('does not trigger status transition when same status provided', function () {
+    $article = Article::createDraft(new ArticleId(1), 'Title', 'Body');
+    $article->revise(null, null, ArticleStatus::draft());
+
+    expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
+    expect($article->releaseEvents())->toBeEmpty();
+});

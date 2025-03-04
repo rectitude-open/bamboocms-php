@@ -21,6 +21,20 @@ class Article extends BaseDomainModel
         $this->created_at = $created_at ?? CarbonImmutable::now();
     }
 
+    public function revise(
+        ?string $newTitle,
+        ?string $newBody,
+        ?ArticleStatus $newStatus,
+        ?CarbonImmutable $newCreatedAt = null,
+    ) {
+        $this->title = $newTitle ?? $this->title;
+        $this->body = $newBody ?? $this->body;
+        if ($newStatus && !$this->status->equals($newStatus)) {
+            $this->transitionStatus($newStatus);
+        }
+        $this->created_at = $newCreatedAt ?? $this->created_at;
+    }
+
     public static function reconstitute(
         ArticleId $id,
         string $title,
@@ -61,8 +75,16 @@ class Article extends BaseDomainModel
 
     public function publish()
     {
-        $this->status = $this->status->transitionTo(ArticleStatus::published());
-        $this->recordEvent(new ArticlePublishedEvent($this->id));
+        $this->transitionStatus(ArticleStatus::published());
+    }
+
+    private function transitionStatus(ArticleStatus $targetStatus): void
+    {
+        $this->status = $this->status->transitionTo($targetStatus);
+
+        match($this->status->getValue()) {
+            ArticleStatus::PUBLISHED => $this->recordEvent(new ArticlePublishedEvent($this->id)),
+        };
     }
 
     public function getId(): ArticleId

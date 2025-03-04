@@ -8,10 +8,10 @@ use InvalidArgumentException;
 
 class ArticleStatus
 {
-    private const DRAFT = 'draft';
-    private const PUBLISHED = 'published';
-    private const ARCHIVED = 'archived';
-    private const DELETED = 'deleted';
+    public const DRAFT = 'draft';
+    public const PUBLISHED = 'published';
+    public const ARCHIVED = 'archived';
+    public const DELETED = 'deleted';
 
     public function __construct(private string $value)
     {
@@ -42,10 +42,27 @@ class ArticleStatus
 
     public function transitionTo(ArticleStatus $target): self
     {
-        if ($this->value === self::PUBLISHED) {
-            throw new InvalidArgumentException('The article is already published');
+        $validTransitions = match($this->value) {
+            self::DRAFT => [self::PUBLISHED, self::ARCHIVED, self::DELETED],
+            self::PUBLISHED => [self::ARCHIVED, self::DELETED],
+            self::ARCHIVED => [self::PUBLISHED, self::DELETED],
+            self::DELETED => [self::DRAFT],
+        };
+
+        if (!in_array($target->value, $validTransitions)) {
+            // TODO: Create a custom exception
+            throw new InvalidArgumentException("Cannot transition from {$this->value} to {$target->value}");
         }
+
         return $target;
+    }
+
+    public static function fromString(string $status): self
+    {
+        if (!in_array($status, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
+            throw new InvalidArgumentException('Invalid article status');
+        }
+        return new self($status);
     }
 
     public function getValue(): string

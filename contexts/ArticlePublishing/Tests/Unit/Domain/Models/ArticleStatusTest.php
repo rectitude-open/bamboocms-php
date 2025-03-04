@@ -32,3 +32,24 @@ it('throws an exception when transitioning to published from published', functio
 
     $articleStatus->transitionTo(ArticleStatus::published());
 });
+
+it('can create from string with valid status', function (string $validValue) {
+    $articleStatus = ArticleStatus::fromString($validValue);
+
+    expect($articleStatus->getValue())->toBe($validValue);
+})->with(['draft', 'published', 'archived', 'deleted']);
+
+it('throws an exception when creating from invalid string status', function (string $invalidValue) {
+    $this->expectException(\InvalidArgumentException::class);
+
+    ArticleStatus::fromString($invalidValue);
+})->with(['invalid', 'status']);
+
+it('checks if two statuses are equal', function (string $status) {
+    $status1 = new ArticleStatus($status);
+    $status2 = new ArticleStatus($status);
+    $differentStatus = $status === 'draft' ? ArticleStatus::published() : ArticleStatus::draft();
+
+    expect($status1->equals($status2))->toBeTrue();
+    expect($status1->equals($differentStatus))->toBeFalse();
+})->with(['draft', 'published', 'archived', 'deleted']);

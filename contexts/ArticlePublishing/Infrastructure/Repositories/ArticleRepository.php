@@ -46,6 +46,12 @@ class ArticleRepository
 
     public function paginate(int $page = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
     {
-        return ArticleRecord::query()->search($criteria)->paginate($perPage, ['*'], 'page', $page);
+        $paginator = ArticleRecord::query()->search($criteria)->paginate($perPage, ['*'], 'page', $page);
+
+        $paginator->getCollection()->transform(function ($record) {
+            return $record->toDomain();
+        });
+
+        return $paginator;
     }
 }

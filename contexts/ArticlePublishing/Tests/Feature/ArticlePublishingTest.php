@@ -76,21 +76,19 @@ it('can get an article', function () {
     ]);
 });
 
-// it('can get a list of articles', function () {
-//     $response = $this->postJson('articles', [
-//         'title' => 'My Article',
-//         'body' => 'This is my article body',
-//         'status' => 'draft',
-//     ]);
+it('can get a list of articles', function () {
+    $response = $this->postJson('articles', [
+        'title' => 'My Article',
+        'body' => 'This is my article body',
+        'status' => 'draft',
+    ]);
 
-//     $response->assertStatus(201);
+    $response->assertStatus(201);
 
-//     $response = $this->get('articles');
+    $response = $this->get('articles');
 
-//     dd($response->json());
-
-//     $response->assertStatus(200);
-// });
+    $response->assertStatus(200);
+});
 
 it('can update an article', function () {
     $response = $this->postJson('articles', [

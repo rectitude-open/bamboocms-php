@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Application\Coordinators;
 
+use App\Http\Coordinators\BaseCoordinator;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 
-class ArticlePublishingCoordinator
+class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
         private ArticleRepository $repository
@@ -61,12 +62,5 @@ class ArticlePublishingCoordinator
         $this->repository->update($article);
 
         $this->dispatchDomainEvents($article);
-    }
-
-    private function dispatchDomainEvents(Article $article): void
-    {
-        foreach ($article->releaseEvents() as $event) {
-            event($event);
-        }
     }
 }

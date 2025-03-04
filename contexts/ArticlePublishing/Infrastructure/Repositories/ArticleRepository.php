@@ -19,7 +19,7 @@ class ArticleRepository
             'created_at' => $article->getCreatedAt(),
         ]);
 
-        return $record->toDomain($article->getDomainEvents());
+        return $record->toDomain($article->getEvents());
     }
 
     public function getById(ArticleId $articleId): Article
@@ -40,6 +40,6 @@ class ArticleRepository
             'created_at' => $article->getCreatedAt(),
         ]);
 
-        return $record->toDomain($article->getDomainEvents());
+        return $record->toDomain($article->getEvents());
     }
 }

@@ -6,11 +6,10 @@ namespace Contexts\ArticlePublishing\Domain\Models;
 
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
+use App\Http\DomainModel\BaseDomainModel;
 
-class Article
+class Article extends BaseDomainModel
 {
-    private array $domainEvents = [];
-
     private function __construct(
         public ArticleId $id,
         private string $title,
@@ -64,23 +63,6 @@ class Article
     {
         $this->status = $this->status->transitionTo(ArticleStatus::published());
         $this->recordEvent(new ArticlePublishedEvent($this->id));
-    }
-
-    private function recordEvent(object $event): void
-    {
-        $this->domainEvents[] = $event;
-    }
-
-    public function getDomainEvents()
-    {
-        return $this->domainEvents;
-    }
-
-    public function releaseEvents(): array
-    {
-        $events = $this->domainEvents;
-        $this->domainEvents = [];
-        return $events;
     }
 
     public function getId(): ArticleId

@@ -47,6 +47,7 @@ class ArticleStatus
             self::PUBLISHED => [self::ARCHIVED, self::DELETED],
             self::ARCHIVED => [self::PUBLISHED, self::DELETED],
             self::DELETED => [self::DRAFT],
+            default => [],
         };
 
         if (!in_array($target->value, $validTransitions)) {

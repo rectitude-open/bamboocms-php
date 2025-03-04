@@ -84,6 +84,7 @@ class Article extends BaseDomainModel
 
         match($this->status->getValue()) {
             ArticleStatus::PUBLISHED => $this->recordEvent(new ArticlePublishedEvent($this->id)),
+            default => null,
         };
     }
 

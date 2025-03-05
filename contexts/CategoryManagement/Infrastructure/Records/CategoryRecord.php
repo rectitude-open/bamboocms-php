@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property string $title
+ * @property string $label
  * @property string $body
  * @property int $status
  * @property Carbon $created_at
@@ -23,13 +23,12 @@ class CategoryRecord extends BaseModel
 {
     protected $table = 'categories';
 
-    protected $fillable = ['title', 'body', 'status', 'created_at'];
+    protected $fillable = ['label', 'status', 'created_at'];
 
     public const STATUS_MAPPING = [
-        0 => 'draft',
-        1 => 'published',
-        2 => 'archived',
-        3 => 'deleted',
+        0 => 'subspended',
+        1 => 'active',
+        2 => 'deleted',
     ];
 
     public static function mapStatusToDomain(int $status): CategoryStatus
@@ -54,8 +53,7 @@ class CategoryRecord extends BaseModel
     {
         return Category::reconstitute(
             new CategoryId($this->id),
-            $this->title,
-            $this->body,
+            $this->label,
             self::mapStatusToDomain($this->status),
             $this->created_at->toImmutable(),
             $this->updated_at?->toImmutable(),
@@ -69,8 +67,8 @@ class CategoryRecord extends BaseModel
             $query->where('id', $criteria['id']);
         });
 
-        $query->when(isset($criteria['title']), function ($query) use ($criteria) {
-            $query->where('title', 'like', "%{$criteria['title']}%");
+        $query->when(isset($criteria['label']), function ($query) use ($criteria) {
+            $query->where('label', 'like', "%{$criteria['label']}%");
         });
 
         $query->when(isset($criteria['status']), function ($query) use ($criteria) {

@@ -6,14 +6,13 @@ namespace Contexts\CategoryManagement\Domain\Models;
 
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
-use Contexts\CategoryManagement\Domain\Events\CategoryPublishedEvent;
+use Contexts\CategoryManagement\Domain\Events\CategoryCreatedEvent;
 
 class Category extends BaseDomainModel
 {
     private function __construct(
         public CategoryId $id,
-        private string $title,
-        private string $body,
+        private string $label,
         private CategoryStatus $status,
         private ?CarbonImmutable $created_at = null,
         private ?CarbonImmutable $updated_at = null
@@ -21,14 +20,12 @@ class Category extends BaseDomainModel
         $this->created_at = $created_at ?? CarbonImmutable::now();
     }
 
-    public function revise(
-        ?string $newTitle,
-        ?string $newBody,
+    public function modify(
+        ?string $newLabel,
         ?CategoryStatus $newStatus,
         ?CarbonImmutable $newCreatedAt = null,
     ) {
-        $this->title = $newTitle ?? $this->title;
-        $this->body = $newBody ?? $this->body;
+        $this->label = $newLabel ?? $this->label;
         if ($newStatus && ! $this->status->equals($newStatus)) {
             $this->transitionStatus($newStatus);
         }
@@ -37,14 +34,13 @@ class Category extends BaseDomainModel
 
     public static function reconstitute(
         CategoryId $id,
-        string $title,
-        string $body,
+        string $label,
         CategoryStatus $status,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null,
         array $events = []
     ): self {
-        $category = new self($id, $title, $body, $status, $created_at, $updated_at);
+        $category = new self($id, $label, $status, $created_at, $updated_at);
         foreach ($events as $event) {
             $category->recordEvent($event);
         }
@@ -52,37 +48,21 @@ class Category extends BaseDomainModel
         return $category;
     }
 
-    public static function createDraft(
+    public static function create(
         CategoryId $id,
-        string $title,
-        string $body,
+        string $label,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null
     ): self {
-        return new self($id, $title, $body, CategoryStatus::draft(), $created_at, $updated_at);
-    }
-
-    public static function createPublished(
-        CategoryId $id,
-        string $title,
-        string $body,
-        ?CarbonImmutable $created_at = null,
-        ?CarbonImmutable $updated_at = null
-    ): self {
-        $category = new self($id, $title, $body, CategoryStatus::published(), $created_at, $updated_at);
-        $category->recordEvent(new CategoryPublishedEvent($category->id));
+        $category = new self($id, $label, CategoryStatus::active(), $created_at, $updated_at);
+        $category->recordEvent(new CategoryCreatedEvent($category->id));
 
         return $category;
     }
 
-    public function publish()
+    public function subspend()
     {
-        $this->transitionStatus(CategoryStatus::published());
-    }
-
-    public function archive()
-    {
-        $this->transitionStatus(CategoryStatus::archived());
+        $this->transitionStatus(CategoryStatus::subspended());
     }
 
     public function delete()
@@ -95,7 +75,6 @@ class Category extends BaseDomainModel
         $this->status = $this->status->transitionTo($targetStatus);
 
         match ($this->status->getValue()) {
-            CategoryStatus::PUBLISHED => $this->recordEvent(new CategoryPublishedEvent($this->id)),
             default => null,
         };
     }
@@ -105,14 +84,9 @@ class Category extends BaseDomainModel
         return $this->id;
     }
 
-    public function getTitle(): string
+    public function getLabel(): string
     {
-        return $this->title;
-    }
-
-    public function getbody(): string
-    {
-        return $this->body;
+        return $this->label;
     }
 
     public function getCreatedAt(): CarbonImmutable

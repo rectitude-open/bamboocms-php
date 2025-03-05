@@ -15,8 +15,7 @@ class CategoryRepository
     public function create(Category $category): Category
     {
         $record = CategoryRecord::create([
-            'title' => $category->getTitle(),
-            'body' => $category->getbody(),
+            'label' => $category->getLabel(),
             'status' => CategoryRecord::mapStatusToRecord($category->getStatus()),
             'created_at' => $category->getCreatedAt(),
         ]);
@@ -36,8 +35,7 @@ class CategoryRepository
         $record = CategoryRecord::findOrFail($category->getId()->getValue());
 
         $record->update([
-            'title' => $category->getTitle(),
-            'body' => $category->getbody(),
+            'label' => $category->getLabel(),
             'status' => CategoryRecord::mapStatusToRecord($category->getStatus()),
             'created_at' => $category->getCreatedAt(),
         ]);

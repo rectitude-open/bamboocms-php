@@ -28,14 +28,6 @@ class CategoryManagementController extends BaseController
             ->send(201);
     }
 
-    public function publishDraft(CategoryIdRequest $request)
-    {
-        $id = (int) ($request->validated()['id']);
-        app(CategoryManagementCoordinator::class)->publishDraft($id);
-
-        return $this->success('Category published successfully')->send();
-    }
-
     public function getCategory(CategoryIdRequest $request)
     {
         $id = (int) ($request->validated()['id']);
@@ -66,13 +58,13 @@ class CategoryManagementController extends BaseController
             ->send();
     }
 
-    public function archiveCategory(CategoryIdRequest $request)
+    public function subspendCategory(CategoryIdRequest $request)
     {
         $id = (int) ($request->validated()['id']);
-        $result = app(CategoryManagementCoordinator::class)->archiveCategory($id);
+        $result = app(CategoryManagementCoordinator::class)->subspendCategory($id);
 
         return $this->success(['id' => $result->getId()->getValue()])
-            ->message('Category archived successfully')
+            ->message('Category subspended successfully')
             ->send();
     }
 

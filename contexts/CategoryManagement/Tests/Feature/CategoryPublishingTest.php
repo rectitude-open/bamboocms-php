@@ -2,47 +2,19 @@
 
 declare(strict_types=1);
 
-it('can publish aritcle drafts via api', function () {
+it('can create active categories via api', function () {
     $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'draft',
+        'label' => 'My Category',
+        'status' => 'active',
     ]);
 
     $response->assertStatus(201);
 });
 
-it('can publish published categories via api', function () {
+it('can get a category', function () {
     $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'published',
-    ]);
-
-    $response->assertStatus(201);
-});
-
-it('can publish a draft category', function () {
-    $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'draft',
-    ]);
-
-    $response->assertStatus(201);
-
-    $id = $response->json('data.id');
-
-    $response = $this->putJson("categories/{$id}/publish");
-
-    $response->assertStatus(200);
-});
-
-it('can get an category', function () {
-    $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'draft',
+        'label' => 'My Category',
+        'status' => 'active',
     ]);
 
     $response->assertStatus(201);
@@ -55,18 +27,16 @@ it('can get an category', function () {
     $response->assertJson([
         'data' => [
             'id' => $id,
-            'title' => 'My Category',
-            'body' => 'This is my category body',
-            'status' => 'draft',
+            'label' => 'My Category',
+            'status' => 'active',
         ],
     ]);
 });
 
 it('can get a list of categories', function () {
     $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'draft',
+        'label' => 'My Category',
+        'status' => 'active',
     ]);
 
     $response->assertStatus(201);
@@ -76,11 +46,10 @@ it('can get a list of categories', function () {
     $response->assertStatus(200);
 });
 
-it('can update an category', function () {
+it('can update a category', function () {
     $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'draft',
+        'label' => 'My Category',
+        'status' => 'active',
     ]);
 
     $response->assertStatus(201);
@@ -88,51 +57,43 @@ it('can update an category', function () {
     $id = $response->json('data.id');
 
     $response = $this->putJson("categories/{$id}", [
-        'title' => 'My Updated Category',
-        'body' => 'This is my updated category body',
+        'label' => 'My Updated Category',
     ]);
 
     $response->assertStatus(200);
     $response->assertJson([
         'data' => [
             'id' => $id,
-            'title' => 'My Updated Category',
-            'body' => 'This is my updated category body',
-            'status' => 'draft',
+            'label' => 'My Updated Category',
+            'status' => 'active',
         ],
     ]);
 });
 
-it('can archive an category', function () {
+it('can subspend a category', function () {
     $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'published',
+        'label' => 'My Category',
+        'status' => 'active',
     ]);
 
     $response->assertStatus(201);
 
     $id = $response->json('data.id');
 
-    $response = $this->putJson("categories/{$id}/archive");
+    $response = $this->putJson("categories/{$id}/subspend");
 
     $response->assertStatus(200);
 });
 
-it('can archive and delete an category', function () {
+it('can delete a category', function () {
     $response = $this->postJson('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => 'published',
+        'label' => 'My Category',
+        'status' => 'active',
     ]);
 
     $response->assertStatus(201);
 
     $id = $response->json('data.id');
-
-    $response = $this->putJson("categories/{$id}/archive");
-
-    $response->assertStatus(200);
 
     $response = $this->delete("categories/{$id}");
 

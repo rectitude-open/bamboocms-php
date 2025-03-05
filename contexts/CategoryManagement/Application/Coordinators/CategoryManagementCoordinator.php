@@ -19,53 +19,18 @@ class CategoryManagementCoordinator extends BaseCoordinator
 {
     public function __construct(
         private CategoryRepository $repository
-    ) {}
+    ) {
+    }
 
     public function create(CreateCategoryDTO $data): Category
     {
-        $category = match ($data->status) {
-            'draft' => $this->createDraft($data),
-            'published' => $this->createPublished($data),
-            default => throw new \InvalidArgumentException('Invalid category status'),
-        };
-
-        $this->dispatchDomainEvents($category);
-
-        return $category;
-    }
-
-    private function createDraft(CreateCategoryDTO $data): Category
-    {
-        $category = Category::createDraft(
+        $category = Category::create(
             new CategoryId(0),
-            $data->title,
-            $data->body,
+            $data->label,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 
         return $this->repository->create($category);
-    }
-
-    private function createPublished(CreateCategoryDTO $data): Category
-    {
-        $category = Category::createPublished(
-            new CategoryId(0),
-            $data->title,
-            $data->body,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
-        );
-
-        return $this->repository->create($category);
-    }
-
-    public function publishDraft(int $id): void
-    {
-        $category = $this->repository->getById(new CategoryId($id));
-        $category->publish();
-
-        $this->repository->update($category);
-
-        $this->dispatchDomainEvents($category);
     }
 
     public function getCategory(int $id): Category
@@ -81,9 +46,8 @@ class CategoryManagementCoordinator extends BaseCoordinator
     public function updateCategory(int $id, UpdateCategoryDTO $data): Category
     {
         $category = $this->repository->getById(new CategoryId($id));
-        $category->revise(
-            $data->title,
-            $data->body,
+        $category->modify(
+            $data->label,
             $data->status ? CategoryStatus::fromString($data->status) : null,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
@@ -95,10 +59,10 @@ class CategoryManagementCoordinator extends BaseCoordinator
         return $category;
     }
 
-    public function archiveCategory(int $id)
+    public function subspendCategory(int $id)
     {
         $category = $this->repository->getById(new CategoryId($id));
-        $category->archive();
+        $category->subspend();
 
         $this->repository->update($category);
 

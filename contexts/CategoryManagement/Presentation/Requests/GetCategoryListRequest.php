@@ -12,8 +12,8 @@ class GetCategoryListRequest extends BaseFormRequest
     {
         return [
             'id' => ['integer', 'gt:0'],
-            'title' => ['string', 'max:255'],
-            'status' => ['string', 'in:draft,published'],
+            'label' => ['string', 'max:255'],
+            'status' => ['string', 'in:subspended,active'],
             'created_at_range' => ['array', 'size:2'],
             'created_at_range.*' => ['date'],
             'page' => ['integer', 'gt:0'],

@@ -8,18 +8,19 @@ class GetCategoryListDTO
 {
     public function __construct(
         public readonly ?string $id,
-        public readonly ?string $title,
+        public readonly ?string $label,
         public readonly ?string $status,
         public readonly ?array $createdAtRange,
         public readonly int $page,
         public readonly int $perPage,
-    ) {}
+    ) {
+    }
 
     public static function fromRequest(array $data): self
     {
         return new self(
             $data['id'] ?? null,
-            $data['title'] ?? null,
+            $data['label'] ?? null,
             $data['status'] ?? null,
             $data['created_at_range'] ?? null,
             $data['page'] ?? 1,
@@ -31,7 +32,7 @@ class GetCategoryListDTO
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'label' => $this->label,
             'status' => $this->status,
             'created_at_range' => $this->createdAtRange,
         ];

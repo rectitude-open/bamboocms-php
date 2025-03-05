@@ -7,13 +7,14 @@ namespace Contexts\CategoryManagement\Domain\Events;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class CategoryPublishedEvent
+class CategoryCreatedEvent
 {
     use Dispatchable;
 
     public function __construct(
         private readonly CategoryId $CategoryId,
-    ) {}
+    ) {
+    }
 
     public function getCategoryId(): CategoryId
     {

@@ -19,8 +19,7 @@ class CategoryResource extends JsonResource
         return [
             'id' => (int) $category->getId()->getValue(),
 
-            'title' => (string) $category->getTitle(),
-            'body' => (string) $category->getbody(),
+            'label' => (string) $category->getLabel(),
             'status' => (string) $category->getStatus()->getValue(),
 
             'created_at' => $category->getCreatedAt()->format('Y-m-d H:i:s'),

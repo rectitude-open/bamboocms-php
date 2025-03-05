@@ -8,34 +8,27 @@ use InvalidArgumentException;
 
 class CategoryStatus
 {
-    public const DRAFT = 'draft';
+    public const SUBSPENDED = 'subspended';
 
-    public const PUBLISHED = 'published';
-
-    public const ARCHIVED = 'archived';
+    public const ACTIVE = 'active';
 
     public const DELETED = 'deleted';
 
     public function __construct(private string $value)
     {
-        if (! in_array($value, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
+        if (! in_array($value, [self::SUBSPENDED, self::ACTIVE, self::DELETED])) {
             throw new InvalidArgumentException('Invalid category status');
         }
     }
 
-    public static function draft(): self
+    public static function subspended(): self
     {
-        return new self(self::DRAFT);
+        return new self(self::SUBSPENDED);
     }
 
-    public static function published(): self
+    public static function active(): self
     {
-        return new self(self::PUBLISHED);
-    }
-
-    public static function archived(): self
-    {
-        return new self(self::ARCHIVED);
+        return new self(self::ACTIVE);
     }
 
     public static function deleted(): self
@@ -46,9 +39,8 @@ class CategoryStatus
     public function transitionTo(CategoryStatus $target): self
     {
         $validTransitions = match ($this->value) {
-            self::DRAFT => [self::PUBLISHED, self::ARCHIVED, self::DELETED],
-            self::PUBLISHED => [self::ARCHIVED, self::DRAFT],
-            self::ARCHIVED => [self::DRAFT, self::PUBLISHED, self::DELETED],
+            self::SUBSPENDED => [self::ACTIVE, self::DELETED],
+            self::ACTIVE => [self::SUBSPENDED, self::DELETED],
             default => [],
         };
 
@@ -62,7 +54,7 @@ class CategoryStatus
 
     public static function fromString(string $status): self
     {
-        if (! in_array($status, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
+        if (! in_array($status, [self::SUBSPENDED, self::ACTIVE, self::DELETED])) {
             throw new InvalidArgumentException('Invalid category status');
         }
 

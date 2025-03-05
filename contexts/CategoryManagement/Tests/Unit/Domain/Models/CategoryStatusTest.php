@@ -8,7 +8,7 @@ it('can be created', function (string $validValue) {
     $categoryStatus = new CategoryStatus($validValue);
 
     expect($categoryStatus->getValue())->toBe($validValue);
-})->with(['draft', 'published', 'archived', 'deleted']);
+})->with(['subspended', 'active', 'subspended', 'deleted']);
 
 it('throws an exception when the status is invalid', function (string $invalidValue) {
     $this->expectException(\InvalidArgumentException::class);
@@ -22,22 +22,22 @@ it('can be transitioned to another status', function (string $initialValue, stri
 
     expect($newStatus->getValue())->toBe($targetValue);
 })->with([
-    ['draft', 'published'],
+    ['subspended', 'active'],
 ]);
 
-it('throws an exception when transitioning to published from published', function () {
-    $categoryStatus = new CategoryStatus('published');
+it('throws an exception when transitioning to active from active', function () {
+    $categoryStatus = new CategoryStatus('active');
 
     $this->expectException(\InvalidArgumentException::class);
 
-    $categoryStatus->transitionTo(CategoryStatus::published());
+    $categoryStatus->transitionTo(CategoryStatus::active());
 });
 
 it('can create from string with valid status', function (string $validValue) {
     $categoryStatus = CategoryStatus::fromString($validValue);
 
     expect($categoryStatus->getValue())->toBe($validValue);
-})->with(['draft', 'published', 'archived', 'deleted']);
+})->with(['subspended', 'active', 'subspended', 'deleted']);
 
 it('throws an exception when creating from invalid string status', function (string $invalidValue) {
     $this->expectException(\InvalidArgumentException::class);
@@ -48,8 +48,8 @@ it('throws an exception when creating from invalid string status', function (str
 it('checks if two statuses are equal', function (string $status) {
     $status1 = new CategoryStatus($status);
     $status2 = new CategoryStatus($status);
-    $differentStatus = $status === 'draft' ? CategoryStatus::published() : CategoryStatus::draft();
+    $differentStatus = $status === 'subspended' ? CategoryStatus::active() : CategoryStatus::subspended();
 
     expect($status1->equals($status2))->toBeTrue();
     expect($status1->equals($differentStatus))->toBeFalse();
-})->with(['draft', 'published', 'archived', 'deleted']);
+})->with(['subspended', 'active', 'subspended', 'deleted']);

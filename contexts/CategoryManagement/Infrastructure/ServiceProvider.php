@@ -16,14 +16,13 @@ class ServiceProvider extends BaseServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Migrations');
         $this->loadJsonTranslationsFrom(__DIR__.'/Lang');
         // Event::listen(
-        //     CategoryPublishedEvent::class
+        //     CategoryCreatedEvent::class
         // );
     }
 
     public function register(): void
     {
-        $this->app->register(new class($this->app) extends RouteServiceProvider
-        {
+        $this->app->register(new class ($this->app) extends RouteServiceProvider {
             public function boot(): void
             {
                 parent::boot();

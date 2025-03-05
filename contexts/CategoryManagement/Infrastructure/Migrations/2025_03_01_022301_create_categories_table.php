@@ -6,8 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,9 +14,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->default('');
-            $table->text('body')->nullable();
-            $table->tinyInteger('status')->default(0)->comment('0: draft, 1: published, 2: archived, 3: deleted');
+            $table->string('label')->default('');
+            $table->tinyInteger('status')->default(0)->comment('0: subspended, 1: active, 2: deleted');
             $table->timestamps();
         });
     }

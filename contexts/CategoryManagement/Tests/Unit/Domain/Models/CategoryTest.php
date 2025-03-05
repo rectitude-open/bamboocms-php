@@ -7,61 +7,39 @@ use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 
-it('can create draft category with valid data', function () {
-    $category = Category::createDraft(new CategoryId(0), 'Title', 'body', new CarbonImmutable);
-    expect($category->getTitle())->toBe('Title');
-    expect($category->getbody())->toBe('body');
-    expect($category->getStatus()->equals(CategoryStatus::draft()))->toBeTrue();
-});
-
-it('can create published category with valid data', function () {
-    $category = Category::createPublished(new CategoryId(0), 'Title', 'body', new CarbonImmutable);
-    expect($category->getTitle())->toBe('Title');
-    expect($category->getbody())->toBe('body');
-    expect($category->getStatus()->equals(CategoryStatus::published()))->toBeTrue();
-});
-
-it('can auto generate created_at date', function () {
-    $category = Category::createDraft(new CategoryId(0), 'Title', 'body', new CarbonImmutable);
+it('can create category with valid data', function () {
+    $category = Category::create(new CategoryId(0), 'Label');
+    expect($category->getLabel())->toBe('Label');
+    expect($category->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
     expect($category->getCreatedAt())->toBeInstanceOf(CarbonImmutable::class);
 });
 
 it('can reconstitute an category from its data', function () {
     $id = new CategoryId(1);
-    $title = 'Reconstituted Title';
-    $body = 'Reconstituted content body';
-    $status = CategoryStatus::published();
+    $label = 'Reconstituted Label';
+    $status = CategoryStatus::active();
     $createdAt = CarbonImmutable::now()->subDays(5);
     $updatedAt = CarbonImmutable::now()->subDays(1);
 
-    $category = Category::reconstitute($id, $title, $body, $status, $createdAt, $updatedAt);
+    $category = Category::reconstitute($id, $label, $status, $createdAt, $updatedAt);
 
     expect($category->id)->toEqual($id);
-    expect($category->getTitle())->toBe($title);
-    expect($category->getBody())->toBe($body);
+    expect($category->getLabel())->toBe($label);
     expect($category->getStatus())->toEqual($status);
     expect($category->getCreatedAt())->toEqual($createdAt);
     expect($category->getUpdatedAt())->toEqual($updatedAt);
 });
 
-it('can publish a draft category', function () {
-    $category = Category::createDraft(new CategoryId(1), 'Draft Title', 'Draft content');
-    $category->publish();
-
-    expect($category->getStatus()->equals(CategoryStatus::published()))->toBeTrue();
-    expect($category->releaseEvents())->toHaveCount(1);
-});
-
-it('should record domain events when category is published', function () {
-    $category = Category::createPublished(new CategoryId(1), 'Title', 'body');
+it('should record domain events when category is active', function () {
+    $category = Category::create(new CategoryId(1), 'Label');
     $events = $category->releaseEvents();
 
     expect($events)->toHaveCount(1);
-    expect($events[0])->toBeInstanceOf(\Contexts\CategoryManagement\Domain\Events\CategoryPublishedEvent::class);
+    expect($events[0])->toBeInstanceOf(\Contexts\CategoryManagement\Domain\Events\CategoryCreatedEvent::class);
 });
 
 it('can release events and clear them from the category', function () {
-    $category = Category::createPublished(new CategoryId(1), 'Title', 'body');
+    $category = Category::create(new CategoryId(1), 'Label');
 
     // First release should return events
     $events = $category->releaseEvents();
@@ -72,76 +50,64 @@ it('can release events and clear them from the category', function () {
     expect($emptyEvents)->toBeEmpty();
 });
 
-it('can revise an category title', function () {
-    $category = Category::createDraft(new CategoryId(1), 'Original Title', 'Original Body');
-    $category->revise('New Title', null, null);
+it('can modify an category label', function () {
+    $category = Category::create(new CategoryId(1), 'Original Label');
+    $category->modify('New Label', null);
 
-    expect($category->getTitle())->toBe('New Title');
-    expect($category->getBody())->toBe('Original Body');
-    expect($category->getStatus()->equals(CategoryStatus::draft()))->toBeTrue();
+    expect($category->getLabel())->toBe('New Label');
 });
 
-it('can revise an category body', function () {
-    $category = Category::createDraft(new CategoryId(1), 'Original Title', 'Original Body');
-    $category->revise(null, 'New Body Content', null);
+it('can modify an category status', function () {
+    $category = Category::create(new CategoryId(1), 'Original Label');
+    $category->modify(null, CategoryStatus::active());
 
-    expect($category->getTitle())->toBe('Original Title');
-    expect($category->getBody())->toBe('New Body Content');
-    expect($category->getStatus()->equals(CategoryStatus::draft()))->toBeTrue();
-});
-
-it('can revise an category status', function () {
-    $category = Category::createDraft(new CategoryId(1), 'Original Title', 'Original Body');
-    $category->revise(null, null, CategoryStatus::published());
-
-    expect($category->getTitle())->toBe('Original Title');
-    expect($category->getBody())->toBe('Original Body');
-    expect($category->getStatus()->equals(CategoryStatus::published()))->toBeTrue();
+    expect($category->getLabel())->toBe('Original Label');
+    expect($category->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
     expect($category->releaseEvents())->toHaveCount(1);
 });
 
-it('can revise multiple category properties at once', function () {
-    $category = Category::createDraft(new CategoryId(1), 'Original Title', 'Original Body');
-    $category->revise('New Title', 'New Body', CategoryStatus::published());
+it('can modify multiple category properties at once', function () {
+    $category = Category::create(new CategoryId(1), 'Original Label');
+    $category->modify('New Label', CategoryStatus::active());
 
-    expect($category->getTitle())->toBe('New Title');
-    expect($category->getBody())->toBe('New Body');
-    expect($category->getStatus()->equals(CategoryStatus::published()))->toBeTrue();
+    expect($category->getLabel())->toBe('New Label');
+    expect($category->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
     expect($category->releaseEvents())->toHaveCount(1);
 });
 
-it('can revise category created_at date', function () {
+it('can modify category created_at date', function () {
     $originalDate = CarbonImmutable::now()->subDays(5);
-    $category = Category::createDraft(new CategoryId(1), 'Original Title', 'Original Body', $originalDate);
+    $category = Category::create(new CategoryId(1), 'Original Label', $originalDate);
 
     $newDate = CarbonImmutable::now()->subDays(10);
-    $category->revise(null, null, null, $newDate);
+    $category->modify(null, null, $newDate);
 
     expect($category->getCreatedAt())->toEqual($newDate);
 });
 
 it('does not trigger status transition when same status provided', function () {
-    $category = Category::createDraft(new CategoryId(1), 'Title', 'Body');
-    $category->revise(null, null, CategoryStatus::draft());
+    $category = Category::create(new CategoryId(1), 'Label');
+    $category->releaseEvents();
 
-    expect($category->getStatus()->equals(CategoryStatus::draft()))->toBeTrue();
+    $category->modify(null, CategoryStatus::subspended());
+    expect($category->getStatus()->equals(CategoryStatus::subspended()))->toBeTrue();
     expect($category->releaseEvents())->toBeEmpty();
 });
 
-it('can archive an category', function () {
-    $category = Category::createPublished(new CategoryId(1), 'Title', 'Body');
-    $category->releaseEvents(); // Clear initial events
+it('can subspend an category', function () {
+    $category = Category::create(new CategoryId(1), 'Label');
+    $category->releaseEvents();
 
-    $category->archive();
+    $category->subspend();
 
-    expect($category->getStatus()->equals(CategoryStatus::archived()))->toBeTrue();
-    expect($category->releaseEvents())->toBeEmpty(); // No events for archiving
+    expect($category->getStatus()->equals(CategoryStatus::subspended()))->toBeTrue();
+    expect($category->releaseEvents())->toBeEmpty(); // No events for subspending
 });
 
 it('can delete an category', function () {
-    $category = Category::createPublished(new CategoryId(1), 'Title', 'Body');
-    $category->archive();
-    $category->releaseEvents(); // Clear initial events
+    $category = Category::create(new CategoryId(1), 'Label');
+    $category->subspend();
+    $category->releaseEvents();
 
     $category->delete();
 

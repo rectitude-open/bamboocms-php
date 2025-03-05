@@ -8,36 +8,22 @@ use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Contexts\CategoryManagement\Infrastructure\Repositories\CategoryRepository;
 
-it('can persist draft category data correctly', function () {
-    $category = Category::createDraft(new CategoryId(0), 'My Category', 'This is my category body', new CarbonImmutable);
-    $categoryRepository = new CategoryRepository;
+it('can persist category data correctly', function () {
+    $category = Category::create(new CategoryId(0), 'My Category');
+    $categoryRepository = new CategoryRepository();
 
     $categoryRepository->create($category);
 
     $this->assertDatabaseHas('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::draft()),
-    ]);
-});
-
-it('can persist published category data correctly', function () {
-    $category = Category::createPublished(new CategoryId(0), 'My Category', 'This is my category body', new CarbonImmutable);
-    $categoryRepository = new CategoryRepository;
-
-    $categoryRepository->create($category);
-
-    $this->assertDatabaseHas('categories', [
-        'title' => 'My Category',
-        'body' => 'This is my category body',
-        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::published()),
+        'label' => 'My Category',
+        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::active()),
     ]);
 });
 
 it('can retrieve an category by ID', function () {
     // Create a test category in the database
-    $createdCategory = Category::createDraft(new CategoryId(0), 'Test Category', 'Test Content', new CarbonImmutable);
-    $categoryRepository = new CategoryRepository;
+    $createdCategory = Category::create(new CategoryId(0), 'Test Category');
+    $categoryRepository = new CategoryRepository();
     $savedCategory = $categoryRepository->create($createdCategory);
 
     // Retrieve the category using getById
@@ -45,23 +31,20 @@ it('can retrieve an category by ID', function () {
 
     // Assert the retrieved category matches the created one
     expect($retrievedCategory->getId()->getValue())->toBe($savedCategory->getId()->getValue());
-    expect($retrievedCategory->getTitle())->toBe('Test Category');
-    expect($retrievedCategory->getBody())->toBe('Test Content');
-    expect($retrievedCategory->getStatus()->equals(CategoryStatus::draft()))->toBeTrue();
+    expect($retrievedCategory->getLabel())->toBe('Test Category');
+    expect($retrievedCategory->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
 });
 
 it('can update an category', function () {
     // Create a test category in the database
-    $createdCategory = Category::createDraft(new CategoryId(0), 'Original Title', 'Original Content', new CarbonImmutable);
-    $categoryRepository = new CategoryRepository;
+    $createdCategory = Category::create(new CategoryId(0), 'Original Label');
+    $categoryRepository = new CategoryRepository();
     $savedCategory = $categoryRepository->create($createdCategory);
 
     // Create an updated version of the category
-    $updatedCategory = Category::createPublished(
+    $updatedCategory = Category::create(
         $savedCategory->id,
-        'Updated Title',
-        'Updated Content',
-        new CarbonImmutable
+        'Updated Label',
     );
 
     // Update the category
@@ -70,28 +53,25 @@ it('can update an category', function () {
     // Verify database was updated
     $this->assertDatabaseHas('categories', [
         'id' => $savedCategory->getId()->getValue(),
-        'title' => 'Updated Title',
-        'body' => 'Updated Content',
-        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::published()),
+        'label' => 'Updated Label',
+        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::active()),
     ]);
 
     // Verify returned object reflects updates
-    expect($result->getTitle())->toBe('Updated Title');
-    expect($result->getBody())->toBe('Updated Content');
-    expect($result->getStatus()->equals(CategoryStatus::published()))->toBeTrue();
+    expect($result->getLabel())->toBe('Updated Label');
+    expect($result->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
 });
 
 it('can paginate categories', function () {
     // Create multiple test categories
-    $categoryRepository = new CategoryRepository;
+    $categoryRepository = new CategoryRepository();
 
     // Create 5 categories
     for ($i = 1; $i <= 5; $i++) {
-        $category = Category::createPublished(
+        $category = Category::create(
             new CategoryId(0),
             "Category $i",
-            "Content $i",
-            new CarbonImmutable
+            new CarbonImmutable()
         );
         $categoryRepository->create($category);
     }
@@ -117,53 +97,52 @@ it('can paginate categories', function () {
 });
 
 it('can filter categories with search criteria', function () {
-    $categoryRepository = new CategoryRepository;
+    $categoryRepository = new CategoryRepository();
 
-    // Create categories with specific titles
-    $category1 = Category::createDraft(
+    // Create categories with specific labels
+    $category1 = Category::create(
         new CategoryId(0),
         'Laravel Category',
-        'Content about Laravel',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
     $categoryRepository->create($category1);
 
-    $category2 = Category::createDraft(
+    $category2 = Category::create(
         new CategoryId(0),
         'PHP Tutorial',
-        'Content about PHP',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
+    $category2->subspend();
     $categoryRepository->create($category2);
 
-    $category3 = Category::createPublished(
+
+    $category3 = Category::create(
         new CategoryId(0),
         'Laravel Tips',
-        'More Laravel content',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
+    $category3->subspend();
     $categoryRepository->create($category3);
 
-    // Test search by title criteria
-    $result = $categoryRepository->paginate(1, 10, ['title' => 'Laravel']);
+    // Test search by label criteria
+    $result = $categoryRepository->paginate(1, 10, ['label' => 'Laravel']);
     expect($result->total())->toBe(2); // Should find the two Laravel categories
 
     // Test search with status criteria
     $result = $categoryRepository->paginate(1, 10, [
-        'title' => 'Laravel',
-        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::published()),
+        'label' => 'Laravel',
+        'status' => CategoryRecord::mapStatusToRecord(CategoryStatus::active()),
     ]);
-    expect($result->total())->toBe(1); // Should only find the published Laravel category
+    expect($result->total())->toBe(1); // Should only find the active Laravel category
 
     // Test with no matching criteria
-    $result = $categoryRepository->paginate(1, 10, ['title' => 'Django']);
+    $result = $categoryRepository->paginate(1, 10, ['label' => 'Django']);
     expect($result->total())->toBe(0);
 
     // Test search by created_at_range criteria
-    $category4 = Category::createPublished(
+    $category4 = Category::create(
         new CategoryId(0),
-        'Laravel Tips',
-        'More Laravel content',
+        'Past Category',
         new CarbonImmutable('2021-01-01')
     );
     $categoryRepository->create($category4);

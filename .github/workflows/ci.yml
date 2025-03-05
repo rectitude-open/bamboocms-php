@@ -74,6 +74,15 @@ jobs:
       - name: Import database
         run: php artisan migrate --seed
 
+      - name: Install Pint
+        run: composer global require laravel/pint
+
+      - name: Run Pint Test
+        run: pint --test
+
+      - name: Static analysis
+        run: ./vendor/bin/phpstan analyse
+
       - name: Run tests
         run: ./vendor/bin/pest --configuration ./phpunit.xml --coverage-clover runtime/.phpunit.cache/coverage.xml
 
@@ -86,6 +95,3 @@ jobs:
 
       - name: Dependencies security check
         uses: symfonycorp/security-checker-action@v5
-
-      - name: Static analysis
-        run: ./vendor/bin/phpstan analyse

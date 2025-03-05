@@ -44,9 +44,8 @@ class ArticleStatus
     {
         $validTransitions = match($this->value) {
             self::DRAFT => [self::PUBLISHED, self::ARCHIVED, self::DELETED],
-            self::PUBLISHED => [self::ARCHIVED, self::DELETED],
-            self::ARCHIVED => [self::PUBLISHED, self::DELETED],
-            self::DELETED => [self::DRAFT],
+            self::PUBLISHED => [self::ARCHIVED, self::DRAFT],
+            self::ARCHIVED => [self::DRAFT, self::PUBLISHED, self::DELETED],
             default => [],
         };
 

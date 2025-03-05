@@ -13,8 +13,7 @@ class CategoryCreatedEvent
 
     public function __construct(
         private readonly CategoryId $CategoryId,
-    ) {
-    }
+    ) {}
 
     public function getCategoryId(): CategoryId
     {

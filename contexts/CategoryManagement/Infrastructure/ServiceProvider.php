@@ -22,7 +22,8 @@ class ServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
-        $this->app->register(new class ($this->app) extends RouteServiceProvider {
+        $this->app->register(new class($this->app) extends RouteServiceProvider
+        {
             public function boot(): void
             {
                 parent::boot();

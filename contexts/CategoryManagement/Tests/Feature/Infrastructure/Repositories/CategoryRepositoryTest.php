@@ -10,7 +10,7 @@ use Contexts\CategoryManagement\Infrastructure\Repositories\CategoryRepository;
 
 it('can persist category data correctly', function () {
     $category = Category::create(new CategoryId(0), 'My Category');
-    $categoryRepository = new CategoryRepository();
+    $categoryRepository = new CategoryRepository;
 
     $categoryRepository->create($category);
 
@@ -23,7 +23,7 @@ it('can persist category data correctly', function () {
 it('can retrieve an category by ID', function () {
     // Create a test category in the database
     $createdCategory = Category::create(new CategoryId(0), 'Test Category');
-    $categoryRepository = new CategoryRepository();
+    $categoryRepository = new CategoryRepository;
     $savedCategory = $categoryRepository->create($createdCategory);
 
     // Retrieve the category using getById
@@ -38,7 +38,7 @@ it('can retrieve an category by ID', function () {
 it('can update an category', function () {
     // Create a test category in the database
     $createdCategory = Category::create(new CategoryId(0), 'Original Label');
-    $categoryRepository = new CategoryRepository();
+    $categoryRepository = new CategoryRepository;
     $savedCategory = $categoryRepository->create($createdCategory);
 
     // Create an updated version of the category
@@ -64,14 +64,14 @@ it('can update an category', function () {
 
 it('can paginate categories', function () {
     // Create multiple test categories
-    $categoryRepository = new CategoryRepository();
+    $categoryRepository = new CategoryRepository;
 
     // Create 5 categories
     for ($i = 1; $i <= 5; $i++) {
         $category = Category::create(
             new CategoryId(0),
             "Category $i",
-            new CarbonImmutable()
+            new CarbonImmutable
         );
         $categoryRepository->create($category);
     }
@@ -97,29 +97,28 @@ it('can paginate categories', function () {
 });
 
 it('can filter categories with search criteria', function () {
-    $categoryRepository = new CategoryRepository();
+    $categoryRepository = new CategoryRepository;
 
     // Create categories with specific labels
     $category1 = Category::create(
         new CategoryId(0),
         'Laravel Category',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $categoryRepository->create($category1);
 
     $category2 = Category::create(
         new CategoryId(0),
         'PHP Tutorial',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $category2->subspend();
     $categoryRepository->create($category2);
 
-
     $category3 = Category::create(
         new CategoryId(0),
         'Laravel Tips',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $category3->subspend();
     $categoryRepository->create($category3);

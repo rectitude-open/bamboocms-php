@@ -10,8 +10,6 @@ class ArticleIdRequest extends BaseFormRequest
 {
     public function rules(): array
     {
-        return [
-            'id' => ['required', 'integer', 'gt:0', 'exists:articles,id'],
-        ];
+        return $this->idRule('articles');
     }
 }

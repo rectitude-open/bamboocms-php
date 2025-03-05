@@ -13,4 +13,11 @@ class BaseFormRequest extends FormRequest
         parent::prepareForValidation();
         $this->route('id') && $this->merge(['id' => $this->route('id')]);
     }
+
+    protected function idRule(string $table): array
+    {
+        return [
+            'id' => ['required', 'integer', 'gt:0', "exists:{$table},id"],
+        ];
+    }
 }

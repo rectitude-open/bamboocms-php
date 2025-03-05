@@ -128,3 +128,24 @@ it('does not trigger status transition when same status provided', function () {
     expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
     expect($article->releaseEvents())->toBeEmpty();
 });
+
+it('can archive an article', function () {
+    $article = Article::createPublished(new ArticleId(1), 'Title', 'Body');
+    $article->releaseEvents(); // Clear initial events
+
+    $article->archive();
+
+    expect($article->getStatus()->equals(ArticleStatus::archived()))->toBeTrue();
+    expect($article->releaseEvents())->toBeEmpty(); // No events for archiving
+});
+
+it('can delete an article', function () {
+    $article = Article::createPublished(new ArticleId(1), 'Title', 'Body');
+    $article->archive();
+    $article->releaseEvents(); // Clear initial events
+
+    $article->delete();
+
+    expect($article->getStatus()->equals(ArticleStatus::deleted()))->toBeTrue();
+    expect($article->releaseEvents())->toBeEmpty(); // No events for deleting
+});

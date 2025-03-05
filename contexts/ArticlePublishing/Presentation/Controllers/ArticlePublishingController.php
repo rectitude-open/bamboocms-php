@@ -15,6 +15,7 @@ use Contexts\ArticlePublishing\Presentation\Requests\GetArticleListRequest;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Contexts\ArticlePublishing\Presentation\Requests\UpdateArticleRequest;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
+use Contexts\ArticlePublishing\Presentation\Requests\ArticleIdRequest;
 
 class ArticlePublishingController extends BaseController
 {
@@ -64,6 +65,26 @@ class ArticlePublishingController extends BaseController
 
         return $this->success($result, ArticleResource::class)
                     ->message('Article updated successfully')
+                    ->send();
+    }
+
+    public function archiveArticle(ArticleIdRequest $request)
+    {
+        $id = (int)($request->validated()['id']);
+        $result = app(ArticlePublishingCoordinator::class)->archiveArticle($id);
+
+        return $this->success(['id' => $result->getId()->getValue()])
+                    ->message('Article archived successfully')
+                    ->send();
+    }
+
+    public function deleteArticle(ArticleIdRequest $request)
+    {
+        $id = (int)($request->validated()['id']);
+        $result = app(ArticlePublishingCoordinator::class)->deleteArticle($id);
+
+        return $this->success(['id' => $result->getId()->getValue()])
+                    ->message('Article deleted successfully')
                     ->send();
     }
 }

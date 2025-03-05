@@ -94,4 +94,24 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         return $article;
     }
+
+    public function archiveArticle(int $id)
+    {
+        $article = $this->repository->getById(new ArticleId($id));
+        $article->archive();
+
+        $this->repository->update($article);
+
+        return $article;
+    }
+
+    public function deleteArticle(int $id)
+    {
+        $article = $this->repository->getById(new ArticleId($id));
+        $article->delete();
+
+        $this->repository->delete($article);
+
+        return $article;
+    }
 }

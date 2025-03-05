@@ -116,3 +116,43 @@ it('can update an article', function () {
         ],
     ]);
 });
+
+it('can archive an article', function () {
+    $response = $this->postJson('articles', [
+        'title' => 'My Article',
+        'body' => 'This is my article body',
+        'status' => 'published',
+    ]);
+
+    $response->assertStatus(201);
+
+    $id = $response->json('data.id');
+
+    $response = $this->putJson("articles/{$id}/archive");
+
+    $response->assertStatus(200);
+});
+
+it('can archive and delete an article', function () {
+    $response = $this->postJson('articles', [
+        'title' => 'My Article',
+        'body' => 'This is my article body',
+        'status' => 'published',
+    ]);
+
+    $response->assertStatus(201);
+
+    $id = $response->json('data.id');
+
+    $response = $this->putJson("articles/{$id}/archive");
+
+    $response->assertStatus(200);
+
+    $response = $this->delete("articles/{$id}");
+
+    $response->assertStatus(200);
+
+    $response = $this->get("articles/{$id}");
+
+    $response->assertStatus(422);
+});

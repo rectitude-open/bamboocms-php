@@ -10,7 +10,9 @@ Route::middleware([])->name('ArticlePublishing.')->group(function () {
         Route::get('{id}', 'getArticle')->name('getArticle');
         Route::get('', 'getArticleList')->name('getArticleList');
         Route::post('', 'createArticle')->name('createArticle');
-        Route::put('{id}', 'updateArticle')->name('updateArticle');
+        Route::put('{id}/archive', 'archiveArticle')->name('archiveArticle');
         Route::put('{id}/publish', 'publishDraft')->name('publishDraft');
+        Route::put('{id}', 'updateArticle')->name('updateArticle');
+        Route::delete('{id}', 'deleteArticle')->name('deleteArticle');
     });
 });

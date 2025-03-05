@@ -78,6 +78,16 @@ class Article extends BaseDomainModel
         $this->transitionStatus(ArticleStatus::published());
     }
 
+    public function archive()
+    {
+        $this->transitionStatus(ArticleStatus::archived());
+    }
+
+    public function delete()
+    {
+        $this->transitionStatus(ArticleStatus::deleted());
+    }
+
     private function transitionStatus(ArticleStatus $targetStatus): void
     {
         $this->status = $this->status->transitionTo($targetStatus);

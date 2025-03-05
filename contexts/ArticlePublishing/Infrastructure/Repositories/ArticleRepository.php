@@ -6,6 +6,7 @@ namespace Contexts\ArticlePublishing\Infrastructure\Repositories;
 
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
+use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -53,5 +54,12 @@ class ArticleRepository
         });
 
         return $paginator;
+    }
+
+    public function delete(Article $article): void
+    {
+        $record = ArticleRecord::findOrFail($article->getId()->getValue());
+        $record->update(['status' => ArticleRecord::mapStatusToRecord(ArticleStatus::deleted())]);
+        $record->delete();
     }
 }

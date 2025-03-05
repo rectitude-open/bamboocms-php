@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Presentation\Controllers;
 
 use App\Http\Controllers\BaseController;
-use Contexts\ArticlePublishing\Presentation\Requests\CreateArticleRequest;
 use Contexts\ArticlePublishing\Application\Coordinators\ArticlePublishingCoordinator;
-use Contexts\ArticlePublishing\Presentation\Resources\ArticleResource;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
-use Contexts\ArticlePublishing\Presentation\Requests\GetArticleListRequest;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
-use Contexts\ArticlePublishing\Presentation\Requests\UpdateArticleRequest;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
 use Contexts\ArticlePublishing\Presentation\Requests\ArticleIdRequest;
+use Contexts\ArticlePublishing\Presentation\Requests\CreateArticleRequest;
+use Contexts\ArticlePublishing\Presentation\Requests\GetArticleListRequest;
+use Contexts\ArticlePublishing\Presentation\Requests\UpdateArticleRequest;
+use Contexts\ArticlePublishing\Presentation\Resources\ArticleResource;
 
 class ArticlePublishingController extends BaseController
 {
@@ -24,13 +24,13 @@ class ArticlePublishingController extends BaseController
         );
 
         return $this->success($result, ArticleResource::class)
-                    ->message('Article created successfully')
-                    ->send(201);
+            ->message('Article created successfully')
+            ->send(201);
     }
 
     public function publishDraft(ArticleIdRequest $request)
     {
-        $id = (int)($request->validated()['id']);
+        $id = (int) ($request->validated()['id']);
         app(ArticlePublishingCoordinator::class)->publishDraft($id);
 
         return $this->success('Article published successfully')->send();
@@ -38,7 +38,7 @@ class ArticlePublishingController extends BaseController
 
     public function getArticle(ArticleIdRequest $request)
     {
-        $id = (int)($request->validated()['id']);
+        $id = (int) ($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->getArticle($id);
 
         return $this->success($result, ArticleResource::class)->send();
@@ -55,34 +55,34 @@ class ArticlePublishingController extends BaseController
 
     public function updateArticle(UpdateArticleRequest $request)
     {
-        $id = (int)($request->validated()['id']);
+        $id = (int) ($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->updateArticle(
             $id,
             UpdateArticleDTO::fromRequest($request->validated())
         );
 
         return $this->success($result, ArticleResource::class)
-                    ->message('Article updated successfully')
-                    ->send();
+            ->message('Article updated successfully')
+            ->send();
     }
 
     public function archiveArticle(ArticleIdRequest $request)
     {
-        $id = (int)($request->validated()['id']);
+        $id = (int) ($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->archiveArticle($id);
 
         return $this->success(['id' => $result->getId()->getValue()])
-                    ->message('Article archived successfully')
-                    ->send();
+            ->message('Article archived successfully')
+            ->send();
     }
 
     public function deleteArticle(ArticleIdRequest $request)
     {
-        $id = (int)($request->validated()['id']);
+        $id = (int) ($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->deleteArticle($id);
 
         return $this->success(['id' => $result->getId()->getValue()])
-                    ->message('Article deleted successfully')
-                    ->send();
+            ->message('Article deleted successfully')
+            ->send();
     }
 }

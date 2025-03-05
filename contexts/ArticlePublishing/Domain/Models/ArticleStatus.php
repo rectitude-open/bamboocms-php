@@ -9,13 +9,16 @@ use InvalidArgumentException;
 class ArticleStatus
 {
     public const DRAFT = 'draft';
+
     public const PUBLISHED = 'published';
+
     public const ARCHIVED = 'archived';
+
     public const DELETED = 'deleted';
 
     public function __construct(private string $value)
     {
-        if (!in_array($value, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
+        if (! in_array($value, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
             throw new InvalidArgumentException('Invalid article status');
         }
     }
@@ -42,14 +45,14 @@ class ArticleStatus
 
     public function transitionTo(ArticleStatus $target): self
     {
-        $validTransitions = match($this->value) {
+        $validTransitions = match ($this->value) {
             self::DRAFT => [self::PUBLISHED, self::ARCHIVED, self::DELETED],
             self::PUBLISHED => [self::ARCHIVED, self::DRAFT],
             self::ARCHIVED => [self::DRAFT, self::PUBLISHED, self::DELETED],
             default => [],
         };
 
-        if (!in_array($target->value, $validTransitions)) {
+        if (! in_array($target->value, $validTransitions)) {
             // TODO: Create a custom exception
             throw new InvalidArgumentException("Cannot transition from {$this->value} to {$target->value}");
         }
@@ -59,9 +62,10 @@ class ArticleStatus
 
     public static function fromString(string $status): self
     {
-        if (!in_array($status, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
+        if (! in_array($status, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
             throw new InvalidArgumentException('Invalid article status');
         }
+
         return new self($status);
     }
 

@@ -21,7 +21,7 @@ class BizExceptionBuilder
 
     public static function make(string $message): self
     {
-        $instance = new self();
+        $instance = new self;
         $instance->message = $message;
 
         return $instance;

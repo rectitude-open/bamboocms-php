@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Domain\Models;
 
+use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
-use App\Http\DomainModel\BaseDomainModel;
 
 class Article extends BaseDomainModel
 {
@@ -29,7 +29,7 @@ class Article extends BaseDomainModel
     ) {
         $this->title = $newTitle ?? $this->title;
         $this->body = $newBody ?? $this->body;
-        if ($newStatus && !$this->status->equals($newStatus)) {
+        if ($newStatus && ! $this->status->equals($newStatus)) {
             $this->transitionStatus($newStatus);
         }
         $this->created_at = $newCreatedAt ?? $this->created_at;
@@ -48,6 +48,7 @@ class Article extends BaseDomainModel
         foreach ($events as $event) {
             $article->recordEvent($event);
         }
+
         return $article;
     }
 
@@ -68,8 +69,9 @@ class Article extends BaseDomainModel
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null
     ): self {
-        $article =  new self($id, $title, $body, ArticleStatus::published(), $created_at, $updated_at);
+        $article = new self($id, $title, $body, ArticleStatus::published(), $created_at, $updated_at);
         $article->recordEvent(new ArticlePublishedEvent($article->id));
+
         return $article;
     }
 
@@ -92,7 +94,7 @@ class Article extends BaseDomainModel
     {
         $this->status = $this->status->transitionTo($targetStatus);
 
-        match($this->status->getValue()) {
+        match ($this->status->getValue()) {
             ArticleStatus::PUBLISHED => $this->recordEvent(new ArticlePublishedEvent($this->id)),
             default => null,
         };

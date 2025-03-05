@@ -8,8 +8,8 @@ use App\Http\Models\BaseModel;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -22,18 +22,19 @@ use Illuminate\Database\Eloquent\Builder;
 class ArticleRecord extends BaseModel
 {
     protected $table = 'articles';
+
     protected $fillable = ['title', 'body', 'status', 'created_at'];
 
     public const STATUS_MAPPING = [
         0 => 'draft',
         1 => 'published',
         2 => 'archived',
-        3 => 'deleted'
+        3 => 'deleted',
     ];
 
     public static function mapStatusToDomain(int $status): ArticleStatus
     {
-        if (!isset(self::STATUS_MAPPING[$status])) {
+        if (! isset(self::STATUS_MAPPING[$status])) {
             throw new \InvalidArgumentException('Invalid status value');
         }
 
@@ -42,7 +43,7 @@ class ArticleRecord extends BaseModel
 
     public static function mapStatusToRecord(ArticleStatus $status): int
     {
-        if (!in_array($status->getValue(), self::STATUS_MAPPING)) {
+        if (! in_array($status->getValue(), self::STATUS_MAPPING)) {
             throw new \InvalidArgumentException('Invalid status value');
         }
 

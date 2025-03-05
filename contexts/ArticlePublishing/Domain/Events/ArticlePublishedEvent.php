@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Domain\Events;
 
-use Illuminate\Foundation\Events\Dispatchable;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
+use Illuminate\Foundation\Events\Dispatchable;
 
 class ArticlePublishedEvent
 {
@@ -13,8 +13,7 @@ class ArticlePublishedEvent
 
     public function __construct(
         private readonly ArticleId $articleId,
-    ) {
-    }
+    ) {}
 
     public function getArticleId(): ArticleId
     {

@@ -8,22 +8,21 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 
 it('can create draft article with valid data', function () {
-    $article = Article::createDraft(new ArticleId(0), 'Title', 'body', new CarbonImmutable());
+    $article = Article::createDraft(new ArticleId(0), 'Title', 'body', new CarbonImmutable);
     expect($article->getTitle())->toBe('Title');
     expect($article->getbody())->toBe('body');
     expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
 });
 
 it('can create published article with valid data', function () {
-    $article = Article::createPublished(new ArticleId(0), 'Title', 'body', new CarbonImmutable());
+    $article = Article::createPublished(new ArticleId(0), 'Title', 'body', new CarbonImmutable);
     expect($article->getTitle())->toBe('Title');
     expect($article->getbody())->toBe('body');
     expect($article->getStatus()->equals(ArticleStatus::published()))->toBeTrue();
 });
 
-
 it('can auto generate created_at date', function () {
-    $article = Article::createDraft(new ArticleId(0), 'Title', 'body', new CarbonImmutable());
+    $article = Article::createDraft(new ArticleId(0), 'Title', 'body', new CarbonImmutable);
     expect($article->getCreatedAt())->toBeInstanceOf(CarbonImmutable::class);
 });
 

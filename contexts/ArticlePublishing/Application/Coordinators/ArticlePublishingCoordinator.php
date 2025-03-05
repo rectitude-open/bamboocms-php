@@ -5,26 +5,25 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Application\Coordinators;
 
 use App\Http\Coordinators\BaseCoordinator;
-use Contexts\ArticlePublishing\Domain\Models\ArticleId;
-use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
-use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
-use Contexts\ArticlePublishing\Domain\Models\Article;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
+use Contexts\ArticlePublishing\Domain\Models\Article;
+use Contexts\ArticlePublishing\Domain\Models\ArticleId;
+use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
         private ArticleRepository $repository
-    ) {
-    }
+    ) {}
 
     public function create(CreateArticleDTO $data): Article
     {
-        $article = match($data->status) {
+        $article = match ($data->status) {
             'draft' => $this->createDraft($data),
             'published' => $this->createPublished($data),
             default => throw new \InvalidArgumentException('Invalid article status'),
@@ -55,6 +54,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             $data->body,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
+
         return $this->repository->create($article);
     }
 

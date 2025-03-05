@@ -9,7 +9,7 @@ class ArticleId
     public function __construct(private readonly int $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("Invalid Article ID");
+            throw new \InvalidArgumentException('Invalid Article ID');
         }
     }
 

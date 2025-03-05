@@ -11,8 +11,7 @@ class CreateArticleDTO
         public readonly string $body,
         public readonly string $status,
         public readonly ?string $created_at
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(array $data): self
     {

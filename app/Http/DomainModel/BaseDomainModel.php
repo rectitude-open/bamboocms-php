@@ -22,6 +22,7 @@ abstract class BaseDomainModel
     {
         $events = $this->events;
         $this->events = [];
+
         return $events;
     }
 }

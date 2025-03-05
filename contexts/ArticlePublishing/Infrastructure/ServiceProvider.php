@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Infrastructure;
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
+use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
-use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
-use Illuminate\Support\Facades\Event;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -25,7 +25,8 @@ class ServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
-        $this->app->register(new class ($this->app) extends RouteServiceProvider {
+        $this->app->register(new class($this->app) extends RouteServiceProvider
+        {
             public function boot(): void
             {
                 parent::boot();
@@ -37,8 +38,6 @@ class ServiceProvider extends BaseServiceProvider
             }
         });
     }
-
-
 
     public function provides(): array
     {

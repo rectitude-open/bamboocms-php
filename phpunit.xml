@@ -13,6 +13,9 @@
             <directory>contexts/*/Tests/Feature</directory>
             <!-- <directory>tests/Feature</directory> -->
         </testsuite>
+        <testsuite name="Shared">
+            <directory>tests/Unit</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

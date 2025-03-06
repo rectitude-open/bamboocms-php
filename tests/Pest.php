@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 */
 
 uses(Tests\TestCase::class, RefreshDatabase::class)->in(__DIR__.'/../contexts/*/Tests/Feature');
+uses(Tests\TestCase::class, RefreshDatabase::class)->in(__DIR__.'/../tests/Feature');
 
 /*
 |--------------------------------------------------------------------------

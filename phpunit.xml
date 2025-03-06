@@ -11,7 +11,7 @@
         </testsuite>
         <testsuite name="Feature">
             <directory>contexts/*/Tests/Feature</directory>
-            <!-- <directory>tests/Feature</directory> -->
+            <directory>tests/Feature</directory>
         </testsuite>
         <testsuite name="Shared">
             <directory>tests/Unit</directory>

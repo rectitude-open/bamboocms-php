@@ -54,6 +54,14 @@ return [
 
     'channels' => [
 
+        'biz' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/biz/biz.log'),
+            'level' => 'error',
+            'days' => env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),

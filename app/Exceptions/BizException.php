@@ -6,53 +6,100 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BizException extends Exception
 {
-    public function __construct(
-        string $message = '',
-        protected string $logMessage = '',
-        protected array $context = [],
-        int $code = 400,
-        ?Exception $previous = null)
+    protected string $logMessage = '';
+    protected array $logContext = [];
+    protected array $transParams = [];
+
+    public static function make(string $message): self
     {
-        parent::__construct($message, $code, $previous);
+        return new static($message);
     }
 
-    public function setFile(string $file): void
+    public function code(int $code): self
     {
-        $this->file = $file;
+        $this->code = $code;
+        return $this;
     }
 
-    public function setLine(int $line): void
+    public function with(array|string $key, $value = null): self
     {
-        $this->line = $line;
+        if (is_array($key)) {
+            $this->transParams = [...$this->transParams, ...$key];
+        } else {
+            $this->transParams[$key] = $value;
+        }
+        return $this;
+    }
+
+    public function logMessage(string $message)
+    {
+        $this->logMessage = $message;
+        return $this;
+    }
+
+    public function logContext(array $context): self
+    {
+        $this->logContext = $context;
+        return $this;
     }
 
     public function report(): void
     {
-        $previousTrace = $this->getPrevious();
-        $previousTrace = $this->getPrevious() ? explode("\n", $this->getPrevious()->getTraceAsString()) : [];
-        $previousTraceSlice = array_slice($previousTrace, 0, 5);
-        $previousTraceString = implode("\n", $previousTraceSlice);
-
-        $logEntry = [
-            'message' => $this->logMessage,
-            'context' => $this->context,
+        $logData = [
+            'client_params' => $this->transParams,
+            'log_context' => $this->logContext,
             'file' => $this->getFile(),
             'line' => $this->getLine(),
-            'previous' => $previousTraceString,
+            'filtered_trace' => $this->getFilteredTrace(),
         ];
-        Log::info('BizException', $logEntry);
+
+        Log::channel('biz')->error($this->getLogMessage(), $logData);
     }
 
-    public function render(Request $request): JsonResponse
+    private function getFilteredTrace(): array
+    {
+        return collect($this->getTrace())
+            ->filter(fn ($trace) => $this->isAppTrace($trace))
+            ->take(5)
+            ->map(fn ($trace) => [
+                'file' => Str::after($trace['file'], base_path()),
+                'line' => $trace['line'] ?? 0,
+                'caller' => $this->formatCaller($trace)
+            ])
+            ->all();
+    }
+
+    private function isAppTrace(array $trace): bool
+    {
+        $file = $trace['file'] ?? '';
+
+        return Str::startsWith($file, base_path().'/contexts');
+    }
+
+    private function formatCaller(array $trace): string
+    {
+        $class = $trace['class'] ?? '';
+        $type = $trace['type'] ?? '';
+        $function = $trace['function'] ?? '';
+
+        return $class ? "$class$type$function()" : $function.'()';
+    }
+
+    private function getLogMessage(): string
+    {
+        return $this->logMessage ?: "[BizError] {$this->message}";
+    }
+
+    public function render(): JsonResponse
     {
         return response()->json([
             'success' => false,
-            'message' => $this->message,
-        ], $this->getCode());
+            'message' => trans($this->message, $this->transParams)
+        ], $this->code ?: 400);
     }
 }

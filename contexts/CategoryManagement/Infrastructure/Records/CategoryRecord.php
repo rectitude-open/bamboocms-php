@@ -52,7 +52,7 @@ class CategoryRecord extends BaseModel
     public function toDomain(array $events = []): Category
     {
         return Category::reconstitute(
-            new CategoryId($this->id),
+            CategoryId::fromInt($this->id),
             $this->label,
             self::mapStatusToDomain($this->status),
             $this->created_at->toImmutable(),

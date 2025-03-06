@@ -8,14 +8,14 @@ use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 
 it('can create category with valid data', function () {
-    $category = Category::create(new CategoryId(0), 'Label');
+    $category = Category::create(CategoryId::null(), 'Label');
     expect($category->getLabel())->toBe('Label');
     expect($category->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
     expect($category->getCreatedAt())->toBeInstanceOf(CarbonImmutable::class);
 });
 
 it('can reconstitute an category from its data', function () {
-    $id = new CategoryId(1);
+    $id = CategoryId::fromInt(1);
     $label = 'Reconstituted Label';
     $status = CategoryStatus::active();
     $createdAt = CarbonImmutable::now()->subDays(5);
@@ -31,7 +31,7 @@ it('can reconstitute an category from its data', function () {
 });
 
 it('should record domain events when category is active', function () {
-    $category = Category::create(new CategoryId(1), 'Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Label');
     $events = $category->releaseEvents();
 
     expect($events)->toHaveCount(1);
@@ -39,7 +39,7 @@ it('should record domain events when category is active', function () {
 });
 
 it('can release events and clear them from the category', function () {
-    $category = Category::create(new CategoryId(1), 'Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Label');
 
     // First release should return events
     $events = $category->releaseEvents();
@@ -51,14 +51,14 @@ it('can release events and clear them from the category', function () {
 });
 
 it('can modify an category label', function () {
-    $category = Category::create(new CategoryId(1), 'Original Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Original Label');
     $category->modify('New Label', null);
 
     expect($category->getLabel())->toBe('New Label');
 });
 
 it('can modify an category status', function () {
-    $category = Category::create(new CategoryId(1), 'Original Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Original Label');
     $category->modify(null, CategoryStatus::active());
 
     expect($category->getLabel())->toBe('Original Label');
@@ -67,7 +67,7 @@ it('can modify an category status', function () {
 });
 
 it('can modify multiple category properties at once', function () {
-    $category = Category::create(new CategoryId(1), 'Original Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Original Label');
     $category->modify('New Label', CategoryStatus::active());
 
     expect($category->getLabel())->toBe('New Label');
@@ -77,7 +77,7 @@ it('can modify multiple category properties at once', function () {
 
 it('can modify category created_at date', function () {
     $originalDate = CarbonImmutable::now()->subDays(5);
-    $category = Category::create(new CategoryId(1), 'Original Label', $originalDate);
+    $category = Category::create(CategoryId::fromInt(1), 'Original Label', $originalDate);
 
     $newDate = CarbonImmutable::now()->subDays(10);
     $category->modify(null, null, $newDate);
@@ -86,7 +86,7 @@ it('can modify category created_at date', function () {
 });
 
 it('does not trigger status transition when same status provided', function () {
-    $category = Category::create(new CategoryId(1), 'Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Label');
     $category->releaseEvents();
 
     $category->modify(null, CategoryStatus::subspended());
@@ -95,7 +95,7 @@ it('does not trigger status transition when same status provided', function () {
 });
 
 it('can subspend an category', function () {
-    $category = Category::create(new CategoryId(1), 'Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Label');
     $category->releaseEvents();
 
     $category->subspend();
@@ -105,7 +105,7 @@ it('can subspend an category', function () {
 });
 
 it('can delete an category', function () {
-    $category = Category::create(new CategoryId(1), 'Label');
+    $category = Category::create(CategoryId::fromInt(1), 'Label');
     $category->subspend();
     $category->releaseEvents();
 

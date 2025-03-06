@@ -6,10 +6,10 @@ namespace Contexts\Shared\ValueObjects;
 
 abstract class IntId
 {
-    private function __construct(private readonly int $value)
+    final private function __construct(private readonly int $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException("Invalid ID value");
+            throw new \InvalidArgumentException('Invalid ID value');
         }
     }
 

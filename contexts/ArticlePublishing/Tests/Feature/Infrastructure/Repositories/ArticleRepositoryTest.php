@@ -9,8 +9,8 @@ use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 
 it('can persist draft article data correctly', function () {
-    $article = Article::createDraft(new ArticleId(0), 'My Article', 'This is my article body', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
+    $article = Article::createDraft(ArticleId::null(), 'My Article', 'This is my article body', new CarbonImmutable());
+    $articleRepository = new ArticleRepository();
 
     $articleRepository->create($article);
 
@@ -22,8 +22,8 @@ it('can persist draft article data correctly', function () {
 });
 
 it('can persist published article data correctly', function () {
-    $article = Article::createPublished(new ArticleId(0), 'My Article', 'This is my article body', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
+    $article = Article::createPublished(ArticleId::null(), 'My Article', 'This is my article body', new CarbonImmutable());
+    $articleRepository = new ArticleRepository();
 
     $articleRepository->create($article);
 
@@ -36,8 +36,8 @@ it('can persist published article data correctly', function () {
 
 it('can retrieve an article by ID', function () {
     // Create a test article in the database
-    $createdArticle = Article::createDraft(new ArticleId(0), 'Test Article', 'Test Content', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
+    $createdArticle = Article::createDraft(ArticleId::null(), 'Test Article', 'Test Content', new CarbonImmutable());
+    $articleRepository = new ArticleRepository();
     $savedArticle = $articleRepository->create($createdArticle);
 
     // Retrieve the article using getById
@@ -52,8 +52,8 @@ it('can retrieve an article by ID', function () {
 
 it('can update an article', function () {
     // Create a test article in the database
-    $createdArticle = Article::createDraft(new ArticleId(0), 'Original Title', 'Original Content', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
+    $createdArticle = Article::createDraft(ArticleId::null(), 'Original Title', 'Original Content', new CarbonImmutable());
+    $articleRepository = new ArticleRepository();
     $savedArticle = $articleRepository->create($createdArticle);
 
     // Create an updated version of the article
@@ -61,7 +61,7 @@ it('can update an article', function () {
         $savedArticle->id,
         'Updated Title',
         'Updated Content',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
 
     // Update the article
@@ -83,15 +83,15 @@ it('can update an article', function () {
 
 it('can paginate articles', function () {
     // Create multiple test articles
-    $articleRepository = new ArticleRepository;
+    $articleRepository = new ArticleRepository();
 
     // Create 5 articles
     for ($i = 1; $i <= 5; $i++) {
         $article = Article::createPublished(
-            new ArticleId(0),
+            ArticleId::null(),
             "Article $i",
             "Content $i",
-            new CarbonImmutable
+            new CarbonImmutable()
         );
         $articleRepository->create($article);
     }
@@ -117,30 +117,30 @@ it('can paginate articles', function () {
 });
 
 it('can filter articles with search criteria', function () {
-    $articleRepository = new ArticleRepository;
+    $articleRepository = new ArticleRepository();
 
     // Create articles with specific titles
     $article1 = Article::createDraft(
-        new ArticleId(0),
+        ArticleId::null(),
         'Laravel Article',
         'Content about Laravel',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
     $articleRepository->create($article1);
 
     $article2 = Article::createDraft(
-        new ArticleId(0),
+        ArticleId::null(),
         'PHP Tutorial',
         'Content about PHP',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
     $articleRepository->create($article2);
 
     $article3 = Article::createPublished(
-        new ArticleId(0),
+        ArticleId::null(),
         'Laravel Tips',
         'More Laravel content',
-        new CarbonImmutable
+        new CarbonImmutable()
     );
     $articleRepository->create($article3);
 
@@ -161,7 +161,7 @@ it('can filter articles with search criteria', function () {
 
     // Test search by created_at_range criteria
     $article4 = Article::createPublished(
-        new ArticleId(0),
+        ArticleId::null(),
         'Laravel Tips',
         'More Laravel content',
         new CarbonImmutable('2021-01-01')

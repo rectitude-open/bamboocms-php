@@ -8,26 +8,26 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 
 it('can create draft article with valid data', function () {
-    $article = Article::createDraft(new ArticleId(0), 'Title', 'body', new CarbonImmutable);
+    $article = Article::createDraft(ArticleId::null(), 'Title', 'body', new CarbonImmutable());
     expect($article->getTitle())->toBe('Title');
     expect($article->getbody())->toBe('body');
     expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
 });
 
 it('can create published article with valid data', function () {
-    $article = Article::createPublished(new ArticleId(0), 'Title', 'body', new CarbonImmutable);
+    $article = Article::createPublished(ArticleId::null(), 'Title', 'body', new CarbonImmutable());
     expect($article->getTitle())->toBe('Title');
     expect($article->getbody())->toBe('body');
     expect($article->getStatus()->equals(ArticleStatus::published()))->toBeTrue();
 });
 
 it('can auto generate created_at date', function () {
-    $article = Article::createDraft(new ArticleId(0), 'Title', 'body', new CarbonImmutable);
+    $article = Article::createDraft(ArticleId::null(), 'Title', 'body', new CarbonImmutable());
     expect($article->getCreatedAt())->toBeInstanceOf(CarbonImmutable::class);
 });
 
 it('can reconstitute an article from its data', function () {
-    $id = new ArticleId(1);
+    $id = ArticleId::fromInt(1);
     $title = 'Reconstituted Title';
     $body = 'Reconstituted content body';
     $status = ArticleStatus::published();
@@ -45,7 +45,7 @@ it('can reconstitute an article from its data', function () {
 });
 
 it('can publish a draft article', function () {
-    $article = Article::createDraft(new ArticleId(1), 'Draft Title', 'Draft content');
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Draft Title', 'Draft content');
     $article->publish();
 
     expect($article->getStatus()->equals(ArticleStatus::published()))->toBeTrue();
@@ -53,7 +53,7 @@ it('can publish a draft article', function () {
 });
 
 it('should record domain events when article is published', function () {
-    $article = Article::createPublished(new ArticleId(1), 'Title', 'body');
+    $article = Article::createPublished(ArticleId::fromInt(1), 'Title', 'body');
     $events = $article->releaseEvents();
 
     expect($events)->toHaveCount(1);
@@ -61,7 +61,7 @@ it('should record domain events when article is published', function () {
 });
 
 it('can release events and clear them from the article', function () {
-    $article = Article::createPublished(new ArticleId(1), 'Title', 'body');
+    $article = Article::createPublished(ArticleId::fromInt(1), 'Title', 'body');
 
     // First release should return events
     $events = $article->releaseEvents();
@@ -73,7 +73,7 @@ it('can release events and clear them from the article', function () {
 });
 
 it('can revise an article title', function () {
-    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Original Title', 'Original Body');
     $article->revise('New Title', null, null);
 
     expect($article->getTitle())->toBe('New Title');
@@ -82,7 +82,7 @@ it('can revise an article title', function () {
 });
 
 it('can revise an article body', function () {
-    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Original Title', 'Original Body');
     $article->revise(null, 'New Body Content', null);
 
     expect($article->getTitle())->toBe('Original Title');
@@ -91,7 +91,7 @@ it('can revise an article body', function () {
 });
 
 it('can revise an article status', function () {
-    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Original Title', 'Original Body');
     $article->revise(null, null, ArticleStatus::published());
 
     expect($article->getTitle())->toBe('Original Title');
@@ -101,7 +101,7 @@ it('can revise an article status', function () {
 });
 
 it('can revise multiple article properties at once', function () {
-    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body');
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Original Title', 'Original Body');
     $article->revise('New Title', 'New Body', ArticleStatus::published());
 
     expect($article->getTitle())->toBe('New Title');
@@ -112,7 +112,7 @@ it('can revise multiple article properties at once', function () {
 
 it('can revise article created_at date', function () {
     $originalDate = CarbonImmutable::now()->subDays(5);
-    $article = Article::createDraft(new ArticleId(1), 'Original Title', 'Original Body', $originalDate);
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Original Title', 'Original Body', $originalDate);
 
     $newDate = CarbonImmutable::now()->subDays(10);
     $article->revise(null, null, null, $newDate);
@@ -121,7 +121,7 @@ it('can revise article created_at date', function () {
 });
 
 it('does not trigger status transition when same status provided', function () {
-    $article = Article::createDraft(new ArticleId(1), 'Title', 'Body');
+    $article = Article::createDraft(ArticleId::fromInt(1), 'Title', 'Body');
     $article->revise(null, null, ArticleStatus::draft());
 
     expect($article->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
@@ -129,7 +129,7 @@ it('does not trigger status transition when same status provided', function () {
 });
 
 it('can archive an article', function () {
-    $article = Article::createPublished(new ArticleId(1), 'Title', 'Body');
+    $article = Article::createPublished(ArticleId::fromInt(1), 'Title', 'Body');
     $article->releaseEvents(); // Clear initial events
 
     $article->archive();
@@ -139,7 +139,7 @@ it('can archive an article', function () {
 });
 
 it('can delete an article', function () {
-    $article = Article::createPublished(new ArticleId(1), 'Title', 'Body');
+    $article = Article::createPublished(ArticleId::fromInt(1), 'Title', 'Body');
     $article->archive();
     $article->releaseEvents(); // Clear initial events
 

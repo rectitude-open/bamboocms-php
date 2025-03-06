@@ -19,7 +19,8 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
         private ArticleRepository $repository
-    ) {}
+    ) {
+    }
 
     public function create(CreateArticleDTO $data): Article
     {
@@ -37,7 +38,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     private function createDraft(CreateArticleDTO $data): Article
     {
         $article = Article::createDraft(
-            new ArticleId(0),
+            ArticleId::null(),
             $data->title,
             $data->body,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
@@ -49,7 +50,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     private function createPublished(CreateArticleDTO $data): Article
     {
         $article = Article::createPublished(
-            new ArticleId(0),
+            ArticleId::null(),
             $data->title,
             $data->body,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
@@ -60,7 +61,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function publishDraft(int $id): void
     {
-        $article = $this->repository->getById(new ArticleId($id));
+        $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->publish();
 
         $this->repository->update($article);
@@ -70,7 +71,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function getArticle(int $id): Article
     {
-        return $this->repository->getById(new ArticleId($id));
+        return $this->repository->getById(ArticleId::fromInt($id));
     }
 
     public function getArticleList(GetArticleListDTO $data): LengthAwarePaginator
@@ -80,7 +81,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function updateArticle(int $id, UpdateArticleDTO $data): Article
     {
-        $article = $this->repository->getById(new ArticleId($id));
+        $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->revise(
             $data->title,
             $data->body,
@@ -97,7 +98,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function archiveArticle(int $id)
     {
-        $article = $this->repository->getById(new ArticleId($id));
+        $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->archive();
 
         $this->repository->update($article);
@@ -107,7 +108,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function deleteArticle(int $id)
     {
-        $article = $this->repository->getById(new ArticleId($id));
+        $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->delete();
 
         $this->repository->delete($article);

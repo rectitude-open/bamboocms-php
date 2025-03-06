@@ -53,7 +53,7 @@ class ArticleRecord extends BaseModel
     public function toDomain(array $events = []): Article
     {
         return Article::reconstitute(
-            new ArticleId($this->id),
+            ArticleId::fromInt($this->id),
             $this->title,
             $this->body,
             self::mapStatusToDomain($this->status),

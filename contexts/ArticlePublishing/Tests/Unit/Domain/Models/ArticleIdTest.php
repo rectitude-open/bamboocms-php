@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 
 it('can be created', function (int $validId) {
-    $articleId = new ArticleId($validId);
+    $articleId = ArticleId::fromInt($validId);
 
     expect($articleId->getValue())->toBe($validId);
 })->with([1, 100]);
@@ -12,5 +12,5 @@ it('can be created', function (int $validId) {
 it('throws an exception when the ID is invalid', function (int $invalidId) {
     $this->expectException(\InvalidArgumentException::class);
 
-    new ArticleId($invalidId);
+    ArticleId::fromInt($invalidId);
 })->with([-1, -100]);

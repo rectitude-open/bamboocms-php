@@ -5,9 +5,7 @@ declare(strict_types=1);
 use Contexts\Shared\ValueObjects\IntId;
 
 // Create a concrete implementation of the abstract IntId class for testing
-class ConcreteIntId extends IntId
-{
-}
+class ConcreteIntId extends IntId {}
 
 it('can be created from int', function (int $validId) {
     $id = ConcreteIntId::fromInt($validId);
@@ -34,7 +32,7 @@ it('can check if ID is null', function (int $value, bool $expected) {
 })->with([
     [0, true],
     [1, false],
-    [100, false]
+    [100, false],
 ]);
 
 it('can be compared with another ID', function (int $value1, int $value2, bool $expected) {
@@ -45,17 +43,17 @@ it('can be compared with another ID', function (int $value1, int $value2, bool $
 })->with([
     [1, 1, true],
     [1, 2, false],
-    [0, 0, true]
+    [0, 0, true],
 ]);
 
 it('can be converted to string', function (int $value, string $expected) {
     $id = ConcreteIntId::fromInt($value);
 
-    expect((string)$id)->toBe($expected);
+    expect((string) $id)->toBe($expected);
 })->with([
     [0, '0'],
     [1, '1'],
-    [100, '100']
+    [100, '100'],
 ]);
 
 it('can be serialized and unserialized', function (int $value) {

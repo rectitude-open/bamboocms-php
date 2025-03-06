@@ -6,6 +6,4 @@ namespace Contexts\CategoryManagement\Domain\Models;
 
 use Contexts\Shared\ValueObjects\IntId;
 
-class CategoryId extends IntId
-{
-}
+class CategoryId extends IntId {}

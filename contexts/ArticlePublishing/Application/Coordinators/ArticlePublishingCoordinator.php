@@ -19,8 +19,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
         private ArticleRepository $repository
-    ) {
-    }
+    ) {}
 
     public function create(CreateArticleDTO $data): Article
     {

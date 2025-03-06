@@ -19,8 +19,7 @@ class CategoryManagementCoordinator extends BaseCoordinator
 {
     public function __construct(
         private CategoryRepository $repository
-    ) {
-    }
+    ) {}
 
     public function create(CreateCategoryDTO $data): Category
     {

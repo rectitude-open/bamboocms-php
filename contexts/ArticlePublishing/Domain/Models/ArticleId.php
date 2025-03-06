@@ -6,6 +6,4 @@ namespace Contexts\ArticlePublishing\Domain\Models;
 
 use Contexts\Shared\ValueObjects\IntId;
 
-class ArticleId extends IntId
-{
-}
+class ArticleId extends IntId {}

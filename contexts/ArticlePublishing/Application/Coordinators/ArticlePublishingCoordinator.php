@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Application\Coordinators;
 
+use App\Exceptions\BizException;
 use App\Http\Coordinators\BaseCoordinator;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
@@ -26,7 +27,8 @@ class ArticlePublishingCoordinator extends BaseCoordinator
         $article = match ($data->status) {
             'draft' => $this->createDraft($data),
             'published' => $this->createPublished($data),
-            default => throw new \InvalidArgumentException('Invalid article status'),
+            default => throw BizException::make('Invalid article status: :status')
+                ->with('status', $data->status),
         };
 
         $this->dispatchDomainEvents($article);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Domain\Models;
 
+use App\Exceptions\BizException;
 use InvalidArgumentException;
 
 class ArticleStatus
@@ -53,8 +54,9 @@ class ArticleStatus
         };
 
         if (! in_array($target->value, $validTransitions)) {
-            // TODO: Create a custom exception
-            throw new InvalidArgumentException("Cannot transition from {$this->value} to {$target->value}");
+            throw BizException::make('Cannot transition from :from to :to')
+                ->with('from', $this->value)
+                ->with('to', $target->value);
         }
 
         return $target;

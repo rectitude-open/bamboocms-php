@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\BizException;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 
 it('can be created', function (string $validValue) {
@@ -25,13 +26,17 @@ it('can be transitioned to another status', function (string $initialValue, stri
     ['draft', 'published'],
 ]);
 
-it('throws an exception when transitioning to published from published', function () {
-    $articleStatus = new ArticleStatus('published');
+it('throws an exception when transitioning to invalid target states', function (string $from, string $to) {
+    $articleStatus = new ArticleStatus($from);
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
-    $articleStatus->transitionTo(ArticleStatus::published());
-});
+    $articleStatus->transitionTo(ArticleStatus::{$to}());
+})->with([
+    ['published', 'published'],
+    ['published', 'deleted'],
+    ['deleted', 'published'],
+]);
 
 it('can create from string with valid status', function (string $validValue) {
     $articleStatus = ArticleStatus::fromString($validValue);

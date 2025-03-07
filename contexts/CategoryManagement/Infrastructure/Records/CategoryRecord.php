@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Infrastructure\Records;
 
+use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
@@ -34,7 +35,7 @@ class CategoryRecord extends BaseModel
     public static function mapStatusToDomain(int $status): CategoryStatus
     {
         if (! isset(self::STATUS_MAPPING[$status])) {
-            throw new \InvalidArgumentException('Invalid status value');
+            throw SysException::make('Invalid status value: '.$status);
         }
 
         return new CategoryStatus(self::STATUS_MAPPING[$status]);
@@ -43,7 +44,7 @@ class CategoryRecord extends BaseModel
     public static function mapStatusToRecord(CategoryStatus $status): int
     {
         if (! in_array($status->getValue(), self::STATUS_MAPPING)) {
-            throw new \InvalidArgumentException('Invalid status value');
+            throw SysException::make('Invalid status value: '.$status->getValue());
         }
 
         return array_search($status->getValue(), self::STATUS_MAPPING);

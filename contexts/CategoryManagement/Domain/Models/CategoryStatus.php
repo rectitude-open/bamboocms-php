@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Domain\Models;
 
-use InvalidArgumentException;
+use App\Exceptions\BizException;
 
 class CategoryStatus
 {
@@ -17,7 +17,8 @@ class CategoryStatus
     public function __construct(private string $value)
     {
         if (! in_array($value, [self::SUBSPENDED, self::ACTIVE, self::DELETED])) {
-            throw new InvalidArgumentException('Invalid category status');
+            throw BizException::make('Invalid status: :status')
+                ->with('status', $value);
         }
     }
 
@@ -45,8 +46,9 @@ class CategoryStatus
         };
 
         if (! in_array($target->value, $validTransitions)) {
-            // TODO: Create a custom exception
-            throw new InvalidArgumentException("Cannot transition from {$this->value} to {$target->value}");
+            throw BizException::make('Cannot transition from :from to :to')
+                ->with('from', $this->value)
+                ->with('to', $target->value);
         }
 
         return $target;
@@ -54,10 +56,6 @@ class CategoryStatus
 
     public static function fromString(string $status): self
     {
-        if (! in_array($status, [self::SUBSPENDED, self::ACTIVE, self::DELETED])) {
-            throw new InvalidArgumentException('Invalid category status');
-        }
-
         return new self($status);
     }
 

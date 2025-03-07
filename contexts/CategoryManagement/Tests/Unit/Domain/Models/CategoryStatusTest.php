@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\BizException;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 
 it('can be created', function (string $validValue) {
@@ -11,7 +12,7 @@ it('can be created', function (string $validValue) {
 })->with(['subspended', 'active', 'subspended', 'deleted']);
 
 it('throws an exception when the status is invalid', function (string $invalidValue) {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
     new CategoryStatus($invalidValue);
 })->with(['invalid', 'status']);
@@ -28,7 +29,7 @@ it('can be transitioned to another status', function (string $initialValue, stri
 it('throws an exception when transitioning to active from active', function () {
     $categoryStatus = new CategoryStatus('active');
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
     $categoryStatus->transitionTo(CategoryStatus::active());
 });
@@ -40,7 +41,7 @@ it('can create from string with valid status', function (string $validValue) {
 })->with(['subspended', 'active', 'subspended', 'deleted']);
 
 it('throws an exception when creating from invalid string status', function (string $invalidValue) {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
     CategoryStatus::fromString($invalidValue);
 })->with(['invalid', 'status']);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Infrastructure\Records;
 
+use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
@@ -35,7 +36,7 @@ class ArticleRecord extends BaseModel
     public static function mapStatusToDomain(int $status): ArticleStatus
     {
         if (! isset(self::STATUS_MAPPING[$status])) {
-            throw new \InvalidArgumentException('Invalid status value');
+            throw SysException::make('Invalid status value: '.$status);
         }
 
         return new ArticleStatus(self::STATUS_MAPPING[$status]);
@@ -44,7 +45,7 @@ class ArticleRecord extends BaseModel
     public static function mapStatusToRecord(ArticleStatus $status): int
     {
         if (! in_array($status->getValue(), self::STATUS_MAPPING)) {
-            throw new \InvalidArgumentException('Invalid status value');
+            throw SysException::make('Invalid status value: '.$status->getValue());
         }
 
         return array_search($status->getValue(), self::STATUS_MAPPING);

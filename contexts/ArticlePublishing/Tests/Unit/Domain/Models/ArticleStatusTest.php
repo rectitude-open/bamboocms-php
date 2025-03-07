@@ -12,7 +12,7 @@ it('can be created', function (string $validValue) {
 })->with(['draft', 'published', 'archived', 'deleted']);
 
 it('throws an exception when the status is invalid', function (string $invalidValue) {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
     new ArticleStatus($invalidValue);
 })->with(['invalid', 'status']);
@@ -45,7 +45,7 @@ it('can create from string with valid status', function (string $validValue) {
 })->with(['draft', 'published', 'archived', 'deleted']);
 
 it('throws an exception when creating from invalid string status', function (string $invalidValue) {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
     ArticleStatus::fromString($invalidValue);
 })->with(['invalid', 'status']);

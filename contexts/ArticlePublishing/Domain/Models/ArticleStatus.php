@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Domain\Models;
 
 use App\Exceptions\BizException;
-use InvalidArgumentException;
 
 class ArticleStatus
 {
@@ -20,7 +19,8 @@ class ArticleStatus
     public function __construct(private string $value)
     {
         if (! in_array($value, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
-            throw new InvalidArgumentException('Invalid article status');
+            throw BizException::make('Invalid article status: :status')
+                ->with('status', $value);
         }
     }
 
@@ -64,10 +64,6 @@ class ArticleStatus
 
     public static function fromString(string $status): self
     {
-        if (! in_array($status, [self::DRAFT, self::PUBLISHED, self::ARCHIVED, self::DELETED])) {
-            throw new InvalidArgumentException('Invalid article status');
-        }
-
         return new self($status);
     }
 

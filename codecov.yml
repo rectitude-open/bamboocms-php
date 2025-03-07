@@ -1,4 +1,6 @@
 ignore:
   - "contexts/*/Tests/"
+  - "tests/"
 coverage:
   range: "80...100"
+  threshold: 3%

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use Carbon\CarbonImmutable;
+use Contexts\CategoryManagement\Domain\Exceptions\CategoryNotFoundException;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
@@ -35,6 +36,13 @@ it('can retrieve an category by ID', function () {
     expect($retrievedCategory->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
 });
 
+it('throws an exception when retrieving a non-existent category', function () {
+    $categoryRepository = new CategoryRepository;
+
+    // Attempt to retrieve a non-existent category
+    $categoryRepository->getById(CategoryId::fromInt(999));
+})->throws(CategoryNotFoundException::class);
+
 it('can update an category', function () {
     // Create a test category in the database
     $createdCategory = Category::create(CategoryId::null(), 'Original Label');
@@ -61,6 +69,13 @@ it('can update an category', function () {
     expect($result->getLabel())->toBe('Updated Label');
     expect($result->getStatus()->equals(CategoryStatus::active()))->toBeTrue();
 });
+
+it('throws an exception when updating a non-existent category', function () {
+    $categoryRepository = new CategoryRepository;
+
+    // Attempt to update a non-existent category
+    $categoryRepository->update(Category::create(CategoryId::fromInt(999), 'Updated Label'));
+})->throws(CategoryNotFoundException::class);
 
 it('can paginate categories', function () {
     // Create multiple test categories
@@ -152,3 +167,25 @@ it('can filter categories with search criteria', function () {
 
     expect($result->total())->toBe(1); // Should find the category created on 2021-01-01
 });
+
+it('can delete an category', function () {
+    // Create a test category in the database
+    $createdCategory = Category::create(CategoryId::null(), 'Test Category');
+    $categoryRepository = new CategoryRepository;
+    $savedCategory = $categoryRepository->create($createdCategory);
+
+    // Delete the category
+    $categoryRepository->delete($savedCategory);
+
+    // Verify the category was deleted
+    $this->assertDatabaseMissing('categories', [
+        'id' => $savedCategory->getId()->getValue(),
+    ]);
+});
+
+it('throws an exception when deleting a non-existent category', function () {
+    $categoryRepository = new CategoryRepository;
+
+    // Attempt to delete a non-existent category
+    $categoryRepository->delete(Category::create(CategoryId::fromInt(999), 'Test Category'));
+})->throws(CategoryNotFoundException::class);

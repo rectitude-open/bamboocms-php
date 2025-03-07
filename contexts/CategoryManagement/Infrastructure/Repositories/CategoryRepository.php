@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Infrastructure\Repositories;
 
+use Contexts\CategoryManagement\Domain\Exceptions\CategoryNotFoundException;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategoryRepository
 {
@@ -25,14 +27,23 @@ class CategoryRepository
 
     public function getById(CategoryId $categoryId): Category
     {
-        $record = CategoryRecord::findOrFail($categoryId->getValue());
+        try {
+            $record = CategoryRecord::findOrFail($categoryId->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new CategoryNotFoundException($categoryId->getValue());
+        }
 
         return $record->toDomain();
     }
 
     public function update(Category $category): Category
     {
-        $record = CategoryRecord::findOrFail($category->getId()->getValue());
+
+        try {
+            $record = CategoryRecord::findOrFail($category->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new CategoryNotFoundException($category->getId()->getValue());
+        }
 
         $record->update([
             'label' => $category->getLabel(),
@@ -56,7 +67,11 @@ class CategoryRepository
 
     public function delete(Category $category): void
     {
-        $record = CategoryRecord::findOrFail($category->getId()->getValue());
+        try {
+            $record = CategoryRecord::findOrFail($category->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new CategoryNotFoundException($category->getId()->getValue());
+        }
         $record->update(['status' => CategoryRecord::mapStatusToRecord(CategoryStatus::deleted())]);
         $record->delete();
     }

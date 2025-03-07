@@ -57,7 +57,7 @@ class BizException extends Exception
     public function report(): void
     {
         $logData = [
-            'client_params' => $this->transParams,
+            'user_message' => trans($this->message, $this->transParams),
             'log_context' => $this->logContext,
             'file' => $this->getFile(),
             'line' => $this->getLine(),

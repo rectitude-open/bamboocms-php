@@ -74,7 +74,7 @@ it('reports to log channel', function () {
         ->once()
         ->withArgs(function ($message, $data) {
             return $message === '[BizError] test.message' &&
-                   isset($data['client_params']) &&
+                   isset($data['user_message']) &&
                    isset($data['log_context']) &&
                    isset($data['file']) &&
                    isset($data['line']) &&

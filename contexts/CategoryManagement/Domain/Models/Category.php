@@ -89,6 +89,11 @@ class Category extends BaseDomainModel
         return $this->label;
     }
 
+    public function getStatus(): CategoryStatus
+    {
+        return $this->status;
+    }
+
     public function getCreatedAt(): CarbonImmutable
     {
         return $this->created_at;
@@ -97,10 +102,5 @@ class Category extends BaseDomainModel
     public function getUpdatedAt(): ?CarbonImmutable
     {
         return $this->updated_at;
-    }
-
-    public function getStatus(): CategoryStatus
-    {
-        return $this->status;
     }
 }

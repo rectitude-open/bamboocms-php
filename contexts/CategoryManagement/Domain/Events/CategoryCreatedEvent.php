@@ -12,11 +12,11 @@ class CategoryCreatedEvent
     use Dispatchable;
 
     public function __construct(
-        private readonly CategoryId $CategoryId,
+        private readonly CategoryId $categoryId,
     ) {}
 
     public function getCategoryId(): CategoryId
     {
-        return $this->CategoryId;
+        return $this->categoryId;
     }
 }

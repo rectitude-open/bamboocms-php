@@ -15,7 +15,6 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $label
- * @property string $body
  * @property int $status
  * @property Carbon $created_at
  * @property Carbon|null $updated_at

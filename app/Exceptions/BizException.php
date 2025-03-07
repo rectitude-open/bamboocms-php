@@ -12,7 +12,9 @@ use Illuminate\Support\Str;
 class BizException extends Exception
 {
     protected string $logMessage = '';
+
     protected array $logContext = [];
+
     protected array $transParams = [];
 
     public static function make(string $message): self
@@ -23,6 +25,7 @@ class BizException extends Exception
     public function code(int $code): self
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -33,18 +36,21 @@ class BizException extends Exception
         } else {
             $this->transParams[$key] = $value;
         }
+
         return $this;
     }
 
     public function logMessage(string $message)
     {
         $this->logMessage = $message;
+
         return $this;
     }
 
     public function logContext(array $context): self
     {
         $this->logContext = $context;
+
         return $this;
     }
 
@@ -69,7 +75,7 @@ class BizException extends Exception
             ->map(fn ($trace) => [
                 'file' => Str::after($trace['file'], base_path()),
                 'line' => $trace['line'] ?? 0,
-                'caller' => $this->formatCaller($trace)
+                'caller' => $this->formatCaller($trace),
             ])
             ->all();
     }
@@ -99,7 +105,7 @@ class BizException extends Exception
     {
         return response()->json([
             'success' => false,
-            'message' => trans($this->message, $this->transParams)
+            'message' => trans($this->message, $this->transParams),
         ], $this->code ?: 400);
     }
 }

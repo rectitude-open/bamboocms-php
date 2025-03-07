@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 use App\Exceptions\BizException;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
     $this->exception = BizException::make('test.message');
@@ -94,7 +93,7 @@ it('renders as JSON response', function () {
         ->and($response->getStatusCode())->toBe(422)
         ->and(json_decode($response->getContent(), true))->toBe([
             'success' => false,
-            'message' => 'test.message'
+            'message' => 'test.message',
         ]);
 });
 
@@ -129,7 +128,7 @@ it('formats caller correctly with class type and function', function () {
     $trace = [
         'class' => 'TestClass',
         'type' => '::',
-        'function' => 'testMethod'
+        'function' => 'testMethod',
     ];
 
     expect($method->invoke($this->exception, $trace))->toBe('TestClass::testMethod()');
@@ -141,7 +140,7 @@ it('formats caller correctly with only function', function () {
     $method->setAccessible(true);
 
     $trace = [
-        'function' => 'testMethod'
+        'function' => 'testMethod',
     ];
 
     expect($method->invoke($this->exception, $trace))->toBe('testMethod()');

@@ -33,6 +33,12 @@ it('can get a category', function () {
     ]);
 });
 
+it('can not get a category that does not exist', function () {
+    $response = $this->get('categories/1');
+
+    $response->assertStatus(404);
+});
+
 it('can get a list of categories', function () {
     $response = $this->postJson('categories', [
         'label' => 'My Category',
@@ -101,5 +107,5 @@ it('can delete a category', function () {
 
     $response = $this->get("categories/{$id}");
 
-    $response->assertStatus(422);
+    $response->assertStatus(404);
 });

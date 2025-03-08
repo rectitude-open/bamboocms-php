@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Domain\Exceptions;
 
-use Contexts\Shared\Exceptions\DomainException;
 use Contexts\Shared\Exceptions\NotFoundException;
 
-class CategoryNotFoundException extends DomainException implements NotFoundException
+class CategoryNotFoundException extends NotFoundException
 {
     public function __construct(int $id)
     {

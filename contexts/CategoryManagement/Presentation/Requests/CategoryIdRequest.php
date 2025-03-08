@@ -10,6 +10,6 @@ class CategoryIdRequest extends BaseFormRequest
 {
     public function rules(): array
     {
-        return $this->idRule('categories');
+        return $this->idRule();
     }
 }

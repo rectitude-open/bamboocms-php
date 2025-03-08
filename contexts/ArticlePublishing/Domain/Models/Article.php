@@ -15,6 +15,7 @@ class Article extends BaseDomainModel
         private string $title,
         private string $body,
         private ArticleStatus $status,
+        private ArticleCategoryCollection $categories,
         private ?CarbonImmutable $created_at = null,
         private ?CarbonImmutable $updated_at = null
     ) {
@@ -25,6 +26,7 @@ class Article extends BaseDomainModel
         ?string $newTitle,
         ?string $newBody,
         ?ArticleStatus $newStatus,
+        ?ArticleCategoryCollection $categories,
         ?CarbonImmutable $newCreatedAt = null,
     ) {
         $this->title = $newTitle ?? $this->title;
@@ -32,6 +34,7 @@ class Article extends BaseDomainModel
         if ($newStatus && ! $this->status->equals($newStatus)) {
             $this->transitionStatus($newStatus);
         }
+        $this->categories = $categories ?? $this->categories;
         $this->created_at = $newCreatedAt ?? $this->created_at;
     }
 
@@ -40,11 +43,12 @@ class Article extends BaseDomainModel
         string $title,
         string $body,
         ArticleStatus $status,
+        ArticleCategoryCollection $categories,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null,
         array $events = []
     ): self {
-        $article = new self($id, $title, $body, $status, $created_at, $updated_at);
+        $article = new self($id, $title, $body, $status, $categories, $created_at, $updated_at);
         foreach ($events as $event) {
             $article->recordEvent($event);
         }
@@ -56,20 +60,22 @@ class Article extends BaseDomainModel
         ArticleId $id,
         string $title,
         string $body,
+        ArticleCategoryCollection $categories,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null
     ): self {
-        return new self($id, $title, $body, ArticleStatus::draft(), $created_at, $updated_at);
+        return new self($id, $title, $body, ArticleStatus::draft(), $categories, $created_at, $updated_at);
     }
 
     public static function createPublished(
         ArticleId $id,
         string $title,
         string $body,
+        ArticleCategoryCollection $categories,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null
     ): self {
-        $article = new self($id, $title, $body, ArticleStatus::published(), $created_at, $updated_at);
+        $article = new self($id, $title, $body, ArticleStatus::published(), $categories, $created_at, $updated_at);
         $article->recordEvent(new ArticlePublishedEvent($article->id));
 
         return $article;
@@ -115,6 +121,16 @@ class Article extends BaseDomainModel
         return $this->body;
     }
 
+    public function getStatus(): ArticleStatus
+    {
+        return $this->status;
+    }
+
+    public function getCategories(): ArticleCategoryCollection
+    {
+        return $this->categories;
+    }
+
     public function getCreatedAt(): CarbonImmutable
     {
         return $this->created_at;
@@ -123,10 +139,5 @@ class Article extends BaseDomainModel
     public function getUpdatedAt(): ?CarbonImmutable
     {
         return $this->updated_at;
-    }
-
-    public function getStatus(): ArticleStatus
-    {
-        return $this->status;
     }
 }

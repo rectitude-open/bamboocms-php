@@ -14,10 +14,10 @@ class BaseFormRequest extends FormRequest
         $this->route('id') && $this->merge(['id' => $this->route('id')]);
     }
 
-    protected function idRule(string $table): array
+    protected function idRule(): array
     {
         return [
-            'id' => ['required', 'integer', 'gt:0', "exists:{$table},id"],
+            'id' => ['required', 'integer', 'gt:0'],
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Contexts\Shared\Exceptions\NotFoundException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (NotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        });
         $exceptions->render(function (AuthenticationException $e) {
             return response()->json(['message' => __('Sorry, you need to log in to perform this action.')], 401);
         });

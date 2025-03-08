@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Infrastructure\Repositories;
 
+use Contexts\ArticlePublishing\Domain\Exceptions\ArticleNotFoundException;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ArticleRepository
 {
@@ -26,14 +28,22 @@ class ArticleRepository
 
     public function getById(ArticleId $articleId): Article
     {
-        $record = ArticleRecord::findOrFail($articleId->getValue());
+        try {
+            $record = ArticleRecord::findOrFail($articleId->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new ArticleNotFoundException($articleId->getValue());
+        }
 
         return $record->toDomain();
     }
 
     public function update(Article $article): Article
     {
-        $record = ArticleRecord::findOrFail($article->getId()->getValue());
+        try {
+            $record = ArticleRecord::findOrFail($article->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new ArticleNotFoundException($article->getId()->getValue());
+        }
 
         $record->update([
             'title' => $article->getTitle(),
@@ -58,7 +68,11 @@ class ArticleRepository
 
     public function delete(Article $article): void
     {
-        $record = ArticleRecord::findOrFail($article->getId()->getValue());
+        try {
+            $record = ArticleRecord::findOrFail($article->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new ArticleNotFoundException($article->getId()->getValue());
+        }
         $record->update(['status' => ArticleRecord::mapStatusToRecord(ArticleStatus::deleted())]);
         $record->delete();
     }

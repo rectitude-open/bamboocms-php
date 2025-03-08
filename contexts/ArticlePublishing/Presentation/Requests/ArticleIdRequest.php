@@ -10,6 +10,6 @@ class ArticleIdRequest extends BaseFormRequest
 {
     public function rules(): array
     {
-        return $this->idRule('articles');
+        return $this->idRule();
     }
 }

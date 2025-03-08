@@ -11,7 +11,7 @@ class UpdateArticleRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'gt:0', 'exists:articles,id'],
+            'id' => ['required', 'integer', 'gt:0'],
             'title' => ['string', 'max:255'],
             'body' => ['string', 'max:20000'],
             'status' => ['string', 'in:draft,published'],

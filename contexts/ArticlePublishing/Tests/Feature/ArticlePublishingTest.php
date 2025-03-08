@@ -154,5 +154,5 @@ it('can archive and delete an article', function () {
 
     $response = $this->get("articles/{$id}");
 
-    $response->assertStatus(422);
+    $response->assertStatus(404);
 });

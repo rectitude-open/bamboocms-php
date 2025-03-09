@@ -19,8 +19,18 @@ class Password
         return new self(password_hash($plainText, PASSWORD_ARGON2ID));
     }
 
+    public static function createFromHashedValue(string $hashedValue): self
+    {
+        return new self($hashedValue);
+    }
+
     public function verify(string $plainText): bool
     {
         return password_verify($plainText, $this->hashedValue);
+    }
+
+    public function getValue(): string
+    {
+        return $this->hashedValue;
     }
 }

@@ -11,6 +11,13 @@ it('can create a password from plain text', function () {
     expect($password)->toBeInstanceOf(Password::class);
 });
 
+it('can create a password from a hashed value', function () {
+    $hashedValue = password_hash('securePassword123', PASSWORD_ARGON2ID);
+    $password = Password::createFromHashedValue($hashedValue);
+
+    expect($password)->toBeInstanceOf(Password::class);
+});
+
 it('throws an exception when password is too short', function (string $shortPassword) {
     expect(function () use ($shortPassword) {
         Password::createFromPlainText($shortPassword);

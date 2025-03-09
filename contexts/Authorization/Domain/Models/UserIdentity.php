@@ -128,6 +128,11 @@ class UserIdentity extends BaseDomainModel
         return $this->email;
     }
 
+    public function getPassword(): Password
+    {
+        return $this->password;
+    }
+
     public function getDisplayName(): string
     {
         return $this->display_name;

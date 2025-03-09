@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Contexts\Authorization\Infrastructure\Repositories;
 
 use Contexts\Authorization\Domain\Exceptions\UserNotFoundException;
-use Contexts\Authorization\Domain\Models\UserIdentity;
 use Contexts\Authorization\Domain\Models\UserId;
+use Contexts\Authorization\Domain\Models\UserIdentity;
 use Contexts\Authorization\Domain\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

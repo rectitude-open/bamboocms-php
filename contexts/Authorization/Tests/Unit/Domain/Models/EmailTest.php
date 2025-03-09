@@ -13,7 +13,7 @@ it('can be created with valid email address', function (string $validEmail) {
     'user@example.com',
     'john.doe@company.co.uk',
     'info@domain.org',
-    'support+tickets@company.io'
+    'support+tickets@company.io',
 ]);
 
 it('throws an exception when email address is invalid', function (string $invalidEmail) {
@@ -25,7 +25,7 @@ it('throws an exception when email address is invalid', function (string $invali
     'missing@domain',
     '@no-user.com',
     'spaces in@email.com',
-    'double@@atsign.com'
+    'double@@atsign.com',
 ]);
 
 it('compares emails correctly', function () {

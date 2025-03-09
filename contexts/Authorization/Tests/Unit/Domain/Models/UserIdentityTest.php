@@ -7,8 +7,8 @@ use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\Models\Email;
 use Contexts\Authorization\Domain\Models\Password;
-use Contexts\Authorization\Domain\Models\UserIdentity;
 use Contexts\Authorization\Domain\Models\UserId;
+use Contexts\Authorization\Domain\Models\UserIdentity;
 use Contexts\Authorization\Domain\Models\UserStatus;
 
 beforeEach(function () {

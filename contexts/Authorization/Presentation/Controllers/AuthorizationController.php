@@ -9,10 +9,10 @@ use Contexts\Authorization\Application\Coordinators\AuthorizationCoordinator;
 use Contexts\Authorization\Application\DTOs\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\GetUserListDTO;
 use Contexts\Authorization\Application\DTOs\UpdateUserDTO;
-use Contexts\Authorization\Presentation\Requests\UserIdRequest;
 use Contexts\Authorization\Presentation\Requests\CreateUserRequest;
 use Contexts\Authorization\Presentation\Requests\GetUserListRequest;
 use Contexts\Authorization\Presentation\Requests\UpdateUserRequest;
+use Contexts\Authorization\Presentation\Requests\UserIdRequest;
 use Contexts\Authorization\Presentation\Resources\UserResource;
 
 class AuthorizationController extends BaseController

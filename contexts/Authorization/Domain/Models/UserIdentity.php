@@ -7,8 +7,8 @@ namespace Contexts\Authorization\Domain\Models;
 use App\Exceptions\BizException;
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
-use Contexts\Authorization\Domain\Events\UserCreatedEvent;
 use Contexts\Authorization\Domain\Events\PasswordChangedEvent;
+use Contexts\Authorization\Domain\Events\UserCreatedEvent;
 
 class UserIdentity extends BaseDomainModel
 {

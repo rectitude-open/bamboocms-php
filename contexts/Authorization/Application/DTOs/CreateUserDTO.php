@@ -11,8 +11,7 @@ class CreateUserDTO
         public readonly string $password,
         public readonly string $display_name,
         public readonly ?string $created_at
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(array $data): self
     {

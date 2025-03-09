@@ -7,9 +7,13 @@ namespace Contexts\ArticlePublishing\Infrastructure\Records;
 use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
 use Contexts\ArticlePublishing\Domain\Models\Article;
+use Contexts\ArticlePublishing\Domain\Models\ArticleCategory;
+use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -22,9 +26,16 @@ use Illuminate\Support\Carbon;
  */
 class ArticleRecord extends BaseModel
 {
+    use SoftDeletes;
+
     protected $table = 'articles';
 
     protected $fillable = ['title', 'body', 'status', 'created_at'];
+
+    public function categories()
+    {
+        return $this->belongsToMany(CategoryRecord::class, 'pivot_article_category', 'article_id', 'category_id');
+    }
 
     public const STATUS_MAPPING = [
         0 => 'draft',
@@ -53,11 +64,16 @@ class ArticleRecord extends BaseModel
 
     public function toDomain(array $events = []): Article
     {
+        $categories = new ArticleCategoryCollection(
+            $this->categories()->get()->map(fn ($category) => new ArticleCategory($category->id, $category->label))->toArray()
+        );
+
         return Article::reconstitute(
             ArticleId::fromInt($this->id),
             $this->title,
             $this->body,
             self::mapStatusToDomain($this->status),
+            $categories,
             $this->created_at->toImmutable(),
             $this->updated_at?->toImmutable(),
             events: $events
@@ -76,6 +92,12 @@ class ArticleRecord extends BaseModel
 
         $query->when(isset($criteria['status']), function ($query) use ($criteria) {
             $query->where('status', $criteria['status']);
+        });
+
+        $query->when(isset($criteria['category_id']), function ($query) use ($criteria) {
+            $query->whereHas('categories', function ($query) use ($criteria) {
+                $query->where('category_id', $criteria['category_id']);
+            });
         });
 
         $query->when(isset($criteria['created_at_range']), function ($query) use ($criteria) {

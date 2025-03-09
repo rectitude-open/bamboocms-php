@@ -19,6 +19,14 @@ return new class extends Migration
             $table->text('body')->nullable();
             $table->tinyInteger('status')->default(0)->comment('0: draft, 1: published, 2: archived, 3: deleted');
             $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('pivot_article_category', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('article_id');
+            $table->unsignedInteger('category_id');
+            $table->timestamps();
         });
     }
 

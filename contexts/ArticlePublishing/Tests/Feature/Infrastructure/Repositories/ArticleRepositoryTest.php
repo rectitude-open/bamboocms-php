@@ -20,7 +20,7 @@ beforeEach(function () {
     $this->categories = CategoryRecord::factory()->count(3)->create();
 
     // Initialize repository
-    $this->repository = new ArticleRepository();
+    $this->repository = new ArticleRepository;
 });
 
 it('can create an article', function () {

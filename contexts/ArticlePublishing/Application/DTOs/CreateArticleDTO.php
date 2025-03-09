@@ -10,6 +10,7 @@ class CreateArticleDTO
         public readonly string $title,
         public readonly string $body,
         public readonly string $status,
+        public readonly array $category_ids,
         public readonly ?string $created_at
     ) {}
 
@@ -19,6 +20,7 @@ class CreateArticleDTO
             $data['title'],
             $data['body'] ?? '',
             $data['status'] ?? 'draft',
+            $data['category_ids'] ?? [],
             $data['created_at'] ?? null,
         );
     }

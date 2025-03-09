@@ -22,7 +22,10 @@ class ArticleResource extends JsonResource
             'title' => (string) $article->getTitle(),
             'body' => (string) $article->getbody(),
             'status' => (string) $article->getStatus()->getValue(),
-
+            'categories' => $article->getCategories()->map(fn ($category) => [
+                'id' => $category->getId(),
+                'label' => $category->getLabel(),
+            ])->toArray(),
             'created_at' => $article->getCreatedAt()->format('Y-m-d H:i:s'),
             'updated_at' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];

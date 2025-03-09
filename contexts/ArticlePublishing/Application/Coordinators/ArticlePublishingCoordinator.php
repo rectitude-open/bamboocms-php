@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
+use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
@@ -19,7 +20,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private ArticleRepository $repository
+        private ArticleRepository $repository,
+        private CategoryGateway $categoryGateway
     ) {}
 
     public function create(CreateArticleDTO $data): Article
@@ -42,6 +44,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             ArticleId::null(),
             $data->title,
             $data->body,
+            $this->categoryGateway->getArticleCategories($data->category_ids),
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 
@@ -54,6 +57,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             ArticleId::null(),
             $data->title,
             $data->body,
+            $this->categoryGateway->getArticleCategories($data->category_ids),
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 
@@ -87,6 +91,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             $data->title,
             $data->body,
             $data->status ? ArticleStatus::fromString($data->status) : null,
+            $this->categoryGateway->getArticleCategories($data->category_ids),
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 

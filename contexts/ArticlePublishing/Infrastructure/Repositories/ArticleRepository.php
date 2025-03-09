@@ -6,24 +6,35 @@ namespace Contexts\ArticlePublishing\Infrastructure\Repositories;
 
 use Contexts\ArticlePublishing\Domain\Exceptions\ArticleNotFoundException;
 use Contexts\ArticlePublishing\Domain\Models\Article;
+use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class ArticleRepository
 {
     public function create(Article $article): Article
     {
-        $record = ArticleRecord::create([
-            'title' => $article->getTitle(),
-            'body' => $article->getbody(),
-            'status' => ArticleRecord::mapStatusToRecord($article->getStatus()),
-            'created_at' => $article->getCreatedAt(),
-        ]);
+        return DB::transaction(function () use ($article) {
+            $record = ArticleRecord::create([
+                'title' => $article->getTitle(),
+                'body' => $article->getbody(),
+                'status' => ArticleRecord::mapStatusToRecord($article->getStatus()),
+                'created_at' => $article->getCreatedAt(),
+            ]);
 
-        return $record->toDomain($article->getEvents());
+            $this->syncCategories($record, $article->getCategories());
+
+            return $record->toDomain($article->getEvents());
+        });
+    }
+
+    private function syncCategories(ArticleRecord $record, ArticleCategoryCollection $articleCategoryCollection): void
+    {
+        $record->categories()->sync($articleCategoryCollection->getIdsArray());
     }
 
     public function getById(ArticleId $articleId): Article
@@ -51,6 +62,8 @@ class ArticleRepository
             'status' => ArticleRecord::mapStatusToRecord($article->getStatus()),
             'created_at' => $article->getCreatedAt(),
         ]);
+
+        $this->syncCategories($record, $article->getCategories());
 
         return $record->toDomain($article->getEvents());
     }

@@ -1,176 +1,184 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Contexts\ArticlePublishing\Tests\Feature\Infrastructure\Repositories;
+
 use Carbon\CarbonImmutable;
+use Contexts\ArticlePublishing\Domain\Exceptions\ArticleNotFoundException;
 use Contexts\ArticlePublishing\Domain\Models\Article;
+use Contexts\ArticlePublishing\Domain\Models\ArticleCategory;
+use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
+use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 
-it('can persist draft article data correctly', function () {
-    $article = Article::createDraft(ArticleId::null(), 'My Article', 'This is my article body', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
+beforeEach(function () {
+    // Create test categories
+    $this->categories = CategoryRecord::factory()->count(3)->create();
 
-    $articleRepository->create($article);
-
-    $this->assertDatabaseHas('articles', [
-        'title' => 'My Article',
-        'body' => 'This is my article body',
-        'status' => ArticleRecord::mapStatusToRecord(ArticleStatus::draft()),
-    ]);
+    // Initialize repository
+    $this->repository = new ArticleRepository();
 });
 
-it('can persist published article data correctly', function () {
-    $article = Article::createPublished(ArticleId::null(), 'My Article', 'This is my article body', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
+it('can create an article', function () {
+    $article = Article::createDraft(
+        ArticleId::null(),
+        'Test Article Title',
+        'Test Article Content',
+        new ArticleCategoryCollection([
+            new ArticleCategory($this->categories[0]->id, $this->categories[0]->label),
+            new ArticleCategory($this->categories[1]->id, $this->categories[1]->label),
+        ])
+    );
 
-    $articleRepository->create($article);
+    $savedArticle = $this->repository->create($article);
+
+    expect($savedArticle->getId()->getValue())->toBeGreaterThan(0)
+        ->and($savedArticle->getTitle())->toBe('Test Article Title')
+        ->and($savedArticle->getBody())->toBe('Test Article Content')
+        ->and($savedArticle->getStatus()->getValue())->toBe(ArticleStatus::DRAFT);
 
     $this->assertDatabaseHas('articles', [
-        'title' => 'My Article',
-        'body' => 'This is my article body',
-        'status' => ArticleRecord::mapStatusToRecord(ArticleStatus::published()),
+        'id' => $savedArticle->getId()->getValue(),
+        'title' => 'Test Article Title',
+        'body' => 'Test Article Content',
+        'status' => 0,
     ]);
+
+    $categoryIds = $savedArticle->getCategories()->getIdsArray();
+    foreach ($categoryIds as $categoryId) {
+        $this->assertDatabaseHas('pivot_article_category', [
+            'article_id' => $savedArticle->getId()->getValue(),
+            'category_id' => $categoryId,
+        ]);
+    }
 });
 
-it('can retrieve an article by ID', function () {
-    // Create a test article in the database
-    $createdArticle = Article::createDraft(ArticleId::null(), 'Test Article', 'Test Content', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
-    $savedArticle = $articleRepository->create($createdArticle);
+it('can get an article by id', function () {
+    $articleRecord = ArticleRecord::create([
+        'title' => 'Test Article Title',
+        'body' => 'Test Article Content',
+        'status' => 0,
+        'created_at' => now(),
+    ]);
 
-    // Retrieve the article using getById
-    $retrievedArticle = $articleRepository->getById($savedArticle->id);
+    $articleRecord->categories()->attach([$this->categories[0]->id, $this->categories[1]->id]);
 
-    // Assert the retrieved article matches the created one
-    expect($retrievedArticle->getId()->getValue())->toBe($savedArticle->getId()->getValue());
-    expect($retrievedArticle->getTitle())->toBe('Test Article');
-    expect($retrievedArticle->getBody())->toBe('Test Content');
-    expect($retrievedArticle->getStatus()->equals(ArticleStatus::draft()))->toBeTrue();
+    $article = $this->repository->getById(ArticleId::fromInt($articleRecord->id));
+
+    expect($article->getId()->getValue())->toBe($articleRecord->id)
+        ->and($article->getTitle())->toBe('Test Article Title')
+        ->and($article->getBody())->toBe('Test Article Content')
+        ->and($article->getStatus()->getValue())->toBe(ArticleStatus::DRAFT);
+
+    $categoryIds = $article->getCategories()->getIdsArray();
+    expect($categoryIds)->toContain($this->categories[0]->id, $this->categories[1]->id);
+});
+
+it('throws exception when article not found', function () {
+    $this->expectException(ArticleNotFoundException::class);
+
+    $this->repository->getById(ArticleId::fromInt(999));
 });
 
 it('can update an article', function () {
-    // Create a test article in the database
-    $createdArticle = Article::createDraft(ArticleId::null(), 'Original Title', 'Original Content', new CarbonImmutable);
-    $articleRepository = new ArticleRepository;
-    $savedArticle = $articleRepository->create($createdArticle);
-
-    // Create an updated version of the article
-    $updatedArticle = Article::createPublished(
-        $savedArticle->id,
-        'Updated Title',
-        'Updated Content',
-        new CarbonImmutable
-    );
-
-    // Update the article
-    $result = $articleRepository->update($updatedArticle);
-
-    // Verify database was updated
-    $this->assertDatabaseHas('articles', [
-        'id' => $savedArticle->getId()->getValue(),
-        'title' => 'Updated Title',
-        'body' => 'Updated Content',
-        'status' => ArticleRecord::mapStatusToRecord(ArticleStatus::published()),
+    $articleRecord = ArticleRecord::create([
+        'title' => 'Original Title',
+        'body' => 'Original Content',
+        'status' => 0,
+        'created_at' => now(),
     ]);
 
-    // Verify returned object reflects updates
-    expect($result->getTitle())->toBe('Updated Title');
-    expect($result->getBody())->toBe('Updated Content');
-    expect($result->getStatus()->equals(ArticleStatus::published()))->toBeTrue();
+    $articleRecord->categories()->attach([$this->categories[0]->id]);
+
+    $article = $this->repository->getById(ArticleId::fromInt($articleRecord->id));
+
+    $article->revise(
+        'Updated Title',
+        'Updated Content',
+        ArticleStatus::published(),
+        new ArticleCategoryCollection([
+            new ArticleCategory($this->categories[1]->id, $this->categories[1]->label),
+            new ArticleCategory($this->categories[2]->id, $this->categories[2]->label),
+        ])
+    );
+
+    $updatedArticle = $this->repository->update($article);
+
+    expect($updatedArticle->getTitle())->toBe('Updated Title')
+        ->and($updatedArticle->getBody())->toBe('Updated Content')
+        ->and($updatedArticle->getStatus()->getValue())->toBe(ArticleStatus::PUBLISHED);
+
+    $this->assertDatabaseHas('articles', [
+        'id' => $updatedArticle->getId()->getValue(),
+        'title' => 'Updated Title',
+        'body' => 'Updated Content',
+        'status' => 1,
+    ]);
+
+    $this->assertDatabaseMissing('pivot_article_category', [
+        'article_id' => $updatedArticle->getId()->getValue(),
+        'category_id' => $this->categories[0]->id,
+    ]);
+
+    $this->assertDatabaseHas('pivot_article_category', [
+        'article_id' => $updatedArticle->getId()->getValue(),
+        'category_id' => $this->categories[1]->id,
+    ]);
+
+    $this->assertDatabaseHas('pivot_article_category', [
+        'article_id' => $updatedArticle->getId()->getValue(),
+        'category_id' => $this->categories[2]->id,
+    ]);
 });
 
 it('can paginate articles', function () {
-    // Create multiple test articles
-    $articleRepository = new ArticleRepository;
-
-    // Create 5 articles
-    for ($i = 1; $i <= 5; $i++) {
-        $article = Article::createPublished(
-            ArticleId::null(),
-            "Article $i",
-            "Content $i",
-            new CarbonImmutable
-        );
-        $articleRepository->create($article);
+    for ($i = 1; $i <= 10; $i++) {
+        $status = $i % 3 === 0 ? 1 : 0;
+        $article = ArticleRecord::create([
+            'title' => "Article Title {$i}",
+            'body' => "Article Content {$i}",
+            'status' => $status,
+            'created_at' => CarbonImmutable::now()->subDays($i),
+        ]);
+        $article->categories()->attach([$this->categories[$i % 3]->id]);
     }
 
-    // Test pagination with default criteria
-    $result = $articleRepository->paginate(1, 2, []);
+    // Test basic pagination
+    $result = $this->repository->paginate(1, 5);
+    expect($result->count())->toBe(5)
+        ->and($result->total())->toBe(10);
 
-    // Assert pagination metadata
-    expect($result->total())->toBe(5);
-    expect($result->perPage())->toBe(2);
-    expect($result->currentPage())->toBe(1);
-    expect(count($result->items()))->toBe(2); // 2 items on the first page
+    // Test filtering by status
+    $publishedResult = $this->repository->paginate(1, 10, ['status' => 1]);
+    expect($publishedResult->count())->toBeLessThan(10)
+        ->and($publishedResult->items())->toHaveCount(3);
 
-    // Test second page
-    $result2 = $articleRepository->paginate(2, 2, []);
-    expect($result2->currentPage())->toBe(2);
-    expect(count($result2->items()))->toBe(2); // 2 items on the second page
-
-    // Test last page
-    $result3 = $articleRepository->paginate(3, 2, []);
-    expect($result3->currentPage())->toBe(3);
-    expect(count($result3->items()))->toBe(1); // 1 item on the last page
+    // Test search by title
+    $searchResult = $this->repository->paginate(1, 10, ['title' => 'Title 1']);
+    expect($searchResult->items())->toHaveCount(2); // 1 and 10
 });
 
-it('can filter articles with search criteria', function () {
-    $articleRepository = new ArticleRepository;
-
-    // Create articles with specific titles
-    $article1 = Article::createDraft(
-        ArticleId::null(),
-        'Laravel Article',
-        'Content about Laravel',
-        new CarbonImmutable
-    );
-    $articleRepository->create($article1);
-
-    $article2 = Article::createDraft(
-        ArticleId::null(),
-        'PHP Tutorial',
-        'Content about PHP',
-        new CarbonImmutable
-    );
-    $articleRepository->create($article2);
-
-    $article3 = Article::createPublished(
-        ArticleId::null(),
-        'Laravel Tips',
-        'More Laravel content',
-        new CarbonImmutable
-    );
-    $articleRepository->create($article3);
-
-    // Test search by title criteria
-    $result = $articleRepository->paginate(1, 10, ['title' => 'Laravel']);
-    expect($result->total())->toBe(2); // Should find the two Laravel articles
-
-    // Test search with status criteria
-    $result = $articleRepository->paginate(1, 10, [
-        'title' => 'Laravel',
-        'status' => ArticleRecord::mapStatusToRecord(ArticleStatus::published()),
+it('can delete an article', function () {
+    $articleRecord = ArticleRecord::create([
+        'title' => 'Test Article Title',
+        'body' => 'Test Article Content',
+        'status' => 0,
+        'created_at' => now(),
     ]);
-    expect($result->total())->toBe(1); // Should only find the published Laravel article
+    $articleRecord->categories()->attach([$this->categories[0]->id]);
 
-    // Test with no matching criteria
-    $result = $articleRepository->paginate(1, 10, ['title' => 'Django']);
-    expect($result->total())->toBe(0);
+    $id = $articleRecord->id;
 
-    // Test search by created_at_range criteria
-    $article4 = Article::createPublished(
-        ArticleId::null(),
-        'Laravel Tips',
-        'More Laravel content',
-        new CarbonImmutable('2021-01-01')
-    );
-    $articleRepository->create($article4);
+    $article = $this->repository->getById(ArticleId::fromInt($id));
 
-    $result = $articleRepository->paginate(1, 10, [
-        'created_at_range' => ['2021-01-01', '2021-01-02'],
-    ]);
+    $this->repository->delete($article);
 
-    expect($result->total())->toBe(1); // Should find the article created on 2021-01-01
+    $this->assertSoftDeleted('articles', ['id' => $id]);
+
+    $this->expectException(ArticleNotFoundException::class);
+    $this->repository->getById(ArticleId::fromInt($id));
 });

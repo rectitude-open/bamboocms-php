@@ -9,7 +9,9 @@ use App\Http\Models\BaseModel;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
+use Contexts\CategoryManagement\Infrastructure\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 /**
@@ -81,5 +83,10 @@ class CategoryRecord extends BaseModel
         });
 
         return $query;
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return CategoryFactory::new();
     }
 }

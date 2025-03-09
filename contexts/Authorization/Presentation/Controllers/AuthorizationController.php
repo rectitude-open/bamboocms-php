@@ -9,6 +9,7 @@ use Contexts\Authorization\Application\Coordinators\AuthorizationCoordinator;
 use Contexts\Authorization\Application\DTOs\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\GetUserListDTO;
 use Contexts\Authorization\Application\DTOs\UpdateUserDTO;
+use Contexts\Authorization\Presentation\Requests\ChangePasswordRequest;
 use Contexts\Authorization\Presentation\Requests\CreateUserRequest;
 use Contexts\Authorization\Presentation\Requests\GetUserListRequest;
 use Contexts\Authorization\Presentation\Requests\UpdateUserRequest;
@@ -75,6 +76,18 @@ class AuthorizationController extends BaseController
 
         return $this->success(['id' => $result->getId()->getValue()])
             ->message('User deleted successfully')
+            ->send();
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $data = $request->validated();
+        $userId = (int) ($data['id']);
+        $newPassword = $data['new_password'];
+        app(AuthorizationCoordinator::class)->changePassword($userId, $newPassword);
+
+        return $this->success()
+            ->message('Password changed successfully')
             ->send();
     }
 }

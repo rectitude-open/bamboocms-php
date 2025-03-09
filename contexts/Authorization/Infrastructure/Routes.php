@@ -10,6 +10,7 @@ Route::middleware([])->name('Authorization.')->group(function () {
         Route::get('{id}', 'getUser')->name('getUser');
         Route::get('', 'getUserList')->name('getUserList');
         Route::post('', 'createUser')->name('createUser');
+        Route::patch('{id}/password', 'changePassword')->name('changePassword');
         Route::put('{id}/subspend', 'subspendUser')->name('subspendUser');
         Route::put('{id}', 'updateUser')->name('updateUser');
         Route::delete('{id}', 'deleteUser')->name('deleteUser');

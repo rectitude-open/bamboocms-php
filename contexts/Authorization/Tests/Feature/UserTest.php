@@ -13,7 +13,7 @@ it('can create active users via api', function () {
     $response->assertStatus(201);
 });
 
-it('can get a user', function () {
+it('can get a user via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
         'password' => 'password123',
@@ -38,13 +38,13 @@ it('can get a user', function () {
     ]);
 });
 
-it('can not get a user that does not exist', function () {
+it('can not get a user that does not exist via api', function () {
     $response = $this->get('users/1');
 
     $response->assertStatus(404);
 });
 
-it('can get a list of users', function () {
+it('can get a list of users via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
         'password' => 'password123',
@@ -59,7 +59,7 @@ it('can get a list of users', function () {
     $response->assertStatus(200);
 });
 
-it('can update a user', function () {
+it('can update a user via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
         'password' => 'password123',
@@ -85,7 +85,7 @@ it('can update a user', function () {
     ]);
 });
 
-it('can subspend a user', function () {
+it('can subspend a user via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
         'password' => 'password123',
@@ -102,7 +102,7 @@ it('can subspend a user', function () {
     $response->assertStatus(200);
 });
 
-it('can delete a user', function () {
+it('can delete a user via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
         'password' => 'password123',
@@ -121,4 +121,24 @@ it('can delete a user', function () {
     $response = $this->get("users/{$id}");
 
     $response->assertStatus(404);
+});
+
+it('can change a user password via api', function () {
+    $response = $this->postJson('users', [
+        'email' => 'test@email.com',
+        'password' => 'password123',
+        'display_name' => 'My User',
+        'status' => 'active',
+    ]);
+
+    $response->assertStatus(201);
+
+    $id = (int) $response->json('data.id');
+
+    $response = $this->patchJson("users/{$id}/password", [
+        'new_password' => 'newpassword123',
+        'new_password_confirmation' => 'newpassword123',
+    ]);
+
+    $response->assertStatus(200);
 });

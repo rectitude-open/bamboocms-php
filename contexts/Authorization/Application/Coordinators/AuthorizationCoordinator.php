@@ -82,4 +82,12 @@ class AuthorizationCoordinator extends BaseCoordinator
 
         return $user;
     }
+
+    public function changePassword(int $userId, string $newPassword)
+    {
+        $user = $this->repository->getById(UserId::fromInt($userId));
+        $user->changePassword($newPassword);
+
+        $this->repository->changePassword($user);
+    }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Presentation\Requests;
+namespace Contexts\Authorization\Presentation\Requests\User;
 
 use App\Http\Requests\BaseFormRequest;
 

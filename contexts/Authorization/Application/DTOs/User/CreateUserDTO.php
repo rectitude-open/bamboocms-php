@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Application\DTOs;
+namespace Contexts\Authorization\Application\DTOs\User;
 
 class CreateUserDTO
 {
@@ -11,7 +11,8 @@ class CreateUserDTO
         public readonly string $password,
         public readonly string $display_name,
         public readonly ?string $created_at
-    ) {}
+    ) {
+    }
 
     public static function fromRequest(array $data): self
     {

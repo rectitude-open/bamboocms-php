@@ -6,14 +6,14 @@ namespace Contexts\Authorization\Presentation\Controllers;
 
 use App\Http\Controllers\BaseController;
 use Contexts\Authorization\Application\Coordinators\UserIdentityCoordinator;
-use Contexts\Authorization\Application\DTOs\CreateUserDTO;
-use Contexts\Authorization\Application\DTOs\GetUserListDTO;
-use Contexts\Authorization\Application\DTOs\UpdateUserDTO;
-use Contexts\Authorization\Presentation\Requests\ChangePasswordRequest;
-use Contexts\Authorization\Presentation\Requests\CreateUserRequest;
-use Contexts\Authorization\Presentation\Requests\GetUserListRequest;
-use Contexts\Authorization\Presentation\Requests\UpdateUserRequest;
-use Contexts\Authorization\Presentation\Requests\UserIdRequest;
+use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
+use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
+use Contexts\Authorization\Application\DTOs\User\UpdateUserDTO;
+use Contexts\Authorization\Presentation\Requests\User\ChangePasswordRequest;
+use Contexts\Authorization\Presentation\Requests\User\CreateUserRequest;
+use Contexts\Authorization\Presentation\Requests\User\GetUserListRequest;
+use Contexts\Authorization\Presentation\Requests\User\UpdateUserRequest;
+use Contexts\Authorization\Presentation\Requests\User\UserIdRequest;
 use Contexts\Authorization\Presentation\Resources\UserResource;
 
 class UserIdentityController extends BaseController

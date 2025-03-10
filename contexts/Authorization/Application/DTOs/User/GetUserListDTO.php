@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Application\DTOs;
+namespace Contexts\Authorization\Application\DTOs\User;
 
 class GetUserListDTO
 {
@@ -14,7 +14,8 @@ class GetUserListDTO
         public readonly ?array $createdAtRange,
         public readonly int $page,
         public readonly int $perPage,
-    ) {}
+    ) {
+    }
 
     public static function fromRequest(array $data): self
     {

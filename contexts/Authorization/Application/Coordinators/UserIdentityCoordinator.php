@@ -6,9 +6,9 @@ namespace Contexts\Authorization\Application\Coordinators;
 
 use App\Http\Coordinators\BaseCoordinator;
 use Carbon\CarbonImmutable;
-use Contexts\Authorization\Application\DTOs\CreateUserDTO;
-use Contexts\Authorization\Application\DTOs\GetUserListDTO;
-use Contexts\Authorization\Application\DTOs\UpdateUserDTO;
+use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
+use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
+use Contexts\Authorization\Application\DTOs\User\UpdateUserDTO;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;

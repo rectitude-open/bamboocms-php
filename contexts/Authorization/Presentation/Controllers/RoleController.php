@@ -11,8 +11,8 @@ use Contexts\Authorization\Application\DTOs\Role\GetRoleListDTO;
 use Contexts\Authorization\Application\DTOs\Role\UpdateRoleDTO;
 use Contexts\Authorization\Presentation\Requests\Role\CreateRoleRequest;
 use Contexts\Authorization\Presentation\Requests\Role\GetRoleListRequest;
-use Contexts\Authorization\Presentation\Requests\Role\UpdateRoleRequest;
 use Contexts\Authorization\Presentation\Requests\Role\RoleIdRequest;
+use Contexts\Authorization\Presentation\Requests\Role\UpdateRoleRequest;
 use Contexts\Authorization\Presentation\Resources\RoleResource;
 
 class RoleController extends BaseController

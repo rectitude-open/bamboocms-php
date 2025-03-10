@@ -12,10 +12,10 @@ use Contexts\Authorization\Application\DTOs\User\UpdateUserDTO;
 use Contexts\Authorization\Presentation\Requests\User\ChangePasswordRequest;
 use Contexts\Authorization\Presentation\Requests\User\CreateUserRequest;
 use Contexts\Authorization\Presentation\Requests\User\GetUserListRequest;
+use Contexts\Authorization\Presentation\Requests\User\UpdateRolesRequest;
 use Contexts\Authorization\Presentation\Requests\User\UpdateUserRequest;
 use Contexts\Authorization\Presentation\Requests\User\UserIdRequest;
 use Contexts\Authorization\Presentation\Resources\UserResource;
-use Contexts\Authorization\Presentation\Requests\User\UpdateRolesRequest;
 
 class UserIdentityController extends BaseController
 {

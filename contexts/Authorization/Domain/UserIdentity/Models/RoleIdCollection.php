@@ -31,7 +31,7 @@ class RoleIdCollection
     {
         return new self(
             $this->items->filter(
-                fn (RoleId $id) => !$other->contains($id)
+                fn (RoleId $id) => ! $other->contains($id)
             )->all()
         );
     }
@@ -55,6 +55,7 @@ class RoleIdCollection
 
     /**
      * @template T
+     *
      * @param  callable(RoleId): T  $callback
      * @return Collection<int, T>
      */

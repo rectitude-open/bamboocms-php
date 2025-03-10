@@ -6,8 +6,10 @@ namespace Contexts\Authorization\Infrastructure\Records;
 
 use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
@@ -15,8 +17,6 @@ use Contexts\Authorization\Infrastructure\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
-use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
-use Contexts\Authorization\Domain\Role\Models\RoleId;
 
 /**
  * @property int $id

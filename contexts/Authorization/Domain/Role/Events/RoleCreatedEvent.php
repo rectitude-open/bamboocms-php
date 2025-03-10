@@ -13,8 +13,7 @@ class RoleCreatedEvent
 
     public function __construct(
         private readonly RoleId $roleId,
-    ) {
-    }
+    ) {}
 
     public function getRoleId(): RoleId
     {

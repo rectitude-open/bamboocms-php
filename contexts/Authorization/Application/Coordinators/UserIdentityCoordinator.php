@@ -9,22 +9,21 @@ use Carbon\CarbonImmutable;
 use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
 use Contexts\Authorization\Application\DTOs\User\UpdateUserDTO;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
-use Contexts\Authorization\Domain\Role\Models\RoleId;
 
 class UserIdentityCoordinator extends BaseCoordinator
 {
     public function __construct(
         private UserRepository $repository
-    ) {
-    }
+    ) {}
 
     public function create(CreateUserDTO $data): UserIdentity
     {

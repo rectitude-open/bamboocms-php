@@ -9,8 +9,7 @@ class CreateRoleDTO
     public function __construct(
         public readonly string $label,
         public readonly ?string $created_at
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(array $data): self
     {

@@ -6,6 +6,4 @@ namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
 use Contexts\Shared\ValueObjects\IntId;
 
-class UserId extends IntId
-{
-}
+class UserId extends IntId {}

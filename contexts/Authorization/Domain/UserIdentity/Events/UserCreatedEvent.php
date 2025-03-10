@@ -13,8 +13,7 @@ class UserCreatedEvent
 
     public function __construct(
         private readonly UserId $userId,
-    ) {
-    }
+    ) {}
 
     public function getUserId(): UserId
     {

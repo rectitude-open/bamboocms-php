@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Role\Events\RoleCreatedEvent;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
-use Contexts\Authorization\Domain\Role\Events\RoleCreatedEvent;
 
 it('can create category with valid data', function () {
     $category = Role::create(RoleId::null(), 'Label');

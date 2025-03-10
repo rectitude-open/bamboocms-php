@@ -11,7 +11,7 @@ use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
 
 it('can persist role data correctly', function () {
     $role = Role::create(RoleId::null(), 'My Role');
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
 
     $roleRepository->create($role);
 
@@ -24,7 +24,7 @@ it('can persist role data correctly', function () {
 it('can retrieve an role by ID', function () {
     // Create a test role in the database
     $createdRole = Role::create(RoleId::null(), 'Test Role');
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
     $savedRole = $roleRepository->create($createdRole);
 
     // Retrieve the role using getById
@@ -37,7 +37,7 @@ it('can retrieve an role by ID', function () {
 });
 
 it('throws an exception when retrieving a non-existent role', function () {
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
 
     // Attempt to retrieve a non-existent role
     $roleRepository->getById(RoleId::fromInt(999));
@@ -46,7 +46,7 @@ it('throws an exception when retrieving a non-existent role', function () {
 it('can update an role', function () {
     // Create a test role in the database
     $createdRole = Role::create(RoleId::null(), 'Original Label');
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
     $savedRole = $roleRepository->create($createdRole);
 
     // Create an updated version of the role
@@ -71,7 +71,7 @@ it('can update an role', function () {
 });
 
 it('throws an exception when updating a non-existent role', function () {
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
 
     // Attempt to update a non-existent role
     $roleRepository->update(Role::create(RoleId::fromInt(999), 'Updated Label'));
@@ -79,14 +79,14 @@ it('throws an exception when updating a non-existent role', function () {
 
 it('can paginate roles', function () {
     // Create multiple test roles
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
 
     // Create 5 roles
     for ($i = 1; $i <= 5; $i++) {
         $role = Role::create(
             RoleId::null(),
             "Role $i",
-            new CarbonImmutable()
+            new CarbonImmutable
         );
         $roleRepository->create($role);
     }
@@ -112,20 +112,20 @@ it('can paginate roles', function () {
 });
 
 it('can filter roles with search criteria', function () {
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
 
     // Create roles with specific labels
     $role1 = Role::create(
         RoleId::null(),
         'Laravel Role',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $roleRepository->create($role1);
 
     $role2 = Role::create(
         RoleId::null(),
         'PHP Tutorial',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $role2->subspend();
     $roleRepository->create($role2);
@@ -133,7 +133,7 @@ it('can filter roles with search criteria', function () {
     $role3 = Role::create(
         RoleId::null(),
         'Laravel Tips',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $role3->subspend();
     $roleRepository->create($role3);
@@ -171,7 +171,7 @@ it('can filter roles with search criteria', function () {
 it('can delete an role', function () {
     // Create a test role in the database
     $createdRole = Role::create(RoleId::null(), 'Test Role');
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
     $savedRole = $roleRepository->create($createdRole);
 
     // Delete the role
@@ -184,7 +184,7 @@ it('can delete an role', function () {
 });
 
 it('throws an exception when deleting a non-existent role', function () {
-    $roleRepository = new RoleRepository();
+    $roleRepository = new RoleRepository;
 
     // Attempt to delete a non-existent role
     $roleRepository->delete(Role::create(RoleId::fromInt(999), 'Test Role'));

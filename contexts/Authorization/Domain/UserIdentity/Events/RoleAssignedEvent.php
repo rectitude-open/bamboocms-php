@@ -15,8 +15,7 @@ class RoleAssignedEvent
     public function __construct(
         private readonly UserId $userId,
         private readonly RoleId $roleId
-    ) {
-    }
+    ) {}
 
     public function getUserId(): UserId
     {

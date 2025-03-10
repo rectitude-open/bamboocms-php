@@ -161,7 +161,7 @@ it('can update user roles via api', function () {
     $roleIds = $roles->pluck('id')->toArray();
 
     $response = $this->putJson("users/{$id}/roles", [
-        'role_ids' => $roleIds
+        'role_ids' => $roleIds,
     ]);
 
     $response->assertStatus(200);

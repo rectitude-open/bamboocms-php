@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Domain\Role\Models;
 
-use App\Exceptions\BizException;
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Role\Events\RoleCreatedEvent;

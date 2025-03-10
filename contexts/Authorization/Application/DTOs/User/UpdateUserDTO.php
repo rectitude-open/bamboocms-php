@@ -11,8 +11,7 @@ class UpdateUserDTO
         public readonly ?string $display_name,
         public readonly ?string $status,
         public readonly ?string $created_at
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(array $data): self
     {

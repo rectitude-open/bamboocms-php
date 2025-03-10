@@ -7,11 +7,11 @@ namespace Contexts\Authorization\Domain\UserIdentity\Models;
 use App\Exceptions\BizException;
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent;
-use Contexts\Authorization\Domain\Role\Models\RoleId;
 
 class UserIdentity extends BaseDomainModel
 {
@@ -27,7 +27,7 @@ class UserIdentity extends BaseDomainModel
         private ?CarbonImmutable $updated_at = null
     ) {
         $this->created_at = $created_at ?? CarbonImmutable::now();
-        $this->roleIdCollection = new RoleIdCollection();
+        $this->roleIdCollection = new RoleIdCollection;
     }
 
     public function syncRoles(RoleIdCollection $newRoles): void
@@ -98,11 +98,11 @@ class UserIdentity extends BaseDomainModel
         UserStatus $status,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null,
-        RoleIdCollection $roleIdCollection = null,
+        ?RoleIdCollection $roleIdCollection = null,
         array $events = []
     ): self {
         $user = new self($id, $email, $password, $display_name, $status, $created_at, $updated_at);
-        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection();
+        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection;
 
         foreach ($events as $event) {
             $user->recordEvent($event);

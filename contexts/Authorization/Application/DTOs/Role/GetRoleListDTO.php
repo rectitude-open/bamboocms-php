@@ -13,8 +13,7 @@ class GetRoleListDTO
         public readonly ?array $createdAtRange,
         public readonly int $page,
         public readonly int $perPage,
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(array $data): self
     {

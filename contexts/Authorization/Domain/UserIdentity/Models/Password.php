@@ -6,9 +6,7 @@ namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
 class Password
 {
-    private function __construct(private string $hashedValue)
-    {
-    }
+    private function __construct(private string $hashedValue) {}
 
     public static function createFromPlainText(string $plainText): self
     {

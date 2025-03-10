@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Contexts\Authorization\Infrastructure\Repositories;
 
 use Contexts\Authorization\Domain\UserIdentity\Exceptions\UserNotFoundException;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 
 class UserRepository
 {

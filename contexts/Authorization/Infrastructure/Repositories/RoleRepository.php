@@ -1,0 +1,78 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Contexts\Authorization\Infrastructure\Repositories;
+
+use Contexts\Authorization\Domain\Role\Exceptions\RoleNotFoundException;
+use Contexts\Authorization\Domain\Role\Models\Role;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
+use Contexts\Authorization\Domain\Role\Models\RoleStatus;
+use Contexts\Authorization\Infrastructure\Records\RoleRecord;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+class RoleRepository
+{
+    public function create(Role $role): Role
+    {
+        $record = RoleRecord::create([
+            'label' => $role->getLabel(),
+            'status' => RoleRecord::mapStatusToRecord($role->getStatus()),
+            'created_at' => $role->getCreatedAt(),
+        ]);
+
+        return $record->toDomain($role->getEvents());
+    }
+
+    public function getById(RoleId $roleId): Role
+    {
+        try {
+            $record = RoleRecord::findOrFail($roleId->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new RoleNotFoundException($roleId->getValue());
+        }
+
+        return $record->toDomain();
+    }
+
+    public function update(Role $role): Role
+    {
+
+        try {
+            $record = RoleRecord::findOrFail($role->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new RoleNotFoundException($role->getId()->getValue());
+        }
+
+        $record->update([
+            'label' => $role->getLabel(),
+            'status' => RoleRecord::mapStatusToRecord($role->getStatus()),
+            'created_at' => $role->getCreatedAt(),
+        ]);
+
+        return $record->toDomain($role->getEvents());
+    }
+
+    public function paginate(int $page = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
+    {
+        $paginator = RoleRecord::query()->search($criteria)->paginate($perPage, ['*'], 'page', $page);
+
+        $paginator->getCollection()->transform(function ($record) {
+            return $record->toDomain();
+        });
+
+        return $paginator;
+    }
+
+    public function delete(Role $role): void
+    {
+        try {
+            $record = RoleRecord::findOrFail($role->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw new RoleNotFoundException($role->getId()->getValue());
+        }
+        $record->update(['status' => RoleRecord::mapStatusToRecord(RoleStatus::deleted())]);
+        $record->delete();
+    }
+}

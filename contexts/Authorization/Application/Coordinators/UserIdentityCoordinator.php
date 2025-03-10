@@ -16,6 +16,8 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 
 class UserIdentityCoordinator extends BaseCoordinator
 {
@@ -90,5 +92,18 @@ class UserIdentityCoordinator extends BaseCoordinator
         $user->changePassword($newPassword);
 
         $this->repository->changePassword($user);
+    }
+
+    public function syncRoles(int $userId, array $roleIds): void
+    {
+        $newRoles = new RoleIdCollection(
+            array_map(fn ($id) => RoleId::fromInt($id), $roleIds)
+        );
+
+        $user = $this->repository->getById(UserId::fromInt($userId));
+
+        $user->syncRoles($newRoles);
+
+        $this->repository->update($user);
     }
 }

@@ -15,6 +15,7 @@ use Contexts\Authorization\Presentation\Requests\User\GetUserListRequest;
 use Contexts\Authorization\Presentation\Requests\User\UpdateUserRequest;
 use Contexts\Authorization\Presentation\Requests\User\UserIdRequest;
 use Contexts\Authorization\Presentation\Resources\UserResource;
+use Contexts\Authorization\Presentation\Requests\User\UpdateRolesRequest;
 
 class UserIdentityController extends BaseController
 {
@@ -88,6 +89,17 @@ class UserIdentityController extends BaseController
 
         return $this->success()
             ->message('Password changed successfully')
+            ->send();
+    }
+
+    public function updateRoles(UpdateRolesRequest $request)
+    {
+        $data = $request->validated();
+        $userId = (int) ($data['id']);
+        app(UserIdentityCoordinator::class)->syncRoles($userId, $data['role_ids']);
+
+        return $this->success()
+            ->message('Roles updated successfully')
             ->send();
     }
 }

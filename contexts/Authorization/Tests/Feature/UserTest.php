@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Contexts\Authorization\Infrastructure\Records\RoleRecord;
+
 it('can create active users via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
@@ -138,6 +140,28 @@ it('can change a user password via api', function () {
     $response = $this->patchJson("users/{$id}/password", [
         'new_password' => 'newpassword123',
         'new_password_confirmation' => 'newpassword123',
+    ]);
+
+    $response->assertStatus(200);
+});
+
+it('can update user roles via api', function () {
+    $response = $this->postJson('users', [
+        'email' => 'test@email.com',
+        'password' => 'password123',
+        'display_name' => 'My User',
+        'status' => 'active',
+    ]);
+
+    $response->assertStatus(201);
+
+    $id = (int) $response->json('data.id');
+
+    $roles = RoleRecord::factory()->count(2)->create();
+    $roleIds = $roles->pluck('id')->toArray();
+
+    $response = $this->putJson("users/{$id}/roles", [
+        'role_ids' => $roleIds
     ]);
 
     $response->assertStatus(200);

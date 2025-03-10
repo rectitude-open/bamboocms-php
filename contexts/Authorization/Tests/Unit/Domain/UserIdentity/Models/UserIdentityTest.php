@@ -59,6 +59,72 @@ it('can reconstitute an user from its data', function () {
     expect($user->getUpdatedAt())->toEqual($updatedAt);
 });
 
+it('can reconstitute a user with roles', function () {
+    $id = UserId::fromInt(1);
+    $display_name = 'Reconstituted DisplayName';
+    $status = UserStatus::active();
+    $createdAt = CarbonImmutable::now()->subDays(5);
+    $updatedAt = CarbonImmutable::now()->subDays(1);
+
+    // Create role collection with some role IDs
+    $roleId1 = RoleId::fromInt(1);
+    $roleId2 = RoleId::fromInt(2);
+    $roleCollection = new RoleIdCollection([$roleId1, $roleId2]);
+
+    $user = UserIdentity::reconstitute(
+        $id,
+        $this->email,
+        $this->password,
+        $display_name,
+        $status,
+        $createdAt,
+        $updatedAt,
+        $roleCollection
+    );
+
+    // Verify user properties
+    expect($user->getId())->toEqual($id);
+    expect($user->getDisplayName())->toBe($display_name);
+    expect($user->getStatus())->toEqual($status);
+    expect($user->getCreatedAt())->toEqual($createdAt);
+    expect($user->getUpdatedAt())->toEqual($updatedAt);
+
+    // Verify role collection
+    expect($user->getRoleIdCollection())->toEqual($roleCollection);
+    expect($user->getRoleIdCollection()->count())->toBe(2);
+    expect($user->getRoleIdCollection()->contains($roleId1))->toBeTrue();
+    expect($user->getRoleIdCollection()->contains($roleId2))->toBeTrue();
+});
+
+it('can reconstitute a user without roles (uses empty collection)', function () {
+    $id = UserId::fromInt(1);
+    $display_name = 'Reconstituted DisplayName';
+    $status = UserStatus::active();
+    $createdAt = CarbonImmutable::now()->subDays(5);
+    $updatedAt = CarbonImmutable::now()->subDays(1);
+
+    $user = UserIdentity::reconstitute(
+        $id,
+        $this->email,
+        $this->password,
+        $display_name,
+        $status,
+        $createdAt,
+        $updatedAt
+    );
+
+    // Verify user properties
+    expect($user->getId())->toEqual($id);
+    expect($user->getDisplayName())->toBe($display_name);
+    expect($user->getStatus())->toEqual($status);
+    expect($user->getCreatedAt())->toEqual($createdAt);
+    expect($user->getUpdatedAt())->toEqual($updatedAt);
+
+    // Verify role collection is empty by default
+    expect($user->getRoleIdCollection())->toBeInstanceOf(RoleIdCollection::class);
+    expect($user->getRoleIdCollection()->count())->toBe(0);
+});
+
 it('should record domain events when user is created', function () {
     $user = UserIdentity::create(
         UserId::fromInt(1),

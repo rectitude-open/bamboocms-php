@@ -15,6 +15,8 @@ use Contexts\Authorization\Infrastructure\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 
 /**
  * @property int $id
@@ -37,6 +39,11 @@ class UserRecord extends BaseModel
         2 => 'deleted',
     ];
 
+    public function roles()
+    {
+        return $this->belongsToMany(RoleRecord::class, 'pivot_user_role', 'user_id', 'role_id');
+    }
+
     public static function mapStatusToDomain(int $status): UserStatus
     {
         if (! isset(self::STATUS_MAPPING[$status])) {
@@ -57,6 +64,9 @@ class UserRecord extends BaseModel
 
     public function toDomain(array $events = []): UserIdentity
     {
+        $rolesIds = $this->roles()->get()->pluck('id')->toArray();
+        $roleIdsCollection = new RoleIdCollection(array_map(fn ($id) => RoleId::fromInt($id), $rolesIds));
+
         return UserIdentity::reconstitute(
             UserId::fromInt($this->id),
             new Email($this->email),
@@ -65,6 +75,7 @@ class UserRecord extends BaseModel
             self::mapStatusToDomain($this->status),
             $this->created_at->toImmutable(),
             $this->updated_at?->toImmutable(),
+            $roleIdsCollection,
             events: $events
         );
     }

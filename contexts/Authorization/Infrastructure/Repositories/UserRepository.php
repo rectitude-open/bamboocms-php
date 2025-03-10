@@ -11,6 +11,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 
 class UserRepository
 {
@@ -38,9 +39,13 @@ class UserRepository
         return $record->toDomain();
     }
 
+    private function syncRoles(UserRecord $user, RoleIdCollection $roleIdCollection): void
+    {
+        $user->roles()->sync($roleIdCollection->getIdsArray());
+    }
+
     public function update(UserIdentity $user): UserIdentity
     {
-
         try {
             $record = UserRecord::findOrFail($user->getId()->getValue());
         } catch (ModelNotFoundException $e) {
@@ -53,6 +58,8 @@ class UserRepository
             'email' => $user->getEmail()->getValue(),
             'created_at' => $user->getCreatedAt(),
         ]);
+
+        $this->syncRoles($record, $user->getRoleIdCollection());
 
         return $record->toDomain($user->getEvents());
     }

@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Exceptions\UserNotFoundException;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
+use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
 
@@ -250,4 +253,170 @@ it('changes password successfully', function () {
     $retrievedUser = $userRepository->getById($savedUser->getId());
     expect($retrievedUser->getPassword()->verify('oldpassword123'))->toBeFalse();
     expect($retrievedUser->getPassword()->verify('newpassword123'))->toBeTrue();
+});
+
+it('can sync user roles when updating user', function () {
+    // Create a test user in the database
+    $email = new Email('role-test@example.com');
+    $password = Password::createFromPlainText('password123');
+    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Role Test User');
+    $userRepository = new UserRepository();
+    $savedUser = $userRepository->create($createdUser);
+
+    // Create test roles
+    $role1 = RoleRecord::create(['name' => 'Editor', 'description' => 'Editor role']);
+    $role2 = RoleRecord::create(['name' => 'Author', 'description' => 'Author role']);
+    $role3 = RoleRecord::create(['name' => 'Admin', 'description' => 'Admin role']);
+
+    // Create a RoleIdCollection with the first two roles
+    $roleIds = new RoleIdCollection([
+        RoleId::fromInt($role1->id),
+        RoleId::fromInt($role2->id)
+    ]);
+
+    // Retrieve the user and assign roles
+    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser->syncRoles($roleIds);
+
+    // Update the user with the roles
+    $updatedUser = $userRepository->update($retrievedUser);
+
+    // Verify the roles were assigned correctly - use query builder to avoid ambiguous column issue
+    $userRoles = \DB::table('pivot_user_role')
+        ->where('user_id', $updatedUser->getId()->getValue())
+        ->pluck('role_id')
+        ->toArray();
+
+    expect(count($userRoles))->toBe(2);
+    expect($userRoles)->toContain($role1->id, $role2->id);
+
+    // Now update with a different set of roles
+    $newRoleIds = new RoleIdCollection([
+        RoleId::fromInt($role2->id),
+        RoleId::fromInt($role3->id)
+    ]);
+
+    $updatedUser->syncRoles($newRoleIds);
+    $userRepository->update($updatedUser);
+
+    // Verify the roles were updated correctly
+    $userRoles = \DB::table('pivot_user_role')
+        ->where('user_id', $updatedUser->getId()->getValue())
+        ->pluck('role_id')
+        ->toArray();
+
+    expect(count($userRoles))->toBe(2);
+    expect($userRoles)->toContain($role2->id, $role3->id);
+    expect($userRoles)->not->toContain($role1->id);
+});
+
+it('can sync user roles to empty collection', function () {
+    // Create a test user in the database
+    $email = new Email('empty-roles@example.com');
+    $password = Password::createFromPlainText('password123');
+    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Roles User');
+    $userRepository = new UserRepository();
+    $savedUser = $userRepository->create($createdUser);
+
+    // Create roles and assign them
+    $role1 = RoleRecord::create(['name' => 'Manager', 'description' => 'Manager role']);
+    $role2 = RoleRecord::create(['name' => 'Staff', 'description' => 'Staff role']);
+
+    $roleIds = new RoleIdCollection([
+        RoleId::fromInt($role1->id),
+        RoleId::fromInt($role2->id)
+    ]);
+
+    // Assign roles and update
+    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser->syncRoles($roleIds);
+    $userRepository->update($retrievedUser);
+
+    // Verify roles were assigned
+    $userRoles = \DB::table('pivot_user_role')
+        ->where('user_id', $retrievedUser->getId()->getValue())
+        ->count();
+    expect($userRoles)->toBe(2);
+
+    // Now remove all roles
+    $emptyRoleIds = new RoleIdCollection([]);
+    $retrievedUser->syncRoles($emptyRoleIds);
+    $userRepository->update($retrievedUser);
+
+    // Verify all roles were removed
+    $userRoles = \DB::table('pivot_user_role')
+        ->where('user_id', $retrievedUser->getId()->getValue())
+        ->count();
+    expect($userRoles)->toBe(0);
+});
+
+it('preserves existing user roles when updating other attributes', function () {
+    // Create a test user in the database
+    $email = new Email('preserve-roles@example.com');
+    $password = Password::createFromPlainText('password123');
+    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Preserve Roles User');
+    $userRepository = new UserRepository();
+    $savedUser = $userRepository->create($createdUser);
+
+    // Create roles and assign them
+    $role1 = RoleRecord::create(['name' => 'Subscriber', 'description' => 'Subscriber role']);
+    $role2 = RoleRecord::create(['name' => 'Member', 'description' => 'Member role']);
+
+    $roleIds = new RoleIdCollection([
+        RoleId::fromInt($role1->id),
+        RoleId::fromInt($role2->id)
+    ]);
+
+    // Assign roles
+    $user = $userRepository->getById($savedUser->getId());
+    $user->syncRoles($roleIds);
+    $userRepository->update($user);
+
+    // Get fresh instance with roles loaded
+    $user = $userRepository->getById($savedUser->getId());
+
+    // Update only the user's display name
+    $user->modify(null, 'Updated Display Name', null);
+    $userRepository->update($user);
+
+    // Verify roles are still present after the update
+    $userRecord = UserRecord::find($user->getId()->getValue());
+    expect($userRecord->display_name)->toBe('Updated Display Name');
+
+    $userRoles = \DB::table('pivot_user_role')
+        ->where('user_id', $user->getId()->getValue())
+        ->pluck('role_id')
+        ->toArray();
+
+    expect(count($userRoles))->toBe(2);
+    expect($userRoles)->toContain($role1->id, $role2->id);
+});
+
+it('updates roles correctly even with empty initial role collection', function () {
+    // Create a test user without roles
+    $email = new Email('no-roles@example.com');
+    $password = Password::createFromPlainText('password123');
+    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Initial Roles');
+    $userRepository = new UserRepository();
+    $savedUser = $userRepository->create($createdUser);
+
+    // Create a role to assign
+    $role = RoleRecord::create(['name' => 'Guest', 'description' => 'Guest role']);
+
+    // Assign role to user that previously had no roles
+    $user = $userRepository->getById($savedUser->getId());
+    $roleIds = new RoleIdCollection([RoleId::fromInt($role->id)]);
+    $user->syncRoles($roleIds);
+    $userRepository->update($user);
+
+    // Verify role was assigned
+    $userRoles = \DB::table('pivot_user_role')
+        ->where('user_id', $user->getId()->getValue())
+        ->count();
+    expect($userRoles)->toBe(1);
+
+    $roleId = \DB::table('pivot_user_role')
+        ->where('user_id', $user->getId()->getValue())
+        ->value('role_id');
+    expect($roleId)->toBe($role->id);
 });

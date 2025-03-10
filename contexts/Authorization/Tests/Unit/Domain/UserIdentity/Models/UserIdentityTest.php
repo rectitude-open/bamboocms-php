@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 use App\Exceptions\BizException;
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
@@ -307,4 +311,167 @@ it('can get user summary for logging', function () {
     expect($summary['email'])->toBe('test@example.com');
     expect($summary['display_name'])->toBe('Test User');
     expect($summary['status'])->toBe('active');
+});
+
+it('can add new roles through syncRoles', function () {
+    $user = UserIdentity::create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->releaseEvents(); // Clear creation event
+
+    $roleId1 = RoleId::fromInt(1);
+    $roleId2 = RoleId::fromInt(2);
+    $newRoles = new RoleIdCollection([$roleId1, $roleId2]);
+
+    $user->syncRoles($newRoles);
+
+    // Check if events were recorded correctly
+    $events = $user->releaseEvents();
+    expect($events)->toHaveCount(2);
+    expect($events[0])->toBeInstanceOf(RoleAssignedEvent::class);
+    expect($events[0]->getRoleId()->equals($roleId1))->toBeTrue();
+    expect($events[1])->toBeInstanceOf(RoleAssignedEvent::class);
+    expect($events[1]->getRoleId()->equals($roleId2))->toBeTrue();
+
+    // Check if the roleIdCollection was updated
+    expect($user->getRoleIdCollection()->count())->toBe(2);
+    expect($user->getRoleIdCollection()->contains($roleId1))->toBeTrue();
+    expect($user->getRoleIdCollection()->contains($roleId2))->toBeTrue();
+});
+
+it('can remove roles through syncRoles', function () {
+    $user = UserIdentity::create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->releaseEvents(); // Clear creation event
+
+    // First add some roles
+    $roleId1 = RoleId::fromInt(1);
+    $roleId2 = RoleId::fromInt(2);
+    $initialRoles = new RoleIdCollection([$roleId1, $roleId2]);
+    $user->syncRoles($initialRoles);
+    $user->releaseEvents(); // Clear role assigned events
+
+    // Now remove one role
+    $newRoles = new RoleIdCollection([$roleId1]);
+    $user->syncRoles($newRoles);
+
+    // Check if events were recorded correctly
+    $events = $user->releaseEvents();
+    expect($events)->toHaveCount(1);
+    expect($events[0])->toBeInstanceOf(RoleRemovedEvent::class);
+    expect($events[0]->getRoleId()->equals($roleId2))->toBeTrue();
+
+    // Check if the roleIdCollection was updated
+    expect($user->getRoleIdCollection()->count())->toBe(1);
+    expect($user->getRoleIdCollection()->contains($roleId1))->toBeTrue();
+    expect($user->getRoleIdCollection()->contains($roleId2))->toBeFalse();
+});
+
+it('can handle both adding and removing roles in one syncRoles call', function () {
+    $user = UserIdentity::create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->releaseEvents(); // Clear creation event
+
+    // First add some roles
+    $roleId1 = RoleId::fromInt(1);
+    $roleId2 = RoleId::fromInt(2);
+    $initialRoles = new RoleIdCollection([$roleId1, $roleId2]);
+    $user->syncRoles($initialRoles);
+    $user->releaseEvents(); // Clear role assigned events
+
+    // Now modify the roles (remove roleId2 and add roleId3)
+    $roleId3 = RoleId::fromInt(3);
+    $newRoles = new RoleIdCollection([$roleId1, $roleId3]);
+    $user->syncRoles($newRoles);
+
+    // Check if events were recorded correctly
+    $events = $user->releaseEvents();
+    expect($events)->toHaveCount(2);
+
+    // Verify role removal event
+    $removeEvents = array_filter($events, fn ($e) => $e instanceof RoleRemovedEvent);
+    expect($removeEvents)->toHaveCount(1);
+    expect(reset($removeEvents)->getRoleId()->equals($roleId2))->toBeTrue();
+
+    // Verify role assignment event
+    $assignEvents = array_filter($events, fn ($e) => $e instanceof RoleAssignedEvent);
+    expect($assignEvents)->toHaveCount(1);
+    expect(reset($assignEvents)->getRoleId()->equals($roleId3))->toBeTrue();
+
+    // Check if the roleIdCollection was updated
+    expect($user->getRoleIdCollection()->count())->toBe(2);
+    expect($user->getRoleIdCollection()->contains($roleId1))->toBeTrue();
+    expect($user->getRoleIdCollection()->contains($roleId2))->toBeFalse();
+    expect($user->getRoleIdCollection()->contains($roleId3))->toBeTrue();
+});
+
+it('does not generate events when syncing with the same roles', function () {
+    $user = UserIdentity::create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->releaseEvents(); // Clear creation event
+
+    // Add some roles first
+    $roleId1 = RoleId::fromInt(1);
+    $roleId2 = RoleId::fromInt(2);
+    $roles = new RoleIdCollection([$roleId1, $roleId2]);
+    $user->syncRoles($roles);
+    $user->releaseEvents(); // Clear role assigned events
+
+    // Sync with the same roles again
+    $sameRoles = new RoleIdCollection([$roleId1, $roleId2]);
+    $user->syncRoles($sameRoles);
+
+    // Check that no events were generated
+    $events = $user->releaseEvents();
+    expect($events)->toBeEmpty();
+
+    // Check that the role collection is unchanged
+    expect($user->getRoleIdCollection()->count())->toBe(2);
+    expect($user->getRoleIdCollection()->contains($roleId1))->toBeTrue();
+    expect($user->getRoleIdCollection()->contains($roleId2))->toBeTrue();
+});
+
+it('can sync to empty role collection', function () {
+    $user = UserIdentity::create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->releaseEvents(); // Clear creation event
+
+    // Add some roles first
+    $roleId1 = RoleId::fromInt(1);
+    $roleId2 = RoleId::fromInt(2);
+    $roles = new RoleIdCollection([$roleId1, $roleId2]);
+    $user->syncRoles($roles);
+    $user->releaseEvents(); // Clear role assigned events
+
+    // Sync to empty collection
+    $emptyRoles = new RoleIdCollection([]);
+    $user->syncRoles($emptyRoles);
+
+    // Check if events were recorded correctly
+    $events = $user->releaseEvents();
+    expect($events)->toHaveCount(2);
+    expect($events[0])->toBeInstanceOf(RoleRemovedEvent::class);
+    expect($events[1])->toBeInstanceOf(RoleRemovedEvent::class);
+
+    // Check if the roleIdCollection is empty
+    expect($user->getRoleIdCollection()->count())->toBe(0);
 });

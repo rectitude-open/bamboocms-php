@@ -8,10 +8,15 @@ use App\Exceptions\BizException;
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent;
+use Contexts\Authorization\Domain\Role\Models\RoleId;
 
 class UserIdentity extends BaseDomainModel
 {
+    private RoleIdCollection $roleIdCollection;
+
     private function __construct(
         public UserId $id,
         private Email $email,
@@ -22,6 +27,24 @@ class UserIdentity extends BaseDomainModel
         private ?CarbonImmutable $updated_at = null
     ) {
         $this->created_at = $created_at ?? CarbonImmutable::now();
+        $this->roleIdCollection = new RoleIdCollection();
+    }
+
+    public function syncRoles(RoleIdCollection $newRoles): void
+    {
+        $rolesToAdd = $newRoles->diff($this->roleIdCollection);
+
+        $rolesToRemove = $this->roleIdCollection->diff($newRoles);
+
+        $rolesToAdd->map(function (RoleId $roleId) {
+            $this->recordEvent(new RoleAssignedEvent($this->id, $roleId));
+        });
+
+        $rolesToRemove->map(function (RoleId $roleId) {
+            $this->recordEvent(new RoleRemovedEvent($this->id, $roleId));
+        });
+
+        $this->roleIdCollection = $newRoles;
     }
 
     public function authenticate(string $plainTextPassword): void
@@ -141,6 +164,11 @@ class UserIdentity extends BaseDomainModel
     public function getStatus(): UserStatus
     {
         return $this->status;
+    }
+
+    public function getRoleIdCollection(): RoleIdCollection
+    {
+        return $this->roleIdCollection;
     }
 
     public function getCreatedAt(): CarbonImmutable

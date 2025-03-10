@@ -6,11 +6,11 @@ namespace Contexts\Authorization\Infrastructure\Records;
 
 use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
-use Contexts\Authorization\Domain\Models\Email;
-use Contexts\Authorization\Domain\Models\Password;
-use Contexts\Authorization\Domain\Models\UserId;
-use Contexts\Authorization\Domain\Models\UserIdentity;
-use Contexts\Authorization\Domain\Models\UserStatus;
+use Contexts\Authorization\Domain\UserIdentity\Models\Email;
+use Contexts\Authorization\Domain\UserIdentity\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;

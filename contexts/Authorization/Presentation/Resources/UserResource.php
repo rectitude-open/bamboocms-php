@@ -12,7 +12,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         /**
-         * @var \Contexts\Authorization\Domain\Models\UserIdentity $user
+         * @var \Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity $user
          */
         $user = $this->resource;
 

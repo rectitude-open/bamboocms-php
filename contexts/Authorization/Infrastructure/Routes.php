@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Contexts\Authorization\Presentation\Controllers\AuthorizationController;
+use Contexts\Authorization\Presentation\Controllers\UserIdentityController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([])->name('Authorization.')->group(function () {
-    Route::controller(AuthorizationController::class)->prefix('users')->name('Authorization.')->group(function () {
+    Route::controller(UserIdentityController::class)->prefix('users')->name('Authorization.')->group(function () {
         Route::get('{id}', 'getUser')->name('getUser');
         Route::get('', 'getUserList')->name('getUserList');
         Route::post('', 'createUser')->name('createUser');

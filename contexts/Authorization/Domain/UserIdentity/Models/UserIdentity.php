@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Domain\Models;
+namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
 use App\Exceptions\BizException;
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
-use Contexts\Authorization\Domain\Events\PasswordChangedEvent;
-use Contexts\Authorization\Domain\Events\UserCreatedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent;
 
 class UserIdentity extends BaseDomainModel
 {

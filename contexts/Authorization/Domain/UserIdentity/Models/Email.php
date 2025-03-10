@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Domain\Models;
+namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
 class Email
 {

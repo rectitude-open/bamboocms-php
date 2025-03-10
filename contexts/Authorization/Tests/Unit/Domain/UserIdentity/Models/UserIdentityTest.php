@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use App\Exceptions\BizException;
 use Carbon\CarbonImmutable;
-use Contexts\Authorization\Domain\Events\PasswordChangedEvent;
-use Contexts\Authorization\Domain\Models\Email;
-use Contexts\Authorization\Domain\Models\Password;
-use Contexts\Authorization\Domain\Models\UserId;
-use Contexts\Authorization\Domain\Models\UserIdentity;
-use Contexts\Authorization\Domain\Models\UserStatus;
+use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Models\Email;
+use Contexts\Authorization\Domain\UserIdentity\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 
 beforeEach(function () {
     $this->email = new Email('test@example.com');
@@ -66,7 +66,7 @@ it('should record domain events when user is created', function () {
     $events = $user->releaseEvents();
 
     expect($events)->toHaveCount(1);
-    expect($events[0])->toBeInstanceOf(\Contexts\Authorization\Domain\Events\UserCreatedEvent::class);
+    expect($events[0])->toBeInstanceOf(\Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent::class);
 });
 
 it('can release events and clear them from the user', function () {

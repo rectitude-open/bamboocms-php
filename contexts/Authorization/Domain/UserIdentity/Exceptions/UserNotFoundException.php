@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Domain\Exceptions;
+namespace Contexts\Authorization\Domain\UserIdentity\Exceptions;
 
 use Contexts\Shared\Exceptions\NotFoundException;
 

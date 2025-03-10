@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Contexts\Authorization\Domain\Models\Email;
+use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 
 it('can be created with valid email address', function (string $validEmail) {
     $email = new Email($validEmail);

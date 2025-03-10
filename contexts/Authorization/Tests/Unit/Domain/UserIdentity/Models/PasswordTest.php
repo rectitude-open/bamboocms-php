@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Contexts\Authorization\Domain\Models\Password;
+use Contexts\Authorization\Domain\UserIdentity\Models\Password;
 
 it('can create a password from plain text', function () {
     $plainText = 'securePassword123';

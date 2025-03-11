@@ -12,8 +12,7 @@ class RolePolicy implements BasePolicy
 {
     public function __construct(
         private RoleResolver $resolver
-    ) {
-    }
+    ) {}
 
     private array $rules = [];
 

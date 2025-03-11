@@ -10,8 +10,7 @@ class ContextPolicyBuilder
 {
     public function __construct(
         private array $config,
-    ) {
-    }
+    ) {}
 
     public function action(string $action): BasePolicy
     {

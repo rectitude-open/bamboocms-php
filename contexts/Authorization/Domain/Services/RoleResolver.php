@@ -10,8 +10,7 @@ class RoleResolver
 {
     public function __construct(
         private readonly RoleRepository $repository
-    ) {
-    }
+    ) {}
 
     public function resolveIds(array $roleLabels)
     {

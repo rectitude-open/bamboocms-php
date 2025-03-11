@@ -60,3 +60,15 @@ it('can map over collection items', function () {
 
     expect($result->toArray())->toBe([10, 20]);
 });
+
+it('can intersect with another collection', function () {
+    $collection1 = new RoleIdCollection([$this->roleId1, $this->roleId2]);
+    $collection2 = new RoleIdCollection([$this->roleId2, $this->roleId3]);
+
+    $intersected = $collection1->intersect($collection2);
+
+    expect($intersected->count())->toBe(1);
+    expect($intersected->contains($this->roleId2))->toBeTrue();
+    expect($intersected->contains($this->roleId1))->toBeFalse();
+    expect($intersected->contains($this->roleId3))->toBeFalse();
+});

@@ -27,6 +27,11 @@ class RoleIdCollection
         });
     }
 
+    public function intersect(RoleIdCollection $roleIds)
+    {
+        return $this->items->intersect($roleIds->items);
+    }
+
     public function diff(RoleIdCollection $other): self
     {
         return new self(

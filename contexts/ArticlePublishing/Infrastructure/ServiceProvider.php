@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Infrastructure;
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
+use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
+use Contexts\ArticlePublishing\Infrastructure\Adapters\AuthorizationAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\CategoryAdapter;
 use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
 use Contexts\CategoryManagement\Application\Coordinators\CategoryManagementCoordinator;
@@ -45,6 +47,8 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind(CategoryGateway::class, function ($app) {
             return new CategoryAdapter($app->make(CategoryManagementCoordinator::class));
         });
+
+        $this->app->bind(AuthorizationGateway::class, AuthorizationAdapter::class);
     }
 
     public function provides(): array

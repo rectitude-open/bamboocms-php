@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
+use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
@@ -21,11 +22,14 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
         private ArticleRepository $repository,
-        private CategoryGateway $categoryGateway
+        private CategoryGateway $categoryGateway,
+        private AuthorizationGateway $authorizationGateway
     ) {}
 
     public function create(CreateArticleDTO $data): Article
     {
+        $this->authorizationGateway->canPerformAction('publish_article');
+
         $article = match ($data->status) {
             'draft' => $this->createDraft($data),
             'published' => $this->createPublished($data),

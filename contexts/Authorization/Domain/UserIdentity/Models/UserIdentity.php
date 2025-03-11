@@ -30,6 +30,11 @@ class UserIdentity extends BaseDomainModel
         $this->roleIdCollection = new RoleIdCollection;
     }
 
+    public function hasAnyRole(RoleIdCollection $roleIds): bool
+    {
+        return $this->roleIdCollection->intersect($roleIds)->isNotEmpty();
+    }
+
     public function syncRoles(RoleIdCollection $newRoles): void
     {
         $rolesToAdd = $newRoles->diff($this->roleIdCollection);

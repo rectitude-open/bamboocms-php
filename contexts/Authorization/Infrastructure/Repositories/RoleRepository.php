@@ -11,6 +11,7 @@ use Contexts\Authorization\Domain\Role\Models\RoleStatus;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class RoleRepository
 {
@@ -74,5 +75,14 @@ class RoleRepository
         }
         $record->update(['status' => RoleRecord::mapStatusToRecord(RoleStatus::deleted())]);
         $record->delete();
+    }
+
+    public function getByLabels(array $labels): Collection
+    {
+        $records = RoleRecord::whereIn('label', $labels)->get();
+
+        return $records->map(function ($record) {
+            return $record->toDomain();
+        });
     }
 }

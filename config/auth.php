@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use Contexts\Authorization\Infrastructure\Records\UserRecord;
 
 return [
 
@@ -16,7 +17,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'admin',
+        'guard' => 'user',
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -38,9 +39,9 @@ return [
     */
 
     'guards' => [
-        'admin' => [
+        'user' => [
             'driver' => 'sanctum',
-            'provider' => 'administrators',
+            'provider' => 'users ',
         ],
         // 'user' => [
         //     'driver' => 'sanctum',
@@ -70,10 +71,10 @@ return [
     */
 
     'providers' => [
-        // 'administrators' => [
-        //     'driver' => 'eloquent',
-        //     'model' => Modules\Administrator\Domain\Models\Administrator::class,
-        // ],
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => UserRecord::class,
+        ],
         // 'users' => [
         //     'driver' => 'eloquent',
         //     'model' => env('AUTH_MODEL', App\Models\User::class),

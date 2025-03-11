@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Contexts\Authorization\Infrastructure\Records;
 
 use App\Exceptions\SysException;
-use App\Http\Models\BaseModel;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
@@ -16,6 +15,8 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
 
 /**
@@ -27,8 +28,10 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class UserRecord extends BaseModel
+class UserRecord extends Authenticatable
 {
+    use HasFactory;
+
     protected $table = 'users';
 
     protected $fillable = ['display_name', 'status', 'email', 'password', 'created_at'];

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('email')->unique();
             $table->string('password')->default('');
+            $table->string('remember_token', 100)->nullable();
             $table->string('display_name')->default('');
             $table->tinyInteger('status')->default(0)->comment('0: subspended, 1: active, 2: deleted');
             $table->timestamps();

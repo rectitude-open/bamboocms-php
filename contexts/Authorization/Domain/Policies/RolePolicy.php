@@ -23,8 +23,10 @@ class RolePolicy implements BasePolicy
         return $this;
     }
 
-    public function evaluate(UserIdentity $user): bool
+    public function evaluate(?UserIdentity $user = null): bool
     {
+        $user = $user ?? auth()->user()->toDomain();
+
         $allowedRoleIds = new RoleIdCollection(
             $this->resolver->resolveIds($this->rules['roles'] ?? [])
         );

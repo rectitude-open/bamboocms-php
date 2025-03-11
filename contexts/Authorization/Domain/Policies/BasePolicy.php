@@ -8,7 +8,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 
 interface BasePolicy
 {
-    public function evaluate(UserIdentity $user): bool;
+    public function evaluate(?UserIdentity $user = null): bool;
 
     public function withRules(array $rules): self;
 }

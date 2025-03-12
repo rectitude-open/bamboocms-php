@@ -26,6 +26,7 @@ class ArticleResource extends JsonResource
                 'id' => $category->getId(),
                 'label' => $category->getLabel(),
             ])->toArray(),
+            'author_id' => (int) $article->getAuthorId()->getValue(),
             'created_at' => $article->getCreatedAt()->format('Y-m-d H:i:s'),
             'updated_at' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),
         ];

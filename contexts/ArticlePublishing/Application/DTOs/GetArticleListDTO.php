@@ -11,6 +11,7 @@ class GetArticleListDTO
         public readonly ?string $title,
         public readonly ?string $status,
         public readonly ?int $categoryId,
+        public readonly ?int $authorId,
         public readonly ?array $createdAtRange,
         public readonly int $page,
         public readonly int $perPage,
@@ -23,6 +24,7 @@ class GetArticleListDTO
             $data['title'] ?? null,
             $data['status'] ?? null,
             $data['category_id'] ?? null,
+            $data['author_id'] ?? null,
             $data['created_at_range'] ?? null,
             $data['page'] ?? 1,
             $data['per_page'] ?? 10,
@@ -36,6 +38,7 @@ class GetArticleListDTO
             'title' => $this->title,
             'status' => $this->status,
             'category_id' => $this->categoryId,
+            'author_id' => $this->authorId,
             'created_at_range' => $this->createdAtRange,
         ];
     }

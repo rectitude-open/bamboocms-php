@@ -11,6 +11,7 @@ class UpdateArticleDTO
         public readonly ?string $body,
         public readonly ?string $status,
         public readonly ?array $category_ids,
+        public readonly ?int $author_id,
         public readonly ?string $created_at
     ) {}
 
@@ -21,6 +22,7 @@ class UpdateArticleDTO
             $data['body'] ?? null,
             $data['status'] ?? null,
             $data['category_ids'] ?? null,
+            $data['author_id'] ?? null,
             $data['created_at'] ?? null,
         );
     }

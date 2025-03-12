@@ -10,12 +10,15 @@ use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
-use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
+use Contexts\ArticlePublishing\Domain\Gateway\CurrentUserGateway;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\ArticlePublishing\Domain\Models\AuthorId;
+use Contexts\ArticlePublishing\Domain\Policies\GlobalPermissionPolicy;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
+use Contexts\Shared\Policies\CompositePolicy;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ArticlePublishingCoordinator extends BaseCoordinator
@@ -23,16 +26,22 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function __construct(
         private ArticleRepository $repository,
         private CategoryGateway $categoryGateway,
-        private AuthorizationGateway $authorizationGateway
+        private CurrentUserGateway $currentUserGateway
     ) {}
 
     public function create(CreateArticleDTO $data): Article
     {
-        $this->authorizationGateway->canPerformAction('publish_article');
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('publish_article'),
+        ])->check();
+
+        $authorId = $data->authorId
+                        ? AuthorId::fromInt($data->authorId)
+                        : AuthorId::fromInt($this->currentUserGateway->getId()->getValue());
 
         $article = match ($data->status) {
-            'draft' => $this->createDraft($data),
-            'published' => $this->createPublished($data),
+            'draft' => $this->createDraft($data, $authorId),
+            'published' => $this->createPublished($data, $authorId),
             default => throw BizException::make('Invalid article status: :status')
                 ->with('status', $data->status),
         };
@@ -42,26 +51,28 @@ class ArticlePublishingCoordinator extends BaseCoordinator
         return $article;
     }
 
-    private function createDraft(CreateArticleDTO $data): Article
+    private function createDraft(CreateArticleDTO $data, AuthorId $authorId): Article
     {
         $article = Article::createDraft(
             ArticleId::null(),
             $data->title,
             $data->body,
             $this->categoryGateway->getArticleCategories($data->category_ids),
+            $authorId,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 
         return $this->repository->create($article);
     }
 
-    private function createPublished(CreateArticleDTO $data): Article
+    private function createPublished(CreateArticleDTO $data, AuthorId $authorId): Article
     {
         $article = Article::createPublished(
             ArticleId::null(),
             $data->title,
             $data->body,
             $this->categoryGateway->getArticleCategories($data->category_ids),
+            $authorId,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 
@@ -96,6 +107,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             $data->body,
             $data->status ? ArticleStatus::fromString($data->status) : null,
             $this->categoryGateway->getArticleCategories($data->category_ids),
+            $data->author_id ? AuthorId::fromInt($data->author_id) : null,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null
         );
 
@@ -109,8 +121,8 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function archiveArticle(int $id)
     {
         $article = $this->repository->getById(ArticleId::fromInt($id));
-        $article->archive();
 
+        $article->archive();
         $this->repository->update($article);
 
         return $article;

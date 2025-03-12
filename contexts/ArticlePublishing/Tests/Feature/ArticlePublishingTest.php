@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
 use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
+use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 
 beforeEach(function () {
@@ -14,6 +15,9 @@ beforeEach(function () {
     $this->app->instance(AuthorizationGateway::class, $mockAuthGateway);
 
     $this->categories = CategoryRecord::factory(2)->create();
+
+    $userRecord = UserRecord::factory()->create();
+    $this->actingAs($userRecord);
 });
 
 it('can publish aritcle drafts via api', function () {
@@ -22,6 +26,7 @@ it('can publish aritcle drafts via api', function () {
         'body' => 'This is my article body',
         'status' => 'draft',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -32,6 +37,7 @@ it('can publish aritcle drafts via api', function () {
             'body' => 'This is my article body',
             'status' => 'draft',
             'categories' => $this->categories->only(['id', 'label'])->toArray(),
+            'author_id' => 1,
         ],
     ]);
 });
@@ -42,6 +48,7 @@ it('can publish published articles via api', function () {
         'body' => 'This is my article body',
         'status' => 'published',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -52,6 +59,7 @@ it('can publish published articles via api', function () {
             'body' => 'This is my article body',
             'status' => 'published',
             'categories' => $this->categories->only(['id', 'label'])->toArray(),
+            'author_id' => 1,
         ],
     ]);
 });
@@ -64,6 +72,7 @@ it('dispatches an event when an article is published via api', function () {
         'body' => 'This is my article body',
         'status' => 'published',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     Event::assertDispatched(ArticlePublishedEvent::class);
@@ -76,6 +85,7 @@ it('can publish a draft article via api', function () {
         'body' => 'This is my article body',
         'status' => 'draft',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -94,6 +104,7 @@ it('can get an article via api', function () {
         'body' => 'This is my article body',
         'status' => 'draft',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -121,6 +132,7 @@ it('can get a list of articles via api', function () {
         'body' => 'This is my article body',
         'status' => 'draft',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -137,6 +149,7 @@ it('can update an article via api', function () {
         'body' => 'This is my article body',
         'status' => 'draft',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -149,6 +162,7 @@ it('can update an article via api', function () {
         'body' => 'This is my updated article body',
         'status' => 'published',
         'category_ids' => $this->categories2->pluck('id')->toArray(),
+        'author_id' => 2,
     ]);
 
     $response->assertStatus(200);
@@ -159,6 +173,7 @@ it('can update an article via api', function () {
             'body' => 'This is my updated article body',
             'status' => 'published',
             'categories' => $this->categories2->only(['id', 'label'])->toArray(),
+            'author_id' => 2,
         ],
     ]);
 });
@@ -170,6 +185,7 @@ it('can archive an article via api', function () {
         'body' => 'This is my article body',
         'status' => 'published',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);
@@ -188,6 +204,7 @@ it('can archive and delete an article via api', function () {
         'body' => 'This is my article body',
         'status' => 'published',
         'category_ids' => $this->categories->pluck('id')->toArray(),
+        'author_id' => 1,
     ]);
 
     $response->assertStatus(201);

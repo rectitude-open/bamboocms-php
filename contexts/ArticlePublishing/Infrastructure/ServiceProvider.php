@@ -7,8 +7,10 @@ namespace Contexts\ArticlePublishing\Infrastructure;
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
 use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
+use Contexts\ArticlePublishing\Domain\Gateway\CurrentUserGateway;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\AuthorizationAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\CategoryAdapter;
+use Contexts\ArticlePublishing\Infrastructure\Adapters\CurrentUserAdapter;
 use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
 use Contexts\CategoryManagement\Application\Coordinators\CategoryManagementCoordinator;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
@@ -49,6 +51,7 @@ class ServiceProvider extends BaseServiceProvider
         });
 
         $this->app->bind(AuthorizationGateway::class, AuthorizationAdapter::class);
+        $this->app->bind(CurrentUserGateway::class, CurrentUserAdapter::class);
     }
 
     public function provides(): array

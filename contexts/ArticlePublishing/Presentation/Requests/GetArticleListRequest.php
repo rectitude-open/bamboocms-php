@@ -15,6 +15,7 @@ class GetArticleListRequest extends BaseFormRequest
             'title' => ['string', 'max:255'],
             'status' => ['string', 'in:draft,published'],
             'category_id' => ['integer', 'gt:0'],
+            'author_id' => ['integer', 'gt:0'],
             'created_at_range' => ['array', 'size:2'],
             'created_at_range.*' => ['date'],
             'page' => ['integer', 'gt:0'],

@@ -37,7 +37,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $authorId = $data->authorId
                         ? AuthorId::fromInt($data->authorId)
-                        : AuthorId::fromInt($this->currentUserGateway->getId()->getValue());
+                        : $this->currentUserGateway->getCurrentAuthorId();
 
         $article = match ($data->status) {
             'draft' => $this->createDraft($data, $authorId),
@@ -81,6 +81,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function publishDraft(int $id): void
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('publish_article'),
+        ])->check();
+
         $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->publish();
 
@@ -101,6 +105,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function updateArticle(int $id, UpdateArticleDTO $data): Article
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('publish_article'),
+        ])->check();
+
         $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->revise(
             $data->title,
@@ -120,6 +128,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function archiveArticle(int $id)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('publish_article'),
+        ])->check();
+
         $article = $this->repository->getById(ArticleId::fromInt($id));
 
         $article->archive();
@@ -130,6 +142,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function deleteArticle(int $id)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('publish_article'),
+        ])->check();
+
         $article = $this->repository->getById(ArticleId::fromInt($id));
         $article->delete();
 

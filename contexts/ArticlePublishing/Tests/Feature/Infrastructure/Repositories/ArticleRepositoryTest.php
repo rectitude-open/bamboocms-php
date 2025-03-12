@@ -11,6 +11,7 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleCategory;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
@@ -31,7 +32,8 @@ it('can create an article', function () {
         new ArticleCategoryCollection([
             new ArticleCategory($this->categories[0]->id, $this->categories[0]->label),
             new ArticleCategory($this->categories[1]->id, $this->categories[1]->label),
-        ])
+        ]),
+        AuthorId::null()
     );
 
     $savedArticle = $this->repository->create($article);
@@ -46,6 +48,7 @@ it('can create an article', function () {
         'title' => 'Test Article Title',
         'body' => 'Test Article Content',
         'status' => 0,
+        'author_id' => $savedArticle->getAuthorId()->getValue(),
     ]);
 
     $categoryIds = $savedArticle->getCategories()->getIdsArray();
@@ -62,6 +65,7 @@ it('can get an article by id', function () {
         'title' => 'Test Article Title',
         'body' => 'Test Article Content',
         'status' => 0,
+        'author_id' => 1,
         'created_at' => now(),
     ]);
 
@@ -72,7 +76,8 @@ it('can get an article by id', function () {
     expect($article->getId()->getValue())->toBe($articleRecord->id)
         ->and($article->getTitle())->toBe('Test Article Title')
         ->and($article->getBody())->toBe('Test Article Content')
-        ->and($article->getStatus()->getValue())->toBe(ArticleStatus::DRAFT);
+        ->and($article->getStatus()->getValue())->toBe(ArticleStatus::DRAFT)
+        ->and($article->getAuthorId()->getValue())->toBe(1);
 
     $categoryIds = $article->getCategories()->getIdsArray();
     expect($categoryIds)->toContain($this->categories[0]->id, $this->categories[1]->id);
@@ -89,6 +94,7 @@ it('can update an article', function () {
         'title' => 'Original Title',
         'body' => 'Original Content',
         'status' => 0,
+        'author_id' => 0,
         'created_at' => now(),
     ]);
 
@@ -103,7 +109,8 @@ it('can update an article', function () {
         new ArticleCategoryCollection([
             new ArticleCategory($this->categories[1]->id, $this->categories[1]->label),
             new ArticleCategory($this->categories[2]->id, $this->categories[2]->label),
-        ])
+        ]),
+        AuthorId::fromInt(1)
     );
 
     $updatedArticle = $this->repository->update($article);
@@ -117,6 +124,7 @@ it('can update an article', function () {
         'title' => 'Updated Title',
         'body' => 'Updated Content',
         'status' => 1,
+        'author_id' => 1,
     ]);
 
     $this->assertDatabaseMissing('pivot_article_category', [
@@ -142,6 +150,7 @@ it('can paginate articles', function () {
             'title' => "Article Title {$i}",
             'body' => "Article Content {$i}",
             'status' => $status,
+            'author_id' => 1,
             'created_at' => CarbonImmutable::now()->subDays($i),
         ]);
         $article->categories()->attach([$this->categories[$i % 3]->id]);
@@ -168,6 +177,7 @@ it('can delete an article', function () {
         'body' => 'Test Article Content',
         'status' => 0,
         'created_at' => now(),
+        'author_id' => 1,
     ]);
     $articleRecord->categories()->attach([$this->categories[0]->id]);
 

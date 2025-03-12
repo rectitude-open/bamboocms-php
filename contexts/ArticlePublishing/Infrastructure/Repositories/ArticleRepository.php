@@ -23,6 +23,7 @@ class ArticleRepository
                 'title' => $article->getTitle(),
                 'body' => $article->getbody(),
                 'status' => ArticleRecord::mapStatusToRecord($article->getStatus()),
+                'author_id' => $article->getAuthorId()->getValue(),
                 'created_at' => $article->getCreatedAt(),
             ]);
 
@@ -60,6 +61,7 @@ class ArticleRepository
             'title' => $article->getTitle(),
             'body' => $article->getbody(),
             'status' => ArticleRecord::mapStatusToRecord($article->getStatus()),
+            'author_id' => $article->getAuthorId()->getValue(),
             'created_at' => $article->getCreatedAt(),
         ]);
 

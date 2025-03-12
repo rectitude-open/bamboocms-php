@@ -11,6 +11,7 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleCategory;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $body
  * @property int $status
+ * @property int $author_id
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
@@ -30,7 +32,7 @@ class ArticleRecord extends BaseModel
 
     protected $table = 'articles';
 
-    protected $fillable = ['title', 'body', 'status', 'created_at'];
+    protected $fillable = ['title', 'body', 'status', 'author_id', 'created_at'];
 
     public function categories()
     {
@@ -74,6 +76,7 @@ class ArticleRecord extends BaseModel
             $this->body,
             self::mapStatusToDomain($this->status),
             $categories,
+            AuthorId::fromInt($this->author_id),
             $this->created_at->toImmutable(),
             $this->updated_at?->toImmutable(),
             events: $events
@@ -98,6 +101,10 @@ class ArticleRecord extends BaseModel
             $query->whereHas('categories', function ($query) use ($criteria) {
                 $query->where('category_id', $criteria['category_id']);
             });
+        });
+
+        $query->when(isset($criteria['author_id']), function ($query) use ($criteria) {
+            $query->where('author_id', $criteria['author_id']);
         });
 
         $query->when(isset($criteria['created_at_range']), function ($query) use ($criteria) {

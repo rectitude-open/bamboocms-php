@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title')->default('');
             $table->text('body')->nullable();
             $table->tinyInteger('status')->default(0)->comment('0: draft, 1: published, 2: archived, 3: deleted');
+            $table->unsignedInteger('author_id');
             $table->timestamps();
             $table->softDeletes();
         });

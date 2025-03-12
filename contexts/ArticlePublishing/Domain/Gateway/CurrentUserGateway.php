@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Domain\Gateway;
 
-use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
+use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 
 interface CurrentUserGateway
 {
-    public function getId(): UserId;
+    public function getCurrentAuthorId(): AuthorId;
 }

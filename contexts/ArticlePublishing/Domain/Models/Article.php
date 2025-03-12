@@ -87,6 +87,11 @@ class Article extends BaseDomainModel
         return $article;
     }
 
+    public function isOwnedBy(AuthorId $authorId): bool
+    {
+        return $this->authorId->equals($authorId);
+    }
+
     public function publish()
     {
         $this->transitionStatus(ArticleStatus::published());

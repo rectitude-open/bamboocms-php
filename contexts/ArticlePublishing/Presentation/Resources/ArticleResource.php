@@ -12,23 +12,23 @@ class ArticleResource extends JsonResource
     public function toArray(Request $request): array
     {
         /**
-         * @var \Contexts\ArticlePublishing\Domain\Models\Article $article
+         * @var \Contexts\ArticlePublishing\Domain\Models\ArticleVisibility $article
          */
         $article = $this->resource;
 
         return [
-            'id' => (int) $article->getId()->getValue(),
+            'id' => (int) $article->getId(),
 
             'title' => (string) $article->getTitle(),
             'body' => (string) $article->getbody(),
-            'status' => (string) $article->getStatus()->getValue(),
-            'categories' => $article->getCategories()->map(fn ($category) => [
-                'id' => $category->getId(),
-                'label' => $category->getLabel(),
-            ])->toArray(),
-            'author_id' => (int) $article->getAuthorId()->getValue(),
+            'status' => (string) $article->getStatus(),
+            'categories' => $article->getCategories(),
+            'author_id' => (int) $article->getAuthorId(),
             'created_at' => $article->getCreatedAt()->format('Y-m-d H:i:s'),
-            'updated_at' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->when(
+                (bool) $article->getUpdatedAt(),
+                $article->getUpdatedAt()?->format('Y-m-d H:i:s')
+            ),
         ];
     }
 }

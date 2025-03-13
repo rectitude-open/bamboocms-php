@@ -10,8 +10,8 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class ArticleRepository

@@ -12,11 +12,14 @@ use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CurrentUserGateway;
+use Contexts\ArticlePublishing\Domain\Gateway\ViewerGateway;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\ArticlePublishing\Domain\Models\ArticleVisibility;
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 use Contexts\ArticlePublishing\Domain\Policies\GlobalPermissionPolicy;
+use Contexts\ArticlePublishing\Domain\Policies\VisibilityPolicy;
 use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\Shared\Policies\CompositePolicy;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -26,10 +29,11 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function __construct(
         private ArticleRepository $repository,
         private CategoryGateway $categoryGateway,
-        private CurrentUserGateway $currentUserGateway
+        private CurrentUserGateway $currentUserGateway,
+        private ViewerGateway $viewerGateway,
     ) {}
 
-    public function create(CreateArticleDTO $data): Article
+    public function create(CreateArticleDTO $data): ArticleVisibility
     {
         CompositePolicy::allOf([
             new GlobalPermissionPolicy('publish_article'),
@@ -48,7 +52,9 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $this->dispatchDomainEvents($article);
 
-        return $article;
+        $viewer = $this->viewerGateway->getCurrentViewer();
+
+        return (new VisibilityPolicy($viewer))->fromArticle($article);
     }
 
     private function createDraft(CreateArticleDTO $data, AuthorId $authorId): Article
@@ -93,17 +99,29 @@ class ArticlePublishingCoordinator extends BaseCoordinator
         $this->dispatchDomainEvents($article);
     }
 
-    public function getArticle(int $id): Article
+    public function getArticle(int $id): ArticleVisibility
     {
-        return $this->repository->getById(ArticleId::fromInt($id));
+        $article = $this->repository->getById(ArticleId::fromInt($id));
+
+        $viewer = $this->viewerGateway->getCurrentViewer();
+
+        return (new VisibilityPolicy($viewer))->fromArticle($article);
     }
 
     public function getArticleList(GetArticleListDTO $data): LengthAwarePaginator
     {
-        return $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
+        $viewer = $this->viewerGateway->getCurrentViewer();
+
+        $paginator = $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
+
+        $paginator->getCollection()->transform(function (Article $article) use ($viewer) {
+            return (new VisibilityPolicy($viewer))->fromArticle($article);
+        });
+
+        return $paginator;
     }
 
-    public function updateArticle(int $id, UpdateArticleDTO $data): Article
+    public function updateArticle(int $id, UpdateArticleDTO $data): ArticleVisibility
     {
         CompositePolicy::allOf([
             new GlobalPermissionPolicy('publish_article'),
@@ -123,10 +141,12 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $this->dispatchDomainEvents($article);
 
-        return $article;
+        $viewer = $this->viewerGateway->getCurrentViewer();
+
+        return (new VisibilityPolicy($viewer))->fromArticle($article);
     }
 
-    public function archiveArticle(int $id)
+    public function archiveArticle(int $id): ArticleVisibility
     {
         CompositePolicy::allOf([
             new GlobalPermissionPolicy('publish_article'),
@@ -137,10 +157,12 @@ class ArticlePublishingCoordinator extends BaseCoordinator
         $article->archive();
         $this->repository->update($article);
 
-        return $article;
+        $viewer = $this->viewerGateway->getCurrentViewer();
+
+        return (new VisibilityPolicy($viewer))->fromArticle($article);
     }
 
-    public function deleteArticle(int $id)
+    public function deleteArticle(int $id): ArticleVisibility
     {
         CompositePolicy::allOf([
             new GlobalPermissionPolicy('publish_article'),
@@ -151,6 +173,8 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $this->repository->delete($article);
 
-        return $article;
+        $viewer = $this->viewerGateway->getCurrentViewer();
+
+        return (new VisibilityPolicy($viewer))->fromArticle($article);
     }
 }

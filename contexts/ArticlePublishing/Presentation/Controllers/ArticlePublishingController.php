@@ -71,7 +71,7 @@ class ArticlePublishingController extends BaseController
         $id = (int) ($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->archiveArticle($id);
 
-        return $this->success(['id' => $result->getId()->getValue()])
+        return $this->success(['id' => $result->getId()])
             ->message('Article archived successfully')
             ->send();
     }
@@ -81,7 +81,7 @@ class ArticlePublishingController extends BaseController
         $id = (int) ($request->validated()['id']);
         $result = app(ArticlePublishingCoordinator::class)->deleteArticle($id);
 
-        return $this->success(['id' => $result->getId()->getValue()])
+        return $this->success(['id' => $result->getId()])
             ->message('Article deleted successfully')
             ->send();
     }

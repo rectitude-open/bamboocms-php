@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Infrastructure;
 
+use Contexts\Authorization\Application\Coordinators\CurrentUserServiceCoordinator;
+use Contexts\Authorization\Contracts\V1\Services\CurrentUserService;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +37,8 @@ class ServiceProvider extends BaseServiceProvider
                 Route::middleware('api')->prefix(config('ROUTE_PREFIX'))->group(__DIR__.'/Routes.php');
             }
         });
+
+        $this->app->bind(CurrentUserService::class, CurrentUserServiceCoordinator::class);
     }
 
     public function provides(): array

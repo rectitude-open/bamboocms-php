@@ -37,6 +37,15 @@ class RoleRepository
         return $record->toDomain();
     }
 
+    public function getByIds(array $roleIds): Collection
+    {
+        $records = RoleRecord::whereIn('id', $roleIds)->get();
+
+        return $records->map(function ($record) {
+            return $record->toDomain();
+        });
+    }
+
     public function update(Role $role): Role
     {
 

@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Infrastructure\Adapters;
 
 use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
-use Contexts\Authorization\Domain\Services\PolicyFactory;
+use Contexts\Authorization\Contracts\V1\Services\GlobalPermissionService;
 
 class AuthorizationAdapter implements AuthorizationGateway
 {
     public function __construct(
-        private PolicyFactory $policyFactory
+        private GlobalPermissionService $globalPermissionService,
     ) {}
 
     public function canPerformAction(string $action): bool
     {
-        $policy = $this->policyFactory
-            ->forContext('article_publishing')
-            ->action($action);
-
-        return $policy->evaluate();
+        return $this->globalPermissionService->checkPermission('article_publishing', $action);
     }
 }

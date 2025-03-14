@@ -12,8 +12,7 @@ use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
 use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
 use Illuminate\Support\Facades\Config;
 
-function setTestConfig()
-{
+beforeEach(function () {
     Config::set('policies.article_publishing', [
         'context_default' => [
             'handler' => RolePolicy::class,
@@ -31,11 +30,9 @@ function setTestConfig()
             ],
         ],
     ]);
-}
+});
 
 it('can get default policy handler', function () {
-    setTestConfig();
-
     $policy = app(PolicyFactory::class)
         ->forContext('article_publishing')
         ->action('publish');
@@ -44,8 +41,6 @@ it('can get default policy handler', function () {
 });
 
 it('can evaluate user against policy', function () {
-    setTestConfig();
-
     $userRepository = new UserRepository;
 
     $userRecord = UserRecord::factory()->create();

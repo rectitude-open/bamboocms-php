@@ -8,7 +8,13 @@ class PolicyFactory
 {
     public function forContext(string $context): ContextPolicyBuilder
     {
-        $config = config("policies.{$context}");
+        $config = config("policies.{$context}") ?? [
+            'context_default' => [
+                'handler' => config('policies.default_handler', \Contexts\Authorization\Domain\Policies\DenyPolicy::class),
+                'rules' => [],
+            ],
+            'actions' => [],
+        ];
 
         return new ContextPolicyBuilder($config);
     }

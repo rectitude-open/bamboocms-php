@@ -10,8 +10,8 @@ use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
 use Contexts\ArticlePublishing\Application\DTOs\UpdateArticleDTO;
+use Contexts\ArticlePublishing\Domain\Gateway\AuthorGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
-use Contexts\ArticlePublishing\Domain\Gateway\CurrentUserGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\ViewerGateway;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
@@ -29,7 +29,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function __construct(
         private ArticleRepository $repository,
         private CategoryGateway $categoryGateway,
-        private CurrentUserGateway $currentUserGateway,
+        private AuthorGateway $authorGateway,
         private ViewerGateway $viewerGateway,
     ) {}
 
@@ -41,7 +41,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $authorId = $data->authorId
                         ? AuthorId::fromInt($data->authorId)
-                        : $this->currentUserGateway->getCurrentAuthorId();
+                        : $this->authorGateway->getCurrentAuthorId();
 
         $article = match ($data->status) {
             'draft' => $this->createDraft($data, $authorId),

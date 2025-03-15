@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Infrastructure;
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
+use Contexts\ArticlePublishing\Domain\Gateway\AuthorGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
-use Contexts\ArticlePublishing\Domain\Gateway\CurrentUserGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\ViewerGateway;
+use Contexts\ArticlePublishing\Infrastructure\Adapters\AuthorAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\AuthorizationAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\CategoryAdapter;
-use Contexts\ArticlePublishing\Infrastructure\Adapters\CurrentUserAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\ViewerAdapter;
 use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
 use Contexts\CategoryManagement\Application\Coordinators\CategoryManagementCoordinator;
@@ -53,8 +53,8 @@ class ServiceProvider extends BaseServiceProvider
         });
 
         $this->app->bind(AuthorizationGateway::class, AuthorizationAdapter::class);
-        $this->app->bind(CurrentUserGateway::class, CurrentUserAdapter::class);
         $this->app->bind(ViewerGateway::class, ViewerAdapter::class);
+        $this->app->bind(AuthorGateway::class, AuthorAdapter::class);
     }
 
     public function provides(): array

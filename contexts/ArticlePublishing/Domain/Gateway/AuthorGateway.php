@@ -6,7 +6,7 @@ namespace Contexts\ArticlePublishing\Domain\Gateway;
 
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 
-interface CurrentUserGateway
+interface AuthorGateway
 {
     public function getCurrentAuthorId(): AuthorId;
 }

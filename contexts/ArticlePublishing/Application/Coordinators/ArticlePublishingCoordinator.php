@@ -20,14 +20,14 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleVisibility;
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 use Contexts\ArticlePublishing\Domain\Policies\GlobalPermissionPolicy;
 use Contexts\ArticlePublishing\Domain\Policies\VisibilityPolicy;
-use Contexts\ArticlePublishing\Infrastructure\Persistence\ArticlePersistence;
+use Contexts\ArticlePublishing\Domain\Repositories\ArticleRepository;
 use Contexts\Shared\Policies\CompositePolicy;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ArticlePublishingCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private ArticlePersistence $repository,
+        private ArticleRepository $repository,
         private CategoryGateway $categoryGateway,
         private AuthorGateway $authorGateway,
         private ViewerGateway $viewerGateway,

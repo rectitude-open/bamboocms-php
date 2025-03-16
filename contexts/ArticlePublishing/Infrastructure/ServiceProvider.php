@@ -9,11 +9,13 @@ use Contexts\ArticlePublishing\Domain\Gateway\AuthorGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
 use Contexts\ArticlePublishing\Domain\Gateway\ViewerGateway;
+use Contexts\ArticlePublishing\Domain\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\AuthorAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\AuthorizationAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\CategoryAdapter;
 use Contexts\ArticlePublishing\Infrastructure\Adapters\ViewerAdapter;
 use Contexts\ArticlePublishing\Infrastructure\EventListeners\ConsoleOutputListener;
+use Contexts\ArticlePublishing\Infrastructure\Persistence\ArticlePersistence;
 use Contexts\CategoryManagement\Application\Coordinators\CategoryManagementCoordinator;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -48,10 +50,10 @@ class ServiceProvider extends BaseServiceProvider
             }
         });
 
+        $this->app->bind(ArticleRepository::class, ArticlePersistence::class);
         $this->app->bind(CategoryGateway::class, function ($app) {
             return new CategoryAdapter($app->make(CategoryManagementCoordinator::class));
         });
-
         $this->app->bind(AuthorizationGateway::class, AuthorizationAdapter::class);
         $this->app->bind(ViewerGateway::class, ViewerAdapter::class);
         $this->app->bind(AuthorGateway::class, AuthorAdapter::class);

@@ -9,12 +9,13 @@ use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
+use Contexts\ArticlePublishing\Domain\Repositories\ArticleRepository;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class ArticlePersistence
+class ArticlePersistence implements ArticleRepository
 {
     public function create(Article $article): Article
     {

@@ -12,8 +12,8 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
+use Contexts\ArticlePublishing\Infrastructure\Persistence\ArticlePersistence;
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
-use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 
 beforeEach(function () {
@@ -21,7 +21,7 @@ beforeEach(function () {
     $this->categories = CategoryRecord::factory()->count(3)->create();
 
     // Initialize repository
-    $this->repository = new ArticleRepository;
+    $this->repository = new ArticlePersistence;
 });
 
 it('can create an article', function () {

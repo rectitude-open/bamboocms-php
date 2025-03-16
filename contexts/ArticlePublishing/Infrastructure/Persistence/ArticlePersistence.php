@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\ArticlePublishing\Infrastructure\Repositories;
+namespace Contexts\ArticlePublishing\Infrastructure\Persistence;
 
 use Contexts\ArticlePublishing\Domain\Exceptions\ArticleNotFoundException;
 use Contexts\ArticlePublishing\Domain\Models\Article;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class ArticleRepository
+class ArticlePersistence
 {
     public function create(Article $article): Article
     {

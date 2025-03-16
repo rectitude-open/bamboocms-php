@@ -7,7 +7,7 @@ namespace Contexts\ArticlePublishing\Domain\Policies;
 use App\Exceptions\BizException;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
-use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
+use Contexts\ArticlePublishing\Infrastructure\Persistence\ArticlePersistence;
 use Contexts\Shared\Contracts\BaseAuthorizationPolicy;
 
 class ArticleOwnershipPolicy implements BaseAuthorizationPolicy
@@ -19,7 +19,7 @@ class ArticleOwnershipPolicy implements BaseAuthorizationPolicy
 
     public function check(): void
     {
-        $repository = app(ArticleRepository::class);
+        $repository = app(ArticlePersistence::class);
         $article = $repository->getById($this->articleId);
 
         if (! $article->isOwnedBy($this->authorId)) {

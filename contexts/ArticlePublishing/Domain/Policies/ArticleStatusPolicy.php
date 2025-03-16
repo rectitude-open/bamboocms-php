@@ -7,14 +7,14 @@ namespace Contexts\ArticlePublishing\Domain\Policies;
 use App\Exceptions\BizException;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
-use Contexts\ArticlePublishing\Infrastructure\Repositories\ArticleRepository;
+use Contexts\ArticlePublishing\Infrastructure\Persistence\ArticlePersistence;
 use Contexts\Shared\Contracts\BaseAuthorizationPolicy;
 
 class ArticleStatusPolicy implements BaseAuthorizationPolicy
 {
     public function __construct(
         private ArticleId $articleId,
-        private ArticleRepository $repository,
+        private ArticlePersistence $repository,
         private ArticleStatus $requiredStatus
     ) {}
 

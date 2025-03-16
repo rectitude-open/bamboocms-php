@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\CategoryManagement\Infrastructure\Repositories;
+namespace Contexts\CategoryManagement\Infrastructure\Persistence;
 
 use Contexts\CategoryManagement\Domain\Exceptions\CategoryNotFoundException;
 use Contexts\CategoryManagement\Domain\Models\Category;
@@ -12,7 +12,7 @@ use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class CategoryRepository
+class CategoryPersistence
 {
     public function create(Category $category): Category
     {

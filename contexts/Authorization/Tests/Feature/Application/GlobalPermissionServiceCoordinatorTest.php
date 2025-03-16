@@ -8,9 +8,9 @@ use Contexts\Authorization\Domain\Policies\RolePolicy;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
+use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
+use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
-use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
-use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
 use Illuminate\Support\Facades\Config;
 
 beforeEach(function () {
@@ -47,8 +47,8 @@ it('can be instantiated through container', function () {
 
 it('can check permission for admin user', function () {
     // Setup repositories
-    $userRepository = new UserRepository;
-    $roleRepository = new RoleRepository;
+    $userPersistence = new UserPersistence;
+    $rolePersistence = new RolePersistence;
 
     // Create admin user
     $userRecord = UserRecord::factory()->create();
@@ -56,12 +56,12 @@ it('can check permission for admin user', function () {
 
     // Create admin role
     $adminRole = Role::create(RoleId::null(), 'admin');
-    $adminRole = $roleRepository->create($adminRole);
+    $adminRole = $rolePersistence->create($adminRole);
 
     // Assign admin role to user
     $user = $userRecord->toDomain();
     $user->syncRoles(new RoleIdCollection([$adminRole->getId()]));
-    $userRepository->update($user);
+    $userPersistence->update($user);
 
     // Check if the admin can publish
     $permissionService = app(GlobalPermissionService::class);
@@ -70,8 +70,8 @@ it('can check permission for admin user', function () {
 
 it('denies permission for users without required roles', function () {
     // Setup repositories
-    $userRepository = new UserRepository;
-    $roleRepository = new RoleRepository;
+    $userPersistence = new UserPersistence;
+    $rolePersistence = new RolePersistence;
 
     // Create regular user
     $userRecord = UserRecord::factory()->create();
@@ -79,12 +79,12 @@ it('denies permission for users without required roles', function () {
 
     // Create editor role (not admin)
     $editorRole = Role::create(RoleId::null(), 'editor');
-    $editorRole = $roleRepository->create($editorRole);
+    $editorRole = $rolePersistence->create($editorRole);
 
     // Assign editor role to user
     $user = $userRecord->toDomain();
     $user->syncRoles(new RoleIdCollection([$editorRole->getId()]));
-    $userRepository->update($user);
+    $userPersistence->update($user);
 
     // Editor can edit but cannot publish
     $permissionService = app(GlobalPermissionService::class);

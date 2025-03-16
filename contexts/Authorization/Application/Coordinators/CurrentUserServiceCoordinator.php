@@ -8,24 +8,24 @@ use App\Http\Coordinators\BaseCoordinator;
 use Contexts\Authorization\Contracts\V1\DTOs\CurrentUserDTO;
 use Contexts\Authorization\Contracts\V1\Services\CurrentUserService;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
-use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
-use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
+use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
+use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 
 class CurrentUserServiceCoordinator extends BaseCoordinator implements CurrentUserService
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private RoleRepository $roleRepository,
+        private UserPersistence $userPersistence,
+        private RolePersistence $rolePersistence,
     ) {}
 
     public function getCurrentUser(): CurrentUserDTO
     {
-        $user = $this->userRepository->getById(
+        $user = $this->userPersistence->getById(
             UserId::fromInt(auth()->id())
         );
 
         $userRoles = $user->getRoleIdCollection();
-        $roles = $this->roleRepository->getByIds($userRoles->getIdsArray());
+        $roles = $this->rolePersistence->getByIds($userRoles->getIdsArray());
 
         return new CurrentUserDTO(
             $user->getId()->getValue(),

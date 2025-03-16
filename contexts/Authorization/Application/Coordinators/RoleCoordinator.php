@@ -12,13 +12,13 @@ use Contexts\Authorization\Application\DTOs\Role\UpdateRoleDTO;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
-use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
+use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class RoleCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private RoleRepository $repository
+        private RolePersistence $repository
     ) {}
 
     public function create(CreateRoleDTO $data): Role

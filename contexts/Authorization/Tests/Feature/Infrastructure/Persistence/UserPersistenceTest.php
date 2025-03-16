@@ -10,17 +10,17 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
+use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
-use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
 
 it('can persist user data correctly', function () {
     $email = new Email('test@example.com');
     $password = Password::createFromPlainText('password123');
     $user = UserIdentity::create(UserId::null(), $email, $password, 'My User');
-    $userRepository = new UserRepository;
+    $userPersistence = new UserPersistence;
 
-    $userRepository->create($user);
+    $userPersistence->create($user);
 
     $this->assertDatabaseHas('users', [
         'display_name' => 'My User',
@@ -34,11 +34,11 @@ it('can retrieve an user by ID', function () {
     $email = new Email('retrieve@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Test User');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Retrieve the user using getById
-    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser = $userPersistence->getById($savedUser->getId());
 
     // Assert the retrieved user matches the created one
     expect($retrievedUser->getId()->getValue())->toBe($savedUser->getId()->getValue());
@@ -49,10 +49,10 @@ it('can retrieve an user by ID', function () {
 });
 
 it('throws an exception when retrieving a non-existent user', function () {
-    $userRepository = new UserRepository;
+    $userPersistence = new UserPersistence;
 
     // Attempt to retrieve a non-existent user
-    $userRepository->getById(UserId::fromInt(999));
+    $userPersistence->getById(UserId::fromInt(999));
 })->throws(UserNotFoundException::class);
 
 it('can update an user', function () {
@@ -60,8 +60,8 @@ it('can update an user', function () {
     $email = new Email('original@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Original DisplayName');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Create an updated version of the user with new email
     $newEmail = new Email('updated@example.com');
@@ -76,7 +76,7 @@ it('can update an user', function () {
     );
 
     // Update the user
-    $result = $userRepository->update($updatedUser);
+    $result = $userPersistence->update($updatedUser);
 
     // Verify database was updated
     $this->assertDatabaseHas('users', [
@@ -93,17 +93,17 @@ it('can update an user', function () {
 });
 
 it('throws an exception when updating a non-existent user', function () {
-    $userRepository = new UserRepository;
+    $userPersistence = new UserPersistence;
     $email = new Email('nonexistent@example.com');
     $password = Password::createFromPlainText('password123');
 
     // Attempt to update a non-existent user
-    $userRepository->update(UserIdentity::create(UserId::fromInt(999), $email, $password, 'Updated DisplayName'));
+    $userPersistence->update(UserIdentity::create(UserId::fromInt(999), $email, $password, 'Updated DisplayName'));
 })->throws(UserNotFoundException::class);
 
 it('can paginate users', function () {
     // Create multiple test users
-    $userRepository = new UserRepository;
+    $userPersistence = new UserPersistence;
 
     // Create 5 users
     for ($i = 1; $i <= 5; $i++) {
@@ -115,11 +115,11 @@ it('can paginate users', function () {
             $password,
             "User $i"
         );
-        $userRepository->create($user);
+        $userPersistence->create($user);
     }
 
     // Test pagination with default criteria
-    $result = $userRepository->paginate(1, 2, []);
+    $result = $userPersistence->paginate(1, 2, []);
 
     // Assert pagination metadata
     expect($result->total())->toBe(5);
@@ -128,18 +128,18 @@ it('can paginate users', function () {
     expect(count($result->items()))->toBe(2); // 2 items on the first page
 
     // Test second page
-    $result2 = $userRepository->paginate(2, 2, []);
+    $result2 = $userPersistence->paginate(2, 2, []);
     expect($result2->currentPage())->toBe(2);
     expect(count($result2->items()))->toBe(2); // 2 items on the second page
 
     // Test last page
-    $result3 = $userRepository->paginate(3, 2, []);
+    $result3 = $userPersistence->paginate(3, 2, []);
     expect($result3->currentPage())->toBe(3);
     expect(count($result3->items()))->toBe(1); // 1 item on the last page
 });
 
 it('can filter users with search criteria', function () {
-    $userRepository = new UserRepository;
+    $userPersistence = new UserPersistence;
     $password = Password::createFromPlainText('password123');
 
     // Create users with specific display_names and emails
@@ -150,7 +150,7 @@ it('can filter users with search criteria', function () {
         $password,
         'Laravel User'
     );
-    $userRepository->create($user1);
+    $userPersistence->create($user1);
 
     $user2Email = new Email('php@example.com');
     $user2 = UserIdentity::create(
@@ -160,7 +160,7 @@ it('can filter users with search criteria', function () {
         'PHP Tutorial'
     );
     $user2->subspend();
-    $userRepository->create($user2);
+    $userPersistence->create($user2);
 
     $user3Email = new Email('tips@laravel.com');
     $user3 = UserIdentity::create(
@@ -170,25 +170,25 @@ it('can filter users with search criteria', function () {
         'Laravel Tips'
     );
     $user3->subspend();
-    $userRepository->create($user3);
+    $userPersistence->create($user3);
 
     // Test search by display_name criteria
-    $result = $userRepository->paginate(1, 10, ['display_name' => 'Laravel']);
+    $result = $userPersistence->paginate(1, 10, ['display_name' => 'Laravel']);
     expect($result->total())->toBe(2); // Should find the two Laravel users
 
     // Test search by email criteria
-    $result = $userRepository->paginate(1, 10, ['email' => 'laravel']);
+    $result = $userPersistence->paginate(1, 10, ['email' => 'laravel']);
     expect($result->total())->toBe(2); // Should find users with laravel in email
 
     // Test search with status criteria
-    $result = $userRepository->paginate(1, 10, [
+    $result = $userPersistence->paginate(1, 10, [
         'display_name' => 'Laravel',
         'status' => UserRecord::mapStatusToRecord(UserStatus::active()),
     ]);
     expect($result->total())->toBe(1); // Should only find the active Laravel user
 
     // Test with no matching criteria
-    $result = $userRepository->paginate(1, 10, ['display_name' => 'Django']);
+    $result = $userPersistence->paginate(1, 10, ['display_name' => 'Django']);
     expect($result->total())->toBe(0);
 
     // Test search by created_at_range criteria
@@ -200,9 +200,9 @@ it('can filter users with search criteria', function () {
         'Past User',
         new CarbonImmutable('2021-01-01')
     );
-    $userRepository->create($user4);
+    $userPersistence->create($user4);
 
-    $result = $userRepository->paginate(1, 10, [
+    $result = $userPersistence->paginate(1, 10, [
         'created_at_range' => ['2021-01-01', '2021-01-02'],
     ]);
 
@@ -214,11 +214,11 @@ it('can delete an user', function () {
     $email = new Email('delete@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Test User');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Delete the user
-    $userRepository->delete($savedUser);
+    $userPersistence->delete($savedUser);
 
     // Verify the user was deleted
     $this->assertDatabaseMissing('users', [
@@ -228,12 +228,12 @@ it('can delete an user', function () {
 });
 
 it('throws an exception when deleting a non-existent user', function () {
-    $userRepository = new UserRepository;
+    $userPersistence = new UserPersistence;
     $email = new Email('nonexistent@example.com');
     $password = Password::createFromPlainText('password123');
 
     // Attempt to delete a non-existent user
-    $userRepository->delete(UserIdentity::create(UserId::fromInt(999), $email, $password, 'Test User'));
+    $userPersistence->delete(UserIdentity::create(UserId::fromInt(999), $email, $password, 'Test User'));
 })->throws(UserNotFoundException::class);
 
 it('changes password successfully', function () {
@@ -241,16 +241,16 @@ it('changes password successfully', function () {
     $email = new Email('password@example.com');
     $password = Password::createFromPlainText('oldpassword123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Password User');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Change password
-    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser = $userPersistence->getById($savedUser->getId());
     $retrievedUser->changePassword('newpassword123');
-    $userRepository->changePassword($retrievedUser);
+    $userPersistence->changePassword($retrievedUser);
 
     // Retrieve user and verify password was changed
-    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser = $userPersistence->getById($savedUser->getId());
     expect($retrievedUser->getPassword()->verify('oldpassword123'))->toBeFalse();
     expect($retrievedUser->getPassword()->verify('newpassword123'))->toBeTrue();
 });
@@ -260,8 +260,8 @@ it('can sync user roles when updating user', function () {
     $email = new Email('role-test@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Role Test User');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Create test roles
     $role1 = RoleRecord::create(['name' => 'Editor', 'description' => 'Editor role']);
@@ -275,11 +275,11 @@ it('can sync user roles when updating user', function () {
     ]);
 
     // Retrieve the user and assign roles
-    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser = $userPersistence->getById($savedUser->getId());
     $retrievedUser->syncRoles($roleIds);
 
     // Update the user with the roles
-    $updatedUser = $userRepository->update($retrievedUser);
+    $updatedUser = $userPersistence->update($retrievedUser);
 
     // Verify the roles were assigned correctly - use query builder to avoid ambiguous column issue
     $userRoles = \DB::table('pivot_user_role')
@@ -297,7 +297,7 @@ it('can sync user roles when updating user', function () {
     ]);
 
     $updatedUser->syncRoles($newRoleIds);
-    $userRepository->update($updatedUser);
+    $userPersistence->update($updatedUser);
 
     // Verify the roles were updated correctly
     $userRoles = \DB::table('pivot_user_role')
@@ -315,8 +315,8 @@ it('can sync user roles to empty collection', function () {
     $email = new Email('empty-roles@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Roles User');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Create roles and assign them
     $role1 = RoleRecord::create(['name' => 'Manager', 'description' => 'Manager role']);
@@ -328,9 +328,9 @@ it('can sync user roles to empty collection', function () {
     ]);
 
     // Assign roles and update
-    $retrievedUser = $userRepository->getById($savedUser->getId());
+    $retrievedUser = $userPersistence->getById($savedUser->getId());
     $retrievedUser->syncRoles($roleIds);
-    $userRepository->update($retrievedUser);
+    $userPersistence->update($retrievedUser);
 
     // Verify roles were assigned
     $userRoles = \DB::table('pivot_user_role')
@@ -341,7 +341,7 @@ it('can sync user roles to empty collection', function () {
     // Now remove all roles
     $emptyRoleIds = new RoleIdCollection([]);
     $retrievedUser->syncRoles($emptyRoleIds);
-    $userRepository->update($retrievedUser);
+    $userPersistence->update($retrievedUser);
 
     // Verify all roles were removed
     $userRoles = \DB::table('pivot_user_role')
@@ -355,8 +355,8 @@ it('preserves existing user roles when updating other attributes', function () {
     $email = new Email('preserve-roles@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Preserve Roles User');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Create roles and assign them
     $role1 = RoleRecord::create(['name' => 'Subscriber', 'description' => 'Subscriber role']);
@@ -368,16 +368,16 @@ it('preserves existing user roles when updating other attributes', function () {
     ]);
 
     // Assign roles
-    $user = $userRepository->getById($savedUser->getId());
+    $user = $userPersistence->getById($savedUser->getId());
     $user->syncRoles($roleIds);
-    $userRepository->update($user);
+    $userPersistence->update($user);
 
     // Get fresh instance with roles loaded
-    $user = $userRepository->getById($savedUser->getId());
+    $user = $userPersistence->getById($savedUser->getId());
 
     // Update only the user's display name
     $user->modify(null, 'Updated Display Name', null);
-    $userRepository->update($user);
+    $userPersistence->update($user);
 
     // Verify roles are still present after the update
     $userRecord = UserRecord::find($user->getId()->getValue());
@@ -397,17 +397,17 @@ it('updates roles correctly even with empty initial role collection', function (
     $email = new Email('no-roles@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Initial Roles');
-    $userRepository = new UserRepository;
-    $savedUser = $userRepository->create($createdUser);
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
 
     // Create a role to assign
     $role = RoleRecord::create(['name' => 'Guest', 'description' => 'Guest role']);
 
     // Assign role to user that previously had no roles
-    $user = $userRepository->getById($savedUser->getId());
+    $user = $userPersistence->getById($savedUser->getId());
     $roleIds = new RoleIdCollection([RoleId::fromInt($role->id)]);
     $user->syncRoles($roleIds);
-    $userRepository->update($user);
+    $userPersistence->update($user);
 
     // Verify role was assigned
     $userRoles = \DB::table('pivot_user_role')

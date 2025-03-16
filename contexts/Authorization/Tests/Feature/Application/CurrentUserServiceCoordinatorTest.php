@@ -13,20 +13,20 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
-use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
-use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
+use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
+use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
     // Mock repositories
-    $this->userRepository = mock(UserRepository::class);
-    $this->roleRepository = mock(RoleRepository::class);
+    $this->userPersistence = mock(UserPersistence::class);
+    $this->rolePersistence = mock(RolePersistence::class);
 
     // Create service coordinator
     $this->service = new CurrentUserServiceCoordinator(
-        $this->userRepository,
-        $this->roleRepository
+        $this->userPersistence,
+        $this->rolePersistence
     );
 
     // Test user ID
@@ -82,12 +82,12 @@ it('returns correct user data with roles', function () {
     ]);
 
     // Set up expectations
-    $this->userRepository->shouldReceive('getById')
+    $this->userPersistence->shouldReceive('getById')
         ->with(Mockery::on(fn ($arg) => $arg instanceof UserId && $arg->getValue() === $this->userId))
         ->once()
         ->andReturn($user);
 
-    $this->roleRepository->shouldReceive('getByIds')
+    $this->rolePersistence->shouldReceive('getByIds')
         ->with([1, 2])
         ->once()
         ->andReturn($roles);
@@ -130,12 +130,12 @@ it('returns user with empty roles when user has no roles', function () {
     );
 
     // Set up expectations
-    $this->userRepository->shouldReceive('getById')
+    $this->userPersistence->shouldReceive('getById')
         ->with(Mockery::on(fn ($arg) => $arg instanceof UserId && $arg->getValue() === $this->userId))
         ->once()
         ->andReturn($user);
 
-    $this->roleRepository->shouldReceive('getByIds')
+    $this->rolePersistence->shouldReceive('getByIds')
         ->with([])
         ->once()
         ->andReturn(new Collection([]));

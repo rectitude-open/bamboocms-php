@@ -6,14 +6,14 @@ use Contexts\Authorization\Domain\Role\Exceptions\RoleNotFoundException;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
+use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
-use Contexts\Authorization\Infrastructure\Repositories\RoleRepository;
 
 it('can persist role data correctly', function () {
     $role = Role::create(RoleId::null(), 'My Role');
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
-    $roleRepository->create($role);
+    $rolePersistence->create($role);
 
     $this->assertDatabaseHas('roles', [
         'label' => 'My Role',
@@ -24,11 +24,11 @@ it('can persist role data correctly', function () {
 it('can retrieve an role by ID', function () {
     // Create a test role in the database
     $createdRole = Role::create(RoleId::null(), 'Test Role');
-    $roleRepository = new RoleRepository;
-    $savedRole = $roleRepository->create($createdRole);
+    $rolePersistence = new RolePersistence;
+    $savedRole = $rolePersistence->create($createdRole);
 
     // Retrieve the role using getById
-    $retrievedRole = $roleRepository->getById($savedRole->id);
+    $retrievedRole = $rolePersistence->getById($savedRole->id);
 
     // Assert the retrieved role matches the created one
     expect($retrievedRole->getId()->getValue())->toBe($savedRole->getId()->getValue());
@@ -38,18 +38,18 @@ it('can retrieve an role by ID', function () {
 
 it('can retrieve multiple roles by IDs', function () {
     // Create multiple test roles in the database
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
     $role1 = Role::create(RoleId::null(), 'Role 1');
     $role2 = Role::create(RoleId::null(), 'Role 2');
     $role3 = Role::create(RoleId::null(), 'Role 3');
 
-    $role1 = $roleRepository->create($role1);
-    $role2 = $roleRepository->create($role2);
-    $role3 = $roleRepository->create($role3);
+    $role1 = $rolePersistence->create($role1);
+    $role2 = $rolePersistence->create($role2);
+    $role3 = $rolePersistence->create($role3);
 
     // Retrieve the roles using getByIds
-    $retrievedRoles = $roleRepository->getByIds([
+    $retrievedRoles = $rolePersistence->getByIds([
         $role1->id->getValue(),
         $role2->id->getValue(),
         $role3->id->getValue(),
@@ -63,17 +63,17 @@ it('can retrieve multiple roles by IDs', function () {
 });
 
 it('throws an exception when retrieving a non-existent role', function () {
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
     // Attempt to retrieve a non-existent role
-    $roleRepository->getById(RoleId::fromInt(999));
+    $rolePersistence->getById(RoleId::fromInt(999));
 })->throws(RoleNotFoundException::class);
 
 it('can update an role', function () {
     // Create a test role in the database
     $createdRole = Role::create(RoleId::null(), 'Original Label');
-    $roleRepository = new RoleRepository;
-    $savedRole = $roleRepository->create($createdRole);
+    $rolePersistence = new RolePersistence;
+    $savedRole = $rolePersistence->create($createdRole);
 
     // Create an updated version of the role
     $updatedRole = Role::create(
@@ -82,7 +82,7 @@ it('can update an role', function () {
     );
 
     // Update the role
-    $result = $roleRepository->update($updatedRole);
+    $result = $rolePersistence->update($updatedRole);
 
     // Verify database was updated
     $this->assertDatabaseHas('roles', [
@@ -97,15 +97,15 @@ it('can update an role', function () {
 });
 
 it('throws an exception when updating a non-existent role', function () {
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
     // Attempt to update a non-existent role
-    $roleRepository->update(Role::create(RoleId::fromInt(999), 'Updated Label'));
+    $rolePersistence->update(Role::create(RoleId::fromInt(999), 'Updated Label'));
 })->throws(RoleNotFoundException::class);
 
 it('can paginate roles', function () {
     // Create multiple test roles
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
     // Create 5 roles
     for ($i = 1; $i <= 5; $i++) {
@@ -114,11 +114,11 @@ it('can paginate roles', function () {
             "Role $i",
             new CarbonImmutable
         );
-        $roleRepository->create($role);
+        $rolePersistence->create($role);
     }
 
     // Test pagination with default criteria
-    $result = $roleRepository->paginate(1, 2, []);
+    $result = $rolePersistence->paginate(1, 2, []);
 
     // Assert pagination metadata
     expect($result->total())->toBe(5);
@@ -127,18 +127,18 @@ it('can paginate roles', function () {
     expect(count($result->items()))->toBe(2); // 2 items on the first page
 
     // Test second page
-    $result2 = $roleRepository->paginate(2, 2, []);
+    $result2 = $rolePersistence->paginate(2, 2, []);
     expect($result2->currentPage())->toBe(2);
     expect(count($result2->items()))->toBe(2); // 2 items on the second page
 
     // Test last page
-    $result3 = $roleRepository->paginate(3, 2, []);
+    $result3 = $rolePersistence->paginate(3, 2, []);
     expect($result3->currentPage())->toBe(3);
     expect(count($result3->items()))->toBe(1); // 1 item on the last page
 });
 
 it('can filter roles with search criteria', function () {
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
     // Create roles with specific labels
     $role1 = Role::create(
@@ -146,7 +146,7 @@ it('can filter roles with search criteria', function () {
         'Laravel Role',
         new CarbonImmutable
     );
-    $roleRepository->create($role1);
+    $rolePersistence->create($role1);
 
     $role2 = Role::create(
         RoleId::null(),
@@ -154,7 +154,7 @@ it('can filter roles with search criteria', function () {
         new CarbonImmutable
     );
     $role2->subspend();
-    $roleRepository->create($role2);
+    $rolePersistence->create($role2);
 
     $role3 = Role::create(
         RoleId::null(),
@@ -162,21 +162,21 @@ it('can filter roles with search criteria', function () {
         new CarbonImmutable
     );
     $role3->subspend();
-    $roleRepository->create($role3);
+    $rolePersistence->create($role3);
 
     // Test search by label criteria
-    $result = $roleRepository->paginate(1, 10, ['label' => 'Laravel']);
+    $result = $rolePersistence->paginate(1, 10, ['label' => 'Laravel']);
     expect($result->total())->toBe(2); // Should find the two Laravel roles
 
     // Test search with status criteria
-    $result = $roleRepository->paginate(1, 10, [
+    $result = $rolePersistence->paginate(1, 10, [
         'label' => 'Laravel',
         'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
     ]);
     expect($result->total())->toBe(1); // Should only find the active Laravel role
 
     // Test with no matching criteria
-    $result = $roleRepository->paginate(1, 10, ['label' => 'Django']);
+    $result = $rolePersistence->paginate(1, 10, ['label' => 'Django']);
     expect($result->total())->toBe(0);
 
     // Test search by created_at_range criteria
@@ -185,9 +185,9 @@ it('can filter roles with search criteria', function () {
         'Past Role',
         new CarbonImmutable('2021-01-01')
     );
-    $roleRepository->create($role4);
+    $rolePersistence->create($role4);
 
-    $result = $roleRepository->paginate(1, 10, [
+    $result = $rolePersistence->paginate(1, 10, [
         'created_at_range' => ['2021-01-01', '2021-01-02'],
     ]);
 
@@ -197,11 +197,11 @@ it('can filter roles with search criteria', function () {
 it('can delete an role', function () {
     // Create a test role in the database
     $createdRole = Role::create(RoleId::null(), 'Test Role');
-    $roleRepository = new RoleRepository;
-    $savedRole = $roleRepository->create($createdRole);
+    $rolePersistence = new RolePersistence;
+    $savedRole = $rolePersistence->create($createdRole);
 
     // Delete the role
-    $roleRepository->delete($savedRole);
+    $rolePersistence->delete($savedRole);
 
     // Verify the role was deleted
     $this->assertDatabaseMissing('roles', [
@@ -210,8 +210,8 @@ it('can delete an role', function () {
 });
 
 it('throws an exception when deleting a non-existent role', function () {
-    $roleRepository = new RoleRepository;
+    $rolePersistence = new RolePersistence;
 
     // Attempt to delete a non-existent role
-    $roleRepository->delete(Role::create(RoleId::fromInt(999), 'Test Role'));
+    $rolePersistence->delete(Role::create(RoleId::fromInt(999), 'Test Role'));
 })->throws(RoleNotFoundException::class);

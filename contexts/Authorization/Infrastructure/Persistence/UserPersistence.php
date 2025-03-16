@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Infrastructure\Repositories;
+namespace Contexts\Authorization\Infrastructure\Persistence;
 
 use Contexts\Authorization\Domain\UserIdentity\Exceptions\UserNotFoundException;
 use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
@@ -13,7 +13,7 @@ use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class UserRepository
+class UserPersistence
 {
     public function create(UserIdentity $user): UserIdentity
     {

@@ -16,13 +16,13 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
-use Contexts\Authorization\Infrastructure\Repositories\UserRepository;
+use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserIdentityCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private UserRepository $repository
+        private UserPersistence $repository
     ) {}
 
     public function create(CreateUserDTO $data): UserIdentity

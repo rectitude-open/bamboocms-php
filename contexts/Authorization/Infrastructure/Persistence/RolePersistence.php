@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Infrastructure\Repositories;
+namespace Contexts\Authorization\Infrastructure\Persistence;
 
 use Contexts\Authorization\Domain\Role\Exceptions\RoleNotFoundException;
 use Contexts\Authorization\Domain\Role\Models\Role;
@@ -13,7 +13,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
-class RoleRepository
+class RolePersistence
 {
     public function create(Role $role): Role
     {

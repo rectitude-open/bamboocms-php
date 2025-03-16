@@ -12,13 +12,13 @@ use Contexts\CategoryManagement\Application\DTOs\UpdateCategoryDTO;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
-use Contexts\CategoryManagement\Infrastructure\Persistence\CategoryPersistence;
+use Contexts\CategoryManagement\Domain\Repositories\CategoryRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class CategoryManagementCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private CategoryPersistence $repository
+        private CategoryRepository $repository
     ) {}
 
     public function create(CreateCategoryDTO $data): Category

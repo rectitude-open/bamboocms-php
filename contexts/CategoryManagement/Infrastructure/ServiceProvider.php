@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Infrastructure;
 
+use Contexts\CategoryManagement\Domain\Repositories\CategoryRepository;
+use Contexts\CategoryManagement\Infrastructure\Persistence\CategoryPersistence;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +36,7 @@ class ServiceProvider extends BaseServiceProvider
                 Route::middleware('api')->prefix(config('ROUTE_PREFIX'))->group(__DIR__.'/Routes.php');
             }
         });
+        $this->app->bind(CategoryRepository::class, CategoryPersistence::class);
     }
 
     public function provides(): array

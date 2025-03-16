@@ -8,11 +8,12 @@ use Contexts\CategoryManagement\Domain\Exceptions\CategoryNotFoundException;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
+use Contexts\CategoryManagement\Domain\Repositories\CategoryRepository;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class CategoryPersistence
+class CategoryPersistence implements CategoryRepository
 {
     public function create(Category $category): Category
     {

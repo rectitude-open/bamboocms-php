@@ -8,6 +8,10 @@ use Contexts\Authorization\Application\Coordinators\CurrentUserServiceCoordinato
 use Contexts\Authorization\Application\Coordinators\GlobalPermissionServiceCoordinator;
 use Contexts\Authorization\Contracts\V1\Services\CurrentUserService;
 use Contexts\Authorization\Contracts\V1\Services\GlobalPermissionService;
+use Contexts\Authorization\Domain\Repositories\RoleRepository;
+use Contexts\Authorization\Domain\Repositories\UserRepository;
+use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
+use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +44,8 @@ class ServiceProvider extends BaseServiceProvider
             }
         });
 
+        $this->app->bind(RoleRepository::class, RolePersistence::class);
+        $this->app->bind(UserRepository::class, UserPersistence::class);
         $this->app->bind(CurrentUserService::class, CurrentUserServiceCoordinator::class);
         $this->app->bind(GlobalPermissionService::class, GlobalPermissionServiceCoordinator::class);
     }

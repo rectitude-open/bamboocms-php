@@ -9,16 +9,16 @@ use Carbon\CarbonImmutable;
 use Contexts\Authorization\Application\DTOs\Role\CreateRoleDTO;
 use Contexts\Authorization\Application\DTOs\Role\GetRoleListDTO;
 use Contexts\Authorization\Application\DTOs\Role\UpdateRoleDTO;
+use Contexts\Authorization\Domain\Repositories\RoleRepository;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
-use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class RoleCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private RolePersistence $repository
+        private RoleRepository $repository
     ) {}
 
     public function create(CreateRoleDTO $data): Role

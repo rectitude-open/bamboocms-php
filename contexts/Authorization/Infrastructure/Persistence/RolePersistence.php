@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Infrastructure\Persistence;
 
+use Contexts\Authorization\Domain\Repositories\RoleRepository;
 use Contexts\Authorization\Domain\Role\Exceptions\RoleNotFoundException;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
@@ -13,7 +14,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
-class RolePersistence
+class RolePersistence implements RoleRepository
 {
     public function create(Role $role): Role
     {

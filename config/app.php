@@ -125,4 +125,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'backend_route_prefix' => env('APP_BACKEND_ROUTE_PREFIX', ''),
 ];

@@ -14,7 +14,7 @@ class CreateUserRequest extends BaseFormRequest
             'email' => ['required', 'email', 'min:4', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
             'display_name' => ['required', 'string', 'max:255'],
-            'created_at' => ['date', 'date_format: Y-m-d H:i:s'],
+            'created_at' => ['date', 'date_format:Y-m-d H:i:s'],
         ];
     }
 }

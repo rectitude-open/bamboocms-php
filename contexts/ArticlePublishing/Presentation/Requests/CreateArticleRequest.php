@@ -17,7 +17,7 @@ class CreateArticleRequest extends BaseFormRequest
             'category_ids' => ['array'],
             'category_ids.*' => ['integer', 'gt:0'],
             'author_id' => ['integer', 'gt:0'],
-            'created_at' => ['date', 'date_format: Y-m-d H:i:s'],
+            'created_at' => ['date', 'date_format:Y-m-d H:i:s'],
         ];
     }
 }

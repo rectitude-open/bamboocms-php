@@ -15,7 +15,7 @@ class UpdateUserRequest extends BaseFormRequest
             'email' => ['email', 'max:255'],
             'display_name' => ['string', 'max:255'],
             'status' => ['string', 'in:subspended,active'],
-            'created_at' => ['date', 'date_format: Y-m-d H:i:s'],
+            'created_at' => ['date', 'date_format:Y-m-d H:i:s'],
         ];
     }
 }

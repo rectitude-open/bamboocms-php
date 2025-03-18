@@ -12,7 +12,7 @@ class CreateRoleRequest extends BaseFormRequest
     {
         return [
             'label' => ['required', 'string', 'max:255'],
-            'created_at' => ['date', 'date_format: Y-m-d H:i:s'],
+            'created_at' => ['date', 'date_format:Y-m-d H:i:s'],
         ];
     }
 }

@@ -17,14 +17,30 @@ class GetRoleListDTO
 
     public static function fromRequest(array $data): self
     {
+        $merged = array_merge($data, self::convertFiltersToCriteria($data['filters'] ?? []));
+
         return new self(
-            $data['id'] ?? null,
-            $data['label'] ?? null,
-            $data['status'] ?? null,
-            $data['created_at_range'] ?? null,
-            $data['current_page'] ?? 1,
-            $data['per_page'] ?? 10,
+            $merged['id'] ?? null,
+            $merged['label'] ?? null,
+            $merged['status'] ?? null,
+            $merged['created_at_range'] ?? null,
+            $merged['current_page'] ?? 1,
+            $merged['per_page'] ?? 10,
         );
+    }
+
+    private static function convertFiltersToCriteria(array $filters): array
+    {
+        return collect($filters)->mapWithKeys(function ($filter) {
+            $key = $filter['id'];
+            if ($key === 'created_at_range') {
+                $value = json_decode($filter['value'], true);
+            } else {
+                $value = $filter['value'];
+            }
+
+            return [$key => $value];
+        })->toArray();
     }
 
     public function toCriteria(): array

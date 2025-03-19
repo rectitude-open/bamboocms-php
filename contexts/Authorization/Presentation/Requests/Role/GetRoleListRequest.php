@@ -18,6 +18,7 @@ class GetRoleListRequest extends BaseFormRequest
             'created_at_range.*' => ['date'],
             'current_page' => ['integer', 'gt:0'],
             'per_page' => ['integer', 'gt:0'],
+            ...$this->filtersRule(),
         ];
     }
 }

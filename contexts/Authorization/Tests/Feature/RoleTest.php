@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use Contexts\Authorization\Domain\Role\Models\RoleStatus;
+use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 
 it('can create active roles via api', function () {
     $response = $this->postJson('roles', [
@@ -50,6 +52,41 @@ it('can get a list of roles', function () {
     $response = $this->get('roles');
 
     $response->assertStatus(200);
+});
+
+it('can search for roles', function () {
+    RoleRecord::factory()->create([
+        'label' => 'My Role',
+        'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+    ]);
+    RoleRecord::factory()->create([
+        'label' => 'Other Role',
+        'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+    ]);
+
+    $response = $this->get('roles?label=My');
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(1, 'data');
+    $response->assertJson([
+        'data' => [
+            [
+                'label' => 'My Role',
+            ],
+        ],
+    ]);
+
+    $response = $this->get('roles?filters=[{"id":"label","value":"Other"}]');
+    $response->assertStatus(200);
+    $response->assertJsonCount(1, 'data');
+    $response->assertJson([
+        'data' => [
+            [
+                'label' => 'Other Role',
+            ],
+        ],
+    ]);
+
 });
 
 it('can update a category', function () {

@@ -18,7 +18,7 @@ class GetArticleListRequest extends BaseFormRequest
             'author_id' => ['integer', 'gt:0'],
             'created_at_range' => ['array', 'size:2'],
             'created_at_range.*' => ['date'],
-            'page' => ['integer', 'gt:0'],
+            'current_page' => ['integer', 'gt:0'],
             'per_page' => ['integer', 'gt:0'],
         ];
     }

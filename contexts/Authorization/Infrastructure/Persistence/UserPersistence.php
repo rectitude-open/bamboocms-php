@@ -65,9 +65,9 @@ class UserPersistence implements UserRepository
         return $record->toDomain($user->getEvents());
     }
 
-    public function paginate(int $page = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
+    public function paginate(int $currentPage = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
     {
-        $paginator = UserRecord::query()->search($criteria)->paginate($perPage, ['*'], 'page', $page);
+        $paginator = UserRecord::query()->search($criteria)->paginate($perPage, ['*'], 'current_page', $currentPage);
 
         $paginator->getCollection()->transform(function ($record) {
             return $record->toDomain();

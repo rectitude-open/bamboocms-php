@@ -45,7 +45,7 @@ class UserIdentityCoordinator extends BaseCoordinator
 
     public function getUserList(GetUserListDTO $data): LengthAwarePaginator
     {
-        return $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
+        return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
     }
 
     public function updateUser(int $id, UpdateUserDTO $data): UserIdentity

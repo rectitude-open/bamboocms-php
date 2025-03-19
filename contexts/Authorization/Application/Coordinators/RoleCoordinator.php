@@ -39,7 +39,7 @@ class RoleCoordinator extends BaseCoordinator
 
     public function getRoleList(GetRoleListDTO $data): LengthAwarePaginator
     {
-        return $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
+        return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
     }
 
     public function updateRole(int $id, UpdateRoleDTO $data): Role

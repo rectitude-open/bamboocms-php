@@ -13,7 +13,7 @@ class GetArticleListDTO
         public readonly ?int $categoryId,
         public readonly ?int $authorId,
         public readonly ?array $createdAtRange,
-        public readonly int $page,
+        public readonly int $currentPage,
         public readonly int $perPage,
     ) {}
 
@@ -26,7 +26,7 @@ class GetArticleListDTO
             $data['category_id'] ?? null,
             $data['author_id'] ?? null,
             $data['created_at_range'] ?? null,
-            $data['page'] ?? 1,
+            $data['current_page'] ?? 1,
             $data['per_page'] ?? 10,
         );
     }

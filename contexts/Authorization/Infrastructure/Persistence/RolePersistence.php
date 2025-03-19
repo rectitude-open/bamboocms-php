@@ -65,9 +65,9 @@ class RolePersistence implements RoleRepository
         return $record->toDomain($role->getEvents());
     }
 
-    public function paginate(int $page = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
+    public function paginate(int $currentPage = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
     {
-        $paginator = RoleRecord::query()->search($criteria)->paginate($perPage, ['*'], 'page', $page);
+        $paginator = RoleRecord::query()->search($criteria)->paginate($perPage, ['*'], 'current_page', $currentPage);
 
         $paginator->getCollection()->transform(function ($record) {
             return $record->toDomain();

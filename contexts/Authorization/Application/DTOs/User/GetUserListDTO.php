@@ -12,7 +12,7 @@ class GetUserListDTO
         public readonly ?string $display_name,
         public readonly ?string $status,
         public readonly ?array $createdAtRange,
-        public readonly int $page,
+        public readonly int $currentPage,
         public readonly int $perPage,
     ) {}
 
@@ -24,7 +24,7 @@ class GetUserListDTO
             $data['display_name'] ?? null,
             $data['status'] ?? null,
             $data['created_at_range'] ?? null,
-            $data['page'] ?? 1,
+            $data['current_page'] ?? 1,
             $data['per_page'] ?? 10,
         );
     }

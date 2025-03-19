@@ -11,7 +11,7 @@ class GetCategoryListDTO
         public readonly ?string $label,
         public readonly ?string $status,
         public readonly ?array $createdAtRange,
-        public readonly int $page,
+        public readonly int $currentPage,
         public readonly int $perPage,
     ) {}
 
@@ -22,7 +22,7 @@ class GetCategoryListDTO
             $data['label'] ?? null,
             $data['status'] ?? null,
             $data['created_at_range'] ?? null,
-            $data['page'] ?? 1,
+            $data['current_page'] ?? 1,
             $data['per_page'] ?? 10,
         );
     }

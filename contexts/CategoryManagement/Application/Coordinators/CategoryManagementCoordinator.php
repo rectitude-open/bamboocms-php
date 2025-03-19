@@ -39,7 +39,7 @@ class CategoryManagementCoordinator extends BaseCoordinator
 
     public function getCategoryList(GetCategoryListDTO $data): LengthAwarePaginator
     {
-        return $this->repository->paginate($data->page, $data->perPage, $data->toCriteria());
+        return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
     }
 
     public function updateCategory(int $id, UpdateCategoryDTO $data): Category

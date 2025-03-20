@@ -45,6 +45,22 @@ class Role extends BaseDomainModel
         return $role;
     }
 
+    public static function reconstitute(
+        RoleId $id,
+        string $label,
+        RoleStatus $status,
+        ?CarbonImmutable $created_at = null,
+        ?CarbonImmutable $updated_at = null,
+        array $events = []
+    ): self {
+        $role = new self($id, $label, $status, $created_at, $updated_at);
+        foreach ($events as $event) {
+            $role->recordEvent($event);
+        }
+
+        return $role;
+    }
+
     public function subspend()
     {
         $this->transitionStatus(RoleStatus::subspended());

@@ -37,15 +37,4 @@ class RoleFactory
 
         return $role;
     }
-
-    public function reconstitute(
-        RoleId $id,
-        string $label,
-        RoleStatus $status,
-        ?CarbonImmutable $created_at = null,
-        ?CarbonImmutable $updated_at = null,
-        array $events = []
-    ): Role {
-        return Role::createFromFactory($id, $label, $status, $created_at, $updated_at, $events);
-    }
 }

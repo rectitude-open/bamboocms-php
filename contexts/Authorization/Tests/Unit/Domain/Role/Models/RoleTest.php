@@ -31,7 +31,7 @@ it('can reconstitute an category from its data', function () {
     $createdAt = CarbonImmutable::now()->subDays(5);
     $updatedAt = CarbonImmutable::now()->subDays(1);
 
-    $category = $this->roleFactory->reconstitute($id, $label, $status, $createdAt, $updatedAt);
+    $category = Role::reconstitute($id, $label, $status, $createdAt, $updatedAt);
 
     expect($category->id)->toEqual($id);
     expect($category->getLabel())->toBe($label);

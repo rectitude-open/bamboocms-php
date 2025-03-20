@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Exceptions\BizException;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
+use Contexts\Authorization\Domain\Services\UserEmailUniquenessService;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
@@ -14,15 +15,19 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
+use Contexts\Authorization\Domain\Factories\UserIdentityFactory;
 
 beforeEach(function () {
     $this->email = new Email('test@example.com');
     $this->password = Password::createFromPlainText('password12345');
     $this->plainPassword = 'password12345';
+    $this->userLabelUniquenessService = mock(UserEmailUniquenessService::class);
+    $this->userLabelUniquenessService->shouldReceive('ensureUnique')->andReturn(true);
+    $this->userFactory = new UserIdentityFactory($this->userLabelUniquenessService);
 });
 
 it('can create user with valid data', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::null(),
         $this->email,
         $this->password,
@@ -126,7 +131,7 @@ it('can reconstitute a user without roles (uses empty collection)', function () 
 });
 
 it('should record domain events when user is created', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -140,7 +145,7 @@ it('should record domain events when user is created', function () {
 });
 
 it('can release events and clear them from the user', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -157,7 +162,7 @@ it('can release events and clear them from the user', function () {
 });
 
 it('can modify an user email', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -171,7 +176,7 @@ it('can modify an user email', function () {
 });
 
 it('can modify an user display_name', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -184,7 +189,7 @@ it('can modify an user display_name', function () {
 });
 
 it('can modify an user status', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -199,7 +204,7 @@ it('can modify an user status', function () {
 });
 
 it('can modify multiple user properties at once', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -217,7 +222,7 @@ it('can modify multiple user properties at once', function () {
 
 it('can modify user created_at date', function () {
     $originalDate = CarbonImmutable::now()->subDays(5);
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -232,7 +237,7 @@ it('can modify user created_at date', function () {
 });
 
 it('does not trigger status transition when same status provided', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -246,7 +251,7 @@ it('does not trigger status transition when same status provided', function () {
 });
 
 it('can subspend an user', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -261,7 +266,7 @@ it('can subspend an user', function () {
 });
 
 it('can delete an user', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -277,7 +282,7 @@ it('can delete an user', function () {
 });
 
 it('can authenticate with correct password', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -290,7 +295,7 @@ it('can authenticate with correct password', function () {
 });
 
 it('throws exception when authenticating with wrong password', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -303,7 +308,7 @@ it('throws exception when authenticating with wrong password', function () {
 });
 
 it('throws exception when authenticating deleted user', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -318,7 +323,7 @@ it('throws exception when authenticating deleted user', function () {
 });
 
 it('can change password and record event', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -367,7 +372,7 @@ it('can get user summary for logging', function () {
     $displayName = 'Test User';
     $createdAt = CarbonImmutable::now();
 
-    $userInstance = UserIdentity::create($id, $email, $password, $displayName, $createdAt);
+    $userInstance = $this->userFactory->create($id, $email, $password, $displayName, $createdAt);
 
     $summary = $method->invoke($userInstance);
 
@@ -380,7 +385,7 @@ it('can get user summary for logging', function () {
 });
 
 it('can add new roles through syncRoles', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -409,7 +414,7 @@ it('can add new roles through syncRoles', function () {
 });
 
 it('can remove roles through syncRoles', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -441,7 +446,7 @@ it('can remove roles through syncRoles', function () {
 });
 
 it('can handle both adding and removing roles in one syncRoles call', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -483,7 +488,7 @@ it('can handle both adding and removing roles in one syncRoles call', function (
 });
 
 it('does not generate events when syncing with the same roles', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,
@@ -513,7 +518,7 @@ it('does not generate events when syncing with the same roles', function () {
 });
 
 it('can sync to empty role collection', function () {
-    $user = UserIdentity::create(
+    $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
         $this->password,

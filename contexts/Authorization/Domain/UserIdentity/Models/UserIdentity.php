@@ -11,7 +11,6 @@ use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
-use Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent;
 
 class UserIdentity extends BaseDomainModel
 {
@@ -27,7 +26,7 @@ class UserIdentity extends BaseDomainModel
         private ?CarbonImmutable $updated_at = null
     ) {
         $this->created_at = $created_at ?? CarbonImmutable::now();
-        $this->roleIdCollection = new RoleIdCollection;
+        $this->roleIdCollection = new RoleIdCollection();
     }
 
     public function hasAnyRole(RoleIdCollection $roleIds): bool
@@ -107,7 +106,7 @@ class UserIdentity extends BaseDomainModel
         array $events = []
     ): self {
         $user = new self($id, $email, $password, $display_name, $status, $created_at, $updated_at);
-        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection;
+        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection();
 
         foreach ($events as $event) {
             $user->recordEvent($event);
@@ -116,16 +115,16 @@ class UserIdentity extends BaseDomainModel
         return $user;
     }
 
-    public static function create(
+    public static function createFromFactory(
         UserId $id,
         Email $email,
         Password $password,
         string $display_name,
+        UserStatus $status,
         ?CarbonImmutable $created_at = null,
         ?CarbonImmutable $updated_at = null
     ): self {
-        $user = new self($id, $email, $password, $display_name, UserStatus::active(), $created_at, $updated_at);
-        $user->recordEvent(new UserCreatedEvent($user->id));
+        $user = new self($id, $email, $password, $display_name, $status, $created_at, $updated_at);
 
         return $user;
     }

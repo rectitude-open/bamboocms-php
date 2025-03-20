@@ -96,4 +96,9 @@ class UserPersistence implements UserRepository
         }
         $record->update(['password' => $user->getPassword()->getValue()]);
     }
+
+    public function existsByEmail(string $email): bool
+    {
+        return UserRecord::where('email', $email)->exists();
+    }
 }

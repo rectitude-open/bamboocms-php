@@ -18,7 +18,7 @@ it('can persist user data correctly', function () {
     $email = new Email('test@example.com');
     $password = Password::createFromPlainText('password123');
     $user = UserIdentity::create(UserId::null(), $email, $password, 'My User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
 
     $userPersistence->create($user);
 
@@ -34,7 +34,7 @@ it('can retrieve an user by ID', function () {
     $email = new Email('retrieve@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Test User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Retrieve the user using getById
@@ -49,7 +49,7 @@ it('can retrieve an user by ID', function () {
 });
 
 it('throws an exception when retrieving a non-existent user', function () {
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
 
     // Attempt to retrieve a non-existent user
     $userPersistence->getById(UserId::fromInt(999));
@@ -60,7 +60,7 @@ it('can update an user', function () {
     $email = new Email('original@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Original DisplayName');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Create an updated version of the user with new email
@@ -93,7 +93,7 @@ it('can update an user', function () {
 });
 
 it('throws an exception when updating a non-existent user', function () {
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $email = new Email('nonexistent@example.com');
     $password = Password::createFromPlainText('password123');
 
@@ -103,7 +103,7 @@ it('throws an exception when updating a non-existent user', function () {
 
 it('can paginate users', function () {
     // Create multiple test users
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
 
     // Create 5 users
     for ($i = 1; $i <= 5; $i++) {
@@ -139,7 +139,7 @@ it('can paginate users', function () {
 });
 
 it('can filter users with search criteria', function () {
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $password = Password::createFromPlainText('password123');
 
     // Create users with specific display_names and emails
@@ -214,7 +214,7 @@ it('can delete an user', function () {
     $email = new Email('delete@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Test User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Delete the user
@@ -228,7 +228,7 @@ it('can delete an user', function () {
 });
 
 it('throws an exception when deleting a non-existent user', function () {
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $email = new Email('nonexistent@example.com');
     $password = Password::createFromPlainText('password123');
 
@@ -241,7 +241,7 @@ it('changes password successfully', function () {
     $email = new Email('password@example.com');
     $password = Password::createFromPlainText('oldpassword123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Password User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Change password
@@ -260,7 +260,7 @@ it('can sync user roles when updating user', function () {
     $email = new Email('role-test@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Role Test User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Create test roles
@@ -315,7 +315,7 @@ it('can sync user roles to empty collection', function () {
     $email = new Email('empty-roles@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Roles User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Create roles and assign them
@@ -355,7 +355,7 @@ it('preserves existing user roles when updating other attributes', function () {
     $email = new Email('preserve-roles@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Preserve Roles User');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Create roles and assign them
@@ -397,7 +397,7 @@ it('updates roles correctly even with empty initial role collection', function (
     $email = new Email('no-roles@example.com');
     $password = Password::createFromPlainText('password123');
     $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Initial Roles');
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
     // Create a role to assign
@@ -419,4 +419,29 @@ it('updates roles correctly even with empty initial role collection', function (
         ->where('user_id', $user->getId()->getValue())
         ->value('role_id');
     expect($roleId)->toBe($role->id);
+});
+
+it('returns true when user exists with the given email', function () {
+    // Create a test user with a specific email
+    $email = new Email('exists@example.com');
+    $password = Password::createFromPlainText('password123');
+    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Existing User');
+    $userPersistence = new UserPersistence();
+    $userPersistence->create($createdUser);
+
+    // Check if the email exists
+    $result = $userPersistence->existsByEmail('exists@example.com');
+
+    // Assert the function returns true for existing email
+    expect($result)->toBeTrue();
+});
+
+it('returns false when no user exists with the given email', function () {
+    $userPersistence = new UserPersistence();
+
+    // Check for a non-existent email
+    $result = $userPersistence->existsByEmail('nonexistent@example.com');
+
+    // Assert the function returns false for non-existing email
+    expect($result)->toBeFalse();
 });

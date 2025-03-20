@@ -21,4 +21,6 @@ interface UserRepository
     public function delete(UserIdentity $user): void;
 
     public function changePassword(UserIdentity $user): void;
+
+    public function existsByEmail(string $email): bool;
 }

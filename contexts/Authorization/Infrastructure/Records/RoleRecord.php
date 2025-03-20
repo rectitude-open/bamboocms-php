@@ -9,7 +9,7 @@ use App\Http\Models\BaseModel;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
-use Contexts\Authorization\Infrastructure\Factories\RoleFactory;
+use Contexts\Authorization\Infrastructure\RecordFactories\RoleRecordFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -87,6 +87,6 @@ class RoleRecord extends BaseModel
 
     protected static function newFactory(): Factory
     {
-        return RoleFactory::new();
+        return RoleRecordFactory::new();
     }
 }

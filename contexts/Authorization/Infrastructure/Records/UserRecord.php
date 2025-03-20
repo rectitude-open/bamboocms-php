@@ -12,7 +12,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
-use Contexts\Authorization\Infrastructure\Factories\UserFactory;
+use Contexts\Authorization\Infrastructure\RecordFactories\UserRecordFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -111,6 +111,6 @@ class UserRecord extends Authenticatable
 
     protected static function newFactory(): Factory
     {
-        return UserFactory::new();
+        return UserRecordFactory::new();
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Infrastructure\Factories;
+namespace Contexts\Authorization\Infrastructure\RecordFactories;
 
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RoleFactory extends Factory
+class RoleRecordFactory extends Factory
 {
     protected $model = RoleRecord::class;
 

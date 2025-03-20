@@ -11,6 +11,8 @@ use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Support\Facades\Config;
+use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 
 beforeEach(function () {
     Config::set('policies.article_publishing', [
@@ -30,6 +32,10 @@ beforeEach(function () {
             ],
         ],
     ]);
+
+    $this->roleLabelUniquenessService = mock(RoleLabelUniquenessService::class);
+    $this->roleLabelUniquenessService->shouldReceive('ensureUnique')->andReturn(true);
+    $this->roleFactory = new RoleFactory($this->roleLabelUniquenessService);
 });
 
 it('can get default policy handler', function () {
@@ -41,14 +47,14 @@ it('can get default policy handler', function () {
 });
 
 it('can evaluate user against policy', function () {
-    $userPersistence = new UserPersistence;
+    $userPersistence = new UserPersistence();
 
     $userRecord = UserRecord::factory()->create();
 
     $this->actingAs($userRecord);
 
-    $role = Role::create(RoleId::null(), 'admin');
-    $rolePersistence = new RolePersistence;
+    $role = $this->roleFactory->create(RoleId::null(), 'admin');
+    $rolePersistence = new RolePersistence();
     $role = $rolePersistence->create($role);
 
     $user = $userRecord->toDomain();

@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use Contexts\Authorization\Application\DTOs\Role\CreateRoleDTO;
 use Contexts\Authorization\Application\DTOs\Role\GetRoleListDTO;
 use Contexts\Authorization\Application\DTOs\Role\UpdateRoleDTO;
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 use Contexts\Authorization\Domain\Repositories\RoleRepository;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
@@ -18,12 +19,14 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class RoleCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private RoleRepository $repository
-    ) {}
+        private RoleRepository $repository,
+        private RoleFactory $factory
+    ) {
+    }
 
     public function create(CreateRoleDTO $data): Role
     {
-        $role = Role::create(
+        $role = $this->factory->create(
             RoleId::null(),
             $data->label,
             $data->created_at ? CarbonImmutable::parse($data->created_at) : null

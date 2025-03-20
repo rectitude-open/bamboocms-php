@@ -12,6 +12,8 @@ use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Support\Facades\Config;
+use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 
 beforeEach(function () {
     Config::set('policies.article_publishing', [
@@ -37,6 +39,10 @@ beforeEach(function () {
             ],
         ],
     ]);
+
+    $this->roleLabelUniquenessService = mock(RoleLabelUniquenessService::class);
+    $this->roleLabelUniquenessService->shouldReceive('ensureUnique')->andReturn(true);
+    $this->roleFactory = new RoleFactory($this->roleLabelUniquenessService);
 });
 
 it('can be instantiated through container', function () {
@@ -47,15 +53,15 @@ it('can be instantiated through container', function () {
 
 it('can check permission for admin user', function () {
     // Setup repositories
-    $userPersistence = new UserPersistence;
-    $rolePersistence = new RolePersistence;
+    $userPersistence = new UserPersistence();
+    $rolePersistence = new RolePersistence();
 
     // Create admin user
     $userRecord = UserRecord::factory()->create();
     $this->actingAs($userRecord);
 
     // Create admin role
-    $adminRole = Role::create(RoleId::null(), 'admin');
+    $adminRole = $this->roleFactory->create(RoleId::null(), 'admin');
     $adminRole = $rolePersistence->create($adminRole);
 
     // Assign admin role to user
@@ -70,15 +76,15 @@ it('can check permission for admin user', function () {
 
 it('denies permission for users without required roles', function () {
     // Setup repositories
-    $userPersistence = new UserPersistence;
-    $rolePersistence = new RolePersistence;
+    $userPersistence = new UserPersistence();
+    $rolePersistence = new RolePersistence();
 
     // Create regular user
     $userRecord = UserRecord::factory()->create();
     $this->actingAs($userRecord);
 
     // Create editor role (not admin)
-    $editorRole = Role::create(RoleId::null(), 'editor');
+    $editorRole = $this->roleFactory->create(RoleId::null(), 'editor');
     $editorRole = $rolePersistence->create($editorRole);
 
     // Assign editor role to user

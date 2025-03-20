@@ -24,4 +24,6 @@ interface RoleRepository
     public function delete(Role $role): void;
 
     public function getByLabels(array $labels): Collection;
+
+    public function existsByLabel(string $label): bool;
 }

@@ -95,4 +95,9 @@ class RolePersistence implements RoleRepository
             return $record->toDomain();
         });
     }
+
+    public function existsByLabel(string $label): bool
+    {
+        return RoleRecord::where('label', $label)->exists();
+    }
 }

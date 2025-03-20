@@ -13,7 +13,7 @@ abstract class BaseDomainModel
         return $this->events;
     }
 
-    protected function recordEvent(object $event): void
+    public function recordEvent(object $event): void
     {
         $this->events[] = $event;
     }
@@ -24,5 +24,10 @@ abstract class BaseDomainModel
         $this->events = [];
 
         return $events;
+    }
+
+    public function recordEvents(array $events): void
+    {
+        $this->events = array_merge($this->events, $events);
     }
 }

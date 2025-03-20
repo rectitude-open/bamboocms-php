@@ -3,13 +3,22 @@
 declare(strict_types=1);
 
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 use Contexts\Authorization\Domain\Role\Events\RoleCreatedEvent;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
+use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
+
+beforeEach(function () {
+    $this->roleLabelUniquenessService = mock(RoleLabelUniquenessService::class);
+    $this->roleLabelUniquenessService->shouldReceive('ensureUnique')->andReturn(true);
+    $this->roleFactory = new RoleFactory($this->roleLabelUniquenessService);
+});
 
 it('can create category with valid data', function () {
-    $category = Role::create(RoleId::null(), 'Label');
+    $category = $this->roleFactory->create(RoleId::null(), 'Label');
+
     expect($category->getLabel())->toBe('Label');
     expect($category->getStatus()->equals(RoleStatus::active()))->toBeTrue();
     expect($category->getCreatedAt())->toBeInstanceOf(CarbonImmutable::class);
@@ -22,7 +31,7 @@ it('can reconstitute an category from its data', function () {
     $createdAt = CarbonImmutable::now()->subDays(5);
     $updatedAt = CarbonImmutable::now()->subDays(1);
 
-    $category = Role::reconstitute($id, $label, $status, $createdAt, $updatedAt);
+    $category = $this->roleFactory->reconstitute($id, $label, $status, $createdAt, $updatedAt);
 
     expect($category->id)->toEqual($id);
     expect($category->getLabel())->toBe($label);
@@ -32,7 +41,7 @@ it('can reconstitute an category from its data', function () {
 });
 
 it('should record domain events when category is active', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
     $events = $category->releaseEvents();
 
     expect($events)->toHaveCount(1);
@@ -40,7 +49,7 @@ it('should record domain events when category is active', function () {
 });
 
 it('can release events and clear them from the category', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
 
     // First release should return events
     $events = $category->releaseEvents();
@@ -52,14 +61,14 @@ it('can release events and clear them from the category', function () {
 });
 
 it('can modify an category label', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Original Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Original Label');
     $category->modify('New Label', null);
 
     expect($category->getLabel())->toBe('New Label');
 });
 
 it('can modify an category status', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Original Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Original Label');
     $category->modify(null, RoleStatus::active());
 
     expect($category->getLabel())->toBe('Original Label');
@@ -68,7 +77,7 @@ it('can modify an category status', function () {
 });
 
 it('can modify multiple category properties at once', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Original Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Original Label');
     $category->modify('New Label', RoleStatus::active());
 
     expect($category->getLabel())->toBe('New Label');
@@ -78,7 +87,7 @@ it('can modify multiple category properties at once', function () {
 
 it('can modify category created_at date', function () {
     $originalDate = CarbonImmutable::now()->subDays(5);
-    $category = Role::create(RoleId::fromInt(1), 'Original Label', $originalDate);
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Original Label', $originalDate);
 
     $newDate = CarbonImmutable::now()->subDays(10);
     $category->modify(null, null, $newDate);
@@ -87,7 +96,7 @@ it('can modify category created_at date', function () {
 });
 
 it('does not trigger status transition when same status provided', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
     $category->releaseEvents();
 
     $category->modify(null, RoleStatus::subspended());
@@ -96,7 +105,7 @@ it('does not trigger status transition when same status provided', function () {
 });
 
 it('can subspend an category', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
     $category->releaseEvents();
 
     $category->subspend();
@@ -106,7 +115,7 @@ it('can subspend an category', function () {
 });
 
 it('can delete an category', function () {
-    $category = Role::create(RoleId::fromInt(1), 'Label');
+    $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
     $category->subspend();
     $category->releaseEvents();
 

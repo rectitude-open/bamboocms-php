@@ -6,7 +6,6 @@ namespace Contexts\Authorization\Domain\Role\Models;
 
 use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
-use Contexts\Authorization\Domain\Role\Events\RoleCreatedEvent;
 
 class Role extends BaseDomainModel
 {
@@ -32,7 +31,7 @@ class Role extends BaseDomainModel
         $this->created_at = $newCreatedAt ?? $this->created_at;
     }
 
-    public static function reconstitute(
+    public static function createFromFactory(
         RoleId $id,
         string $label,
         RoleStatus $status,
@@ -41,21 +40,7 @@ class Role extends BaseDomainModel
         array $events = []
     ): self {
         $role = new self($id, $label, $status, $created_at, $updated_at);
-        foreach ($events as $event) {
-            $role->recordEvent($event);
-        }
-
-        return $role;
-    }
-
-    public static function create(
-        RoleId $id,
-        string $label,
-        ?CarbonImmutable $created_at = null,
-        ?CarbonImmutable $updated_at = null
-    ): self {
-        $role = new self($id, $label, RoleStatus::active(), $created_at, $updated_at);
-        $role->recordEvent(new RoleCreatedEvent($role->id));
+        $role->recordEvents($events);
 
         return $role;
     }

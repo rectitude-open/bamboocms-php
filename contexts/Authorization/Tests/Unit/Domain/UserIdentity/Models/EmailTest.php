@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\BizException;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 
 it('can be created with valid email address', function (string $validEmail) {
@@ -19,7 +20,7 @@ it('can be created with valid email address', function (string $validEmail) {
 it('throws an exception when email address is invalid', function (string $invalidEmail) {
     expect(function () use ($invalidEmail) {
         new Email($invalidEmail);
-    })->toThrow(InvalidArgumentException::class, 'Invalid email address');
+    })->toThrow(BizException::class, 'Invalid email address');
 })->with([
     'not-an-email',
     'missing@domain',

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\BizException;
 use Contexts\Shared\ValueObjects\IntId;
 
 // Create a concrete implementation of the abstract IntId class for testing
@@ -15,7 +16,7 @@ it('can be created from int', function (int $validId) {
 
 it('throws exception when created with negative value', function (int $invalidId) {
     expect(fn () => ConcreteIntId::fromInt($invalidId))
-        ->toThrow(\InvalidArgumentException::class, 'Invalid ID value');
+        ->toThrow(BizException::class, 'Invalid ID value');
 })->with([-1, -100, PHP_INT_MIN]);
 
 it('can create a null ID', function () {

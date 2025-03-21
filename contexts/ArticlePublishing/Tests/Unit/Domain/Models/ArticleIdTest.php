@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Exceptions\BizException;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 
 it('can be created', function (int $validId) {
@@ -10,7 +11,7 @@ it('can be created', function (int $validId) {
 })->with([1, 100]);
 
 it('throws an exception when the ID is invalid', function (int $invalidId) {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(BizException::class);
 
     ArticleId::fromInt($invalidId);
 })->with([-1, -100]);

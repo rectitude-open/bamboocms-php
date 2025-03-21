@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
+use App\Exceptions\BizException;
+
 class Email
 {
     public function __construct(private string $value)
     {
         if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Invalid email address');
+            throw BizException::make('Invalid email address: :email')
+                ->with('email', $value);
         }
     }
 

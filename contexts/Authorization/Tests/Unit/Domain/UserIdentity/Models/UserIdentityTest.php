@@ -352,13 +352,13 @@ it('can change password and record event', function () {
 });
 
 it('validates email format', function () {
-    expect(fn () => new Email('invalid-email'))->toThrow(\InvalidArgumentException::class);
-    expect(fn () => new Email('valid@example.com'))->not->toThrow(\InvalidArgumentException::class);
+    expect(fn () => new Email('invalid-email'))->toThrow(BizException::class);
+    expect(fn () => new Email('valid@example.com'))->not->toThrow(BizException::class);
 });
 
 it('validates password minimum length', function () {
-    expect(fn () => Password::createFromPlainText('short'))->toThrow(\InvalidArgumentException::class);
-    expect(fn () => Password::createFromPlainText('password12345'))->not->toThrow(\InvalidArgumentException::class);
+    expect(fn () => Password::createFromPlainText('short'))->toThrow(BizException::class);
+    expect(fn () => Password::createFromPlainText('password12345'))->not->toThrow(BizException::class);
 });
 
 it('can get user summary for logging', function () {

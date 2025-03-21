@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Contexts\Shared\ValueObjects;
 
+use App\Exceptions\BizException;
+
 abstract class IntId
 {
     final private function __construct(private readonly int $value)
     {
         if ($value < 0) {
-            throw new \InvalidArgumentException('Invalid ID value');
+            throw BizException::make('Invalid ID value :value')
+                ->with('value', $value);
         }
     }
 

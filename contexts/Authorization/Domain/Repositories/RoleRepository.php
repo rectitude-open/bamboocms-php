@@ -19,7 +19,7 @@ interface RoleRepository
 
     public function update(Role $role): Role;
 
-    public function paginate(int $currentPage = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator;
+    public function paginate(int $currentPage = 1, int $perPage = 10, array $criteria = [], array $sorting = []): LengthAwarePaginator;
 
     public function delete(Role $role): void;
 

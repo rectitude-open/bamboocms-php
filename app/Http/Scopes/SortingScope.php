@@ -11,25 +11,24 @@ class SortingScope
     /**
      * @param array{
      *   sorting: array<int, array{
-     *      id: string,
-     *      desc?: bool
+     *      field: string,
+     *      direction?: string
      *   }>
      * } $params
      * @return void
      */
-    public static function apply(Builder $query, array $params = [])
+    public static function apply(Builder $query, array $sorting = [])
     {
-        $sorting = $params['sorting'] ?? [];
         if (empty($sorting)) {
-            $sorting = [['id' => 'id', 'desc' => true]];
+            $sorting = [['field' => 'id', 'direction' => 'desc']];
         }
 
         foreach ($sorting as $sort) {
-            $column = $sort['id'] ?? null;
+            $column = $sort['field'] ?? null;
             if ($column === null) {
                 continue;
             }
-            $direction = $sort['desc'] ?? true ? 'desc' : 'asc';
+            $direction = ($sort['direction'] ?? 'asc') == 'asc' ? 'asc' : 'desc';
             $query->orderBy($column, $direction);
         }
     }

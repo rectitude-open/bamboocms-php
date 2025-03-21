@@ -14,6 +14,7 @@ abstract class BaseFormRequest extends FormRequest
         $this->route('id') && $this->merge(['id' => $this->route('id')]);
         $this->autoCast();
         $this->filtersCast();
+        $this->sortingCast();
     }
 
     private function filtersCast()
@@ -26,6 +27,20 @@ abstract class BaseFormRequest extends FormRequest
 
             if (json_last_error() === JSON_ERROR_NONE) {
                 $this->merge(['filters' => $filters]);
+            }
+        }
+    }
+
+    private function sortingCast()
+    {
+        if ($this->has('sorting')) {
+            $inputSorting = $this->input('sorting');
+
+            $sorting = $inputSorting[0];
+            $sorting = json_decode($inputSorting[0], true);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $this->merge(['sorting' => $sorting]);
             }
         }
     }
@@ -43,6 +58,15 @@ abstract class BaseFormRequest extends FormRequest
             'filters' => ['sometimes', 'array'],
             'filters.*.id' => ['required_with:filters', 'string'],
             'filters.*.value' => ['required_with:filters'],
+        ];
+    }
+
+    protected function sortingRule(): array
+    {
+        return [
+            'sorting' => ['sometimes', 'array'],
+            'sorting.*.id' => ['required_with:sorting', 'string'],
+            'sorting.*.desc' => ['required_with:sorting', 'boolean'],
         ];
     }
 

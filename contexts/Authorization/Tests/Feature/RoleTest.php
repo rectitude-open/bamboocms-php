@@ -13,7 +13,7 @@ it('can create active roles via api', function () {
     $response->assertStatus(201);
 });
 
-it('can get a category', function () {
+it('can get a role', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -35,7 +35,7 @@ it('can get a category', function () {
     ]);
 });
 
-it('can not get a category that does not exist', function () {
+it('can not get a role that does not exist', function () {
     $response = $this->get('roles/1');
 
     $response->assertStatus(404);
@@ -52,6 +52,19 @@ it('can get a list of roles', function () {
     $response = $this->get('roles');
 
     $response->assertStatus(200);
+});
+
+it('can get a list of roles with sorting', function () {
+    RoleRecord::factory(3)->create();
+
+    $response = $this->get('roles?sorting=[{"id":"id","desc":false}]');
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(3, 'data');
+
+    $responseIds = collect($response->json('data'))->pluck('id')->all();
+    $sortedIds = collect($responseIds)->sort()->values()->all();
+    expect($responseIds)->toBe($sortedIds);
 });
 
 it('can search for roles', function () {
@@ -89,7 +102,7 @@ it('can search for roles', function () {
 
 });
 
-it('can update a category', function () {
+it('can update a role', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -113,7 +126,7 @@ it('can update a category', function () {
     ]);
 });
 
-it('can subspend a category', function () {
+it('can subspend a role', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -128,7 +141,7 @@ it('can subspend a category', function () {
     $response->assertStatus(200);
 });
 
-it('can delete a category', function () {
+it('can delete a role', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',

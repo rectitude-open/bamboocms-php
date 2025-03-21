@@ -6,6 +6,7 @@ namespace Contexts\Authorization\Infrastructure\Records;
 
 use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
+use App\Http\Traits\HasSortingScopeTrait;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
@@ -23,6 +24,8 @@ use Illuminate\Support\Carbon;
  */
 class RoleRecord extends BaseModel
 {
+    use HasSortingScopeTrait;
+
     protected $table = 'roles';
 
     protected $fillable = ['label', 'status', 'created_at'];

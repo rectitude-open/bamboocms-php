@@ -11,8 +11,7 @@ class UserEmailUniquenessService
 {
     public function __construct(
         private readonly UserRepository $userRepository
-    ) {
-    }
+    ) {}
 
     public function ensureUnique(string $email)
     {

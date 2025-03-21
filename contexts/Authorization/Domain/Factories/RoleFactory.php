@@ -15,8 +15,7 @@ class RoleFactory
 {
     public function __construct(
         private readonly RoleLabelUniquenessService $roleLabelUniquenessService
-    ) {
-    }
+    ) {}
 
     public function create(
         RoleId $id,

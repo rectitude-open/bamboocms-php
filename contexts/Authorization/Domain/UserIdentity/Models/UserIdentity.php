@@ -26,7 +26,7 @@ class UserIdentity extends BaseDomainModel
         private ?CarbonImmutable $updated_at = null
     ) {
         $this->created_at = $created_at ?? CarbonImmutable::now();
-        $this->roleIdCollection = new RoleIdCollection();
+        $this->roleIdCollection = new RoleIdCollection;
     }
 
     public function hasAnyRole(RoleIdCollection $roleIds): bool
@@ -106,7 +106,7 @@ class UserIdentity extends BaseDomainModel
         array $events = []
     ): self {
         $user = new self($id, $email, $password, $display_name, $status, $created_at, $updated_at);
-        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection();
+        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection;
 
         foreach ($events as $event) {
             $user->recordEvent($event);

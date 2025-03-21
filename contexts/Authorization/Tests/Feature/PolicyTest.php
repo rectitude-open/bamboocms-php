@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 use Contexts\Authorization\Domain\Policies\RolePolicy;
-use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Services\PolicyFactory;
+use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
 use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Support\Facades\Config;
-use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
-use Contexts\Authorization\Domain\Factories\RoleFactory;
 
 beforeEach(function () {
     Config::set('policies.article_publishing', [
@@ -47,14 +46,14 @@ it('can get default policy handler', function () {
 });
 
 it('can evaluate user against policy', function () {
-    $userPersistence = new UserPersistence();
+    $userPersistence = new UserPersistence;
 
     $userRecord = UserRecord::factory()->create();
 
     $this->actingAs($userRecord);
 
     $role = $this->roleFactory->create(RoleId::null(), 'admin');
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
     $role = $rolePersistence->create($role);
 
     $user = $userRecord->toDomain();

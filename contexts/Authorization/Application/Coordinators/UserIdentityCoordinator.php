@@ -25,8 +25,7 @@ class UserIdentityCoordinator extends BaseCoordinator
     public function __construct(
         private UserRepository $repository,
         private UserIdentityFactory $factory
-    ) {
-    }
+    ) {}
 
     public function create(CreateUserDTO $data): UserIdentity
     {

@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Domain\Factories;
 
+use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Services\UserEmailUniquenessService;
-use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
-use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
+use Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
-use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
+use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
-use Contexts\Authorization\Domain\UserIdentity\Events\UserCreatedEvent;
 
 class UserIdentityFactory
 {
     public function __construct(
         private readonly UserEmailUniquenessService $userEmailUniquenessService
-    ) {
-    }
+    ) {}
 
     public function create(
         UserId $id,

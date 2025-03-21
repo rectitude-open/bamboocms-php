@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Exceptions\BizException;
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Factories\UserIdentityFactory;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Services\UserEmailUniquenessService;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
@@ -15,7 +16,6 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
-use Contexts\Authorization\Domain\Factories\UserIdentityFactory;
 
 beforeEach(function () {
     $this->email = new Email('test@example.com');

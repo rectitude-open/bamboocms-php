@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 use Carbon\CarbonImmutable;
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 use Contexts\Authorization\Domain\Role\Exceptions\RoleNotFoundException;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
+use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
 use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
-use Contexts\Authorization\Domain\Factories\RoleFactory;
-use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
 
 beforeEach(function () {
     $this->roleLabelUniquenessService = mock(RoleLabelUniquenessService::class);
@@ -19,7 +19,7 @@ beforeEach(function () {
 
 it('can persist role data correctly', function () {
     $role = $this->roleFactory->create(RoleId::null(), 'My Role');
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     $rolePersistence->create($role);
 
@@ -32,7 +32,7 @@ it('can persist role data correctly', function () {
 it('can retrieve an role by ID', function () {
     // Create a test role in the database
     $createdRole = $this->roleFactory->create(RoleId::null(), 'Test Role');
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
     $savedRole = $rolePersistence->create($createdRole);
 
     // Retrieve the role using getById
@@ -46,7 +46,7 @@ it('can retrieve an role by ID', function () {
 
 it('can retrieve multiple roles by IDs', function () {
     // Create multiple test roles in the database
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     $role1 = $this->roleFactory->create(RoleId::null(), 'Role 1');
     $role2 = $this->roleFactory->create(RoleId::null(), 'Role 2');
@@ -71,7 +71,7 @@ it('can retrieve multiple roles by IDs', function () {
 });
 
 it('throws an exception when retrieving a non-existent role', function () {
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Attempt to retrieve a non-existent role
     $rolePersistence->getById(RoleId::fromInt(999));
@@ -80,7 +80,7 @@ it('throws an exception when retrieving a non-existent role', function () {
 it('can update an role', function () {
     // Create a test role in the database
     $createdRole = $this->roleFactory->create(RoleId::null(), 'Original Label');
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
     $savedRole = $rolePersistence->create($createdRole);
 
     // Create an updated version of the role
@@ -105,7 +105,7 @@ it('can update an role', function () {
 });
 
 it('throws an exception when updating a non-existent role', function () {
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Attempt to update a non-existent role
     $rolePersistence->update($this->roleFactory->create(RoleId::fromInt(999), 'Updated Label'));
@@ -113,14 +113,14 @@ it('throws an exception when updating a non-existent role', function () {
 
 it('can paginate roles', function () {
     // Create multiple test roles
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Create 5 roles
     for ($i = 1; $i <= 5; $i++) {
         $role = $this->roleFactory->create(
             RoleId::null(),
             "Role $i",
-            new CarbonImmutable()
+            new CarbonImmutable
         );
         $rolePersistence->create($role);
     }
@@ -146,20 +146,20 @@ it('can paginate roles', function () {
 });
 
 it('can filter roles with search criteria', function () {
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Create roles with specific labels
     $role1 = $this->roleFactory->create(
         RoleId::null(),
         'Laravel Role',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $rolePersistence->create($role1);
 
     $role2 = $this->roleFactory->create(
         RoleId::null(),
         'PHP Tutorial',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $role2->subspend();
     $rolePersistence->create($role2);
@@ -167,7 +167,7 @@ it('can filter roles with search criteria', function () {
     $role3 = $this->roleFactory->create(
         RoleId::null(),
         'Laravel Tips',
-        new CarbonImmutable()
+        new CarbonImmutable
     );
     $role3->subspend();
     $rolePersistence->create($role3);
@@ -205,7 +205,7 @@ it('can filter roles with search criteria', function () {
 it('can delete an role', function () {
     // Create a test role in the database
     $createdRole = $this->roleFactory->create(RoleId::null(), 'Test Role');
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
     $savedRole = $rolePersistence->create($createdRole);
 
     // Delete the role
@@ -218,17 +218,16 @@ it('can delete an role', function () {
 });
 
 it('throws an exception when deleting a non-existent role', function () {
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Attempt to delete a non-existent role
     $rolePersistence->delete($this->roleFactory->create(RoleId::fromInt(999), 'Test Role'));
 })->throws(RoleNotFoundException::class);
 
-
 it('returns true when role exists with given label', function () {
     // Create a test role in the database with a specific label
     $createdRole = $this->roleFactory->create(RoleId::null(), 'Unique Label');
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
     $rolePersistence->create($createdRole);
 
     // Check if the method correctly detects the existing label
@@ -238,7 +237,7 @@ it('returns true when role exists with given label', function () {
 });
 
 it('returns false when role does not exist with given label', function () {
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Test with a label that doesn't exist in the database
     $result = $rolePersistence->existsByLabel('Non-Existent Label');
@@ -248,7 +247,7 @@ it('returns false when role does not exist with given label', function () {
 
 it('can retrieve roles by labels', function () {
     // Create roles with specific labels
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     $role1 = $this->roleFactory->create(RoleId::null(), 'Admin Role');
     $role2 = $this->roleFactory->create(RoleId::null(), 'Editor Role');
@@ -270,7 +269,7 @@ it('can retrieve roles by labels', function () {
 });
 
 it('returns empty collection when no roles match the given labels', function () {
-    $rolePersistence = new RolePersistence();
+    $rolePersistence = new RolePersistence;
 
     // Retrieve with non-existent labels
     $retrievedRoles = $rolePersistence->getByLabels(['Non-Existent Label']);

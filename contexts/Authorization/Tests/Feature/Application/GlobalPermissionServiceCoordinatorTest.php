@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 use Contexts\Authorization\Application\Coordinators\GlobalPermissionServiceCoordinator;
 use Contexts\Authorization\Contracts\V1\Services\GlobalPermissionService;
+use Contexts\Authorization\Domain\Factories\RoleFactory;
 use Contexts\Authorization\Domain\Policies\RolePolicy;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
+use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
 use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Infrastructure\Persistence\RolePersistence;
 use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Support\Facades\Config;
-use Contexts\Authorization\Domain\Services\RoleLabelUniquenessService;
-use Contexts\Authorization\Domain\Factories\RoleFactory;
 
 beforeEach(function () {
     Config::set('policies.article_publishing', [
@@ -53,8 +53,8 @@ it('can be instantiated through container', function () {
 
 it('can check permission for admin user', function () {
     // Setup repositories
-    $userPersistence = new UserPersistence();
-    $rolePersistence = new RolePersistence();
+    $userPersistence = new UserPersistence;
+    $rolePersistence = new RolePersistence;
 
     // Create admin user
     $userRecord = UserRecord::factory()->create();
@@ -76,8 +76,8 @@ it('can check permission for admin user', function () {
 
 it('denies permission for users without required roles', function () {
     // Setup repositories
-    $userPersistence = new UserPersistence();
-    $rolePersistence = new RolePersistence();
+    $userPersistence = new UserPersistence;
+    $rolePersistence = new RolePersistence;
 
     // Create regular user
     $userRecord = UserRecord::factory()->create();

@@ -21,8 +21,7 @@ class RoleCoordinator extends BaseCoordinator
     public function __construct(
         private RoleRepository $repository,
         private RoleFactory $factory
-    ) {
-    }
+    ) {}
 
     public function create(CreateRoleDTO $data): Role
     {

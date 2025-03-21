@@ -13,11 +13,18 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
+use Contexts\Authorization\Domain\Services\UserEmailUniquenessService;
+use Contexts\Authorization\Domain\Factories\UserIdentityFactory;
 
+beforeEach(function () {
+    $this->userLabelUniquenessService = mock(UserEmailUniquenessService::class);
+    $this->userLabelUniquenessService->shouldReceive('ensureUnique')->andReturn(true);
+    $this->userFactory = new UserIdentityFactory($this->userLabelUniquenessService);
+});
 it('can persist user data correctly', function () {
     $email = new Email('test@example.com');
     $password = Password::createFromPlainText('password123');
-    $user = UserIdentity::create(UserId::null(), $email, $password, 'My User');
+    $user = $this->userFactory->create(UserId::null(), $email, $password, 'My User');
     $userPersistence = new UserPersistence();
 
     $userPersistence->create($user);
@@ -33,7 +40,7 @@ it('can retrieve an user by ID', function () {
     // Create a test user in the database
     $email = new Email('retrieve@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Test User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Test User');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -59,7 +66,7 @@ it('can update an user', function () {
     // Create a test user in the database
     $email = new Email('original@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Original DisplayName');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Original DisplayName');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -98,7 +105,7 @@ it('throws an exception when updating a non-existent user', function () {
     $password = Password::createFromPlainText('password123');
 
     // Attempt to update a non-existent user
-    $userPersistence->update(UserIdentity::create(UserId::fromInt(999), $email, $password, 'Updated DisplayName'));
+    $userPersistence->update($this->userFactory->create(UserId::fromInt(999), $email, $password, 'Updated DisplayName'));
 })->throws(UserNotFoundException::class);
 
 it('can paginate users', function () {
@@ -109,7 +116,7 @@ it('can paginate users', function () {
     for ($i = 1; $i <= 5; $i++) {
         $email = new Email("user{$i}@example.com");
         $password = Password::createFromPlainText('password123');
-        $user = UserIdentity::create(
+        $user = $this->userFactory->create(
             UserId::null(),
             $email,
             $password,
@@ -144,7 +151,7 @@ it('can filter users with search criteria', function () {
 
     // Create users with specific display_names and emails
     $user1Email = new Email('laravel@example.com');
-    $user1 = UserIdentity::create(
+    $user1 = $this->userFactory->create(
         UserId::null(),
         $user1Email,
         $password,
@@ -153,7 +160,7 @@ it('can filter users with search criteria', function () {
     $userPersistence->create($user1);
 
     $user2Email = new Email('php@example.com');
-    $user2 = UserIdentity::create(
+    $user2 = $this->userFactory->create(
         UserId::null(),
         $user2Email,
         $password,
@@ -163,7 +170,7 @@ it('can filter users with search criteria', function () {
     $userPersistence->create($user2);
 
     $user3Email = new Email('tips@laravel.com');
-    $user3 = UserIdentity::create(
+    $user3 = $this->userFactory->create(
         UserId::null(),
         $user3Email,
         $password,
@@ -193,7 +200,7 @@ it('can filter users with search criteria', function () {
 
     // Test search by created_at_range criteria
     $user4Email = new Email('past@example.com');
-    $user4 = UserIdentity::create(
+    $user4 = $this->userFactory->create(
         UserId::null(),
         $user4Email,
         $password,
@@ -213,7 +220,7 @@ it('can delete an user', function () {
     // Create a test user in the database
     $email = new Email('delete@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Test User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Test User');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -233,14 +240,14 @@ it('throws an exception when deleting a non-existent user', function () {
     $password = Password::createFromPlainText('password123');
 
     // Attempt to delete a non-existent user
-    $userPersistence->delete(UserIdentity::create(UserId::fromInt(999), $email, $password, 'Test User'));
+    $userPersistence->delete($this->userFactory->create(UserId::fromInt(999), $email, $password, 'Test User'));
 })->throws(UserNotFoundException::class);
 
 it('changes password successfully', function () {
     // Create a test user
     $email = new Email('password@example.com');
     $password = Password::createFromPlainText('oldpassword123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Password User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Password User');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -259,7 +266,7 @@ it('can sync user roles when updating user', function () {
     // Create a test user in the database
     $email = new Email('role-test@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Role Test User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Role Test User');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -314,7 +321,7 @@ it('can sync user roles to empty collection', function () {
     // Create a test user in the database
     $email = new Email('empty-roles@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Roles User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'No Roles User');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -354,7 +361,7 @@ it('preserves existing user roles when updating other attributes', function () {
     // Create a test user in the database
     $email = new Email('preserve-roles@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Preserve Roles User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Preserve Roles User');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -396,7 +403,7 @@ it('updates roles correctly even with empty initial role collection', function (
     // Create a test user without roles
     $email = new Email('no-roles@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'No Initial Roles');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'No Initial Roles');
     $userPersistence = new UserPersistence();
     $savedUser = $userPersistence->create($createdUser);
 
@@ -425,7 +432,7 @@ it('returns true when user exists with the given email', function () {
     // Create a test user with a specific email
     $email = new Email('exists@example.com');
     $password = Password::createFromPlainText('password123');
-    $createdUser = UserIdentity::create(UserId::null(), $email, $password, 'Existing User');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Existing User');
     $userPersistence = new UserPersistence();
     $userPersistence->create($createdUser);
 

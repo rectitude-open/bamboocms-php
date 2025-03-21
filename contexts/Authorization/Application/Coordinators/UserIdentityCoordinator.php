@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
 use Contexts\Authorization\Application\DTOs\User\UpdateUserDTO;
+use Contexts\Authorization\Domain\Factories\UserIdentityFactory;
 use Contexts\Authorization\Domain\Repositories\UserRepository;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
@@ -22,12 +23,14 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class UserIdentityCoordinator extends BaseCoordinator
 {
     public function __construct(
-        private UserRepository $repository
-    ) {}
+        private UserRepository $repository,
+        private UserIdentityFactory $factory
+    ) {
+    }
 
     public function create(CreateUserDTO $data): UserIdentity
     {
-        $user = UserIdentity::create(
+        $user = $this->factory->create(
             UserId::null(),
             new Email($data->email),
             Password::createFromPlainText($data->password),

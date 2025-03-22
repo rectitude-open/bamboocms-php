@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Contexts\Authorization\Infrastructure\Records;
 
 use App\Exceptions\SysException;
-use App\Http\Models\BaseModel;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
 use Contexts\Authorization\Infrastructure\RecordFactories\RoleRecordFactory;
+use Contexts\Shared\Infrastructure\BaseRecord;
 use Contexts\Shared\Infrastructure\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class RoleRecord extends BaseModel
+class RoleRecord extends BaseRecord
 {
     use HasSortingScopeTrait;
 

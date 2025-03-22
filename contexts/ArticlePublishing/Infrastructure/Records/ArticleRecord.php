@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Infrastructure\Records;
 
 use App\Exceptions\SysException;
-use App\Http\Models\BaseModel;
 use Contexts\ArticlePublishing\Domain\Models\Article;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategory;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
@@ -14,6 +13,7 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 use Contexts\Authorization\Infrastructure\Factories\ArticleFactory;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
+use Contexts\Shared\Infrastructure\BaseRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,7 +28,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class ArticleRecord extends BaseModel
+class ArticleRecord extends BaseRecord
 {
     use SoftDeletes;
 

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Contexts\CategoryManagement\Infrastructure\Records;
 
 use App\Exceptions\SysException;
-use App\Http\Models\BaseModel;
 use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 use Contexts\CategoryManagement\Infrastructure\RecordFactories\CategoryRecordFactory;
+use Contexts\Shared\Infrastructure\BaseRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  */
-class CategoryRecord extends BaseModel
+class CategoryRecord extends BaseRecord
 {
     protected $table = 'categories';
 

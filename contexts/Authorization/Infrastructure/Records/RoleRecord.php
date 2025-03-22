@@ -6,11 +6,11 @@ namespace Contexts\Authorization\Infrastructure\Records;
 
 use App\Exceptions\SysException;
 use App\Http\Models\BaseModel;
-use App\Http\Traits\HasSortingScopeTrait;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
 use Contexts\Authorization\Infrastructure\RecordFactories\RoleRecordFactory;
+use Contexts\Shared\Infrastructure\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;

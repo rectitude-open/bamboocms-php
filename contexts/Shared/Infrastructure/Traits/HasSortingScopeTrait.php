@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Traits;
+namespace Contexts\Shared\Infrastructure\Traits;
 
-use App\Http\Scopes\SortingScope;
+use Contexts\Shared\Infrastructure\Scopes\SortingScope;
 use Illuminate\Database\Eloquent\Builder;
 
 trait HasSortingScopeTrait

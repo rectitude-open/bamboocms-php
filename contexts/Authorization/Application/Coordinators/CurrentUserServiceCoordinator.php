@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Application\Coordinators;
 
-use App\Http\Coordinators\BaseCoordinator;
 use Contexts\Authorization\Contracts\V1\DTOs\CurrentUserDTO;
 use Contexts\Authorization\Contracts\V1\Services\CurrentUserService;
 use Contexts\Authorization\Domain\Repositories\RoleRepository;
 use Contexts\Authorization\Domain\Repositories\UserRepository;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
+use Contexts\Shared\Application\BaseCoordinator;
 
 class CurrentUserServiceCoordinator extends BaseCoordinator implements CurrentUserService
 {

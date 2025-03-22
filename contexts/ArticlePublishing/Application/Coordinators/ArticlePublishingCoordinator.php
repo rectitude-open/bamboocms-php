@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Contexts\ArticlePublishing\Application\Coordinators;
 
 use App\Exceptions\BizException;
-use App\Http\Coordinators\BaseCoordinator;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
@@ -21,6 +20,7 @@ use Contexts\ArticlePublishing\Domain\Models\AuthorId;
 use Contexts\ArticlePublishing\Domain\Policies\GlobalPermissionPolicy;
 use Contexts\ArticlePublishing\Domain\Policies\VisibilityPolicy;
 use Contexts\ArticlePublishing\Domain\Repositories\ArticleRepository;
+use Contexts\Shared\Application\BaseCoordinator;
 use Contexts\Shared\Policies\CompositePolicy;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 

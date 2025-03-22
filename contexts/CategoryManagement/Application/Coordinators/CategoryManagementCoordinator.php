@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Application\Coordinators;
 
-use App\Http\Coordinators\BaseCoordinator;
 use Carbon\CarbonImmutable;
 use Contexts\CategoryManagement\Application\DTOs\CreateCategoryDTO;
 use Contexts\CategoryManagement\Application\DTOs\GetCategoryListDTO;
@@ -13,6 +12,7 @@ use Contexts\CategoryManagement\Domain\Models\Category;
 use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 use Contexts\CategoryManagement\Domain\Repositories\CategoryRepository;
+use Contexts\Shared\Application\BaseCoordinator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class CategoryManagementCoordinator extends BaseCoordinator

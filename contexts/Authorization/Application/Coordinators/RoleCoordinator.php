@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Application\Coordinators;
 
-use App\Http\Coordinators\BaseCoordinator;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Application\DTOs\Role\CreateRoleDTO;
 use Contexts\Authorization\Application\DTOs\Role\GetRoleListDTO;
@@ -14,6 +13,7 @@ use Contexts\Authorization\Domain\Repositories\RoleRepository;
 use Contexts\Authorization\Domain\Role\Models\Role;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
+use Contexts\Shared\Application\BaseCoordinator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class RoleCoordinator extends BaseCoordinator

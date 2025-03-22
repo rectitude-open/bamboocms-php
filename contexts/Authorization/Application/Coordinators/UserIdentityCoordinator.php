@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Application\Coordinators;
 
-use App\Http\Coordinators\BaseCoordinator;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
@@ -18,6 +17,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
+use Contexts\Shared\Application\BaseCoordinator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserIdentityCoordinator extends BaseCoordinator

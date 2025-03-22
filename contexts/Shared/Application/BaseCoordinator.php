@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Coordinators;
+namespace Contexts\Shared\Application;
 
 use App\Http\DomainModel\BaseDomainModel;
 

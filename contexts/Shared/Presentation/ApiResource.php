@@ -11,8 +11,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ApiResource
 {
-    private int $httpCode = 200;
-
     private array $headers = [
         'Content-Type' => 'application/json',
     ];
@@ -21,11 +19,9 @@ class ApiResource
 
     private array $additional = [];
 
-    public function __construct(private string $type, private mixed $data = null, private ?string $resourceClass = '')
-    {
-    }
+    public function __construct(private string $type, private mixed $data = null, private ?string $resourceClass = '') {}
 
-    public static function checkResourceClass(?string $resouceClass = '')
+    public static function checkResourceClass(?string $resourceClass = '')
     {
         if (! empty($resourceClass) && ! is_subclass_of($resourceClass, JsonResource::class)) {
             throw new \InvalidArgumentException('Resource must be an instance of '.JsonResource::class);

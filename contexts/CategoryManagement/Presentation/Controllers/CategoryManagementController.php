@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Presentation\Controllers;
 
-use App\Http\Controllers\BaseController;
 use Contexts\CategoryManagement\Application\Coordinators\CategoryManagementCoordinator;
 use Contexts\CategoryManagement\Application\DTOs\CreateCategoryDTO;
 use Contexts\CategoryManagement\Application\DTOs\GetCategoryListDTO;
@@ -14,6 +13,7 @@ use Contexts\CategoryManagement\Presentation\Requests\CreateCategoryRequest;
 use Contexts\CategoryManagement\Presentation\Requests\GetCategoryListRequest;
 use Contexts\CategoryManagement\Presentation\Requests\UpdateCategoryRequest;
 use Contexts\CategoryManagement\Presentation\Resources\CategoryResource;
+use Contexts\Shared\Presentation\BaseController;
 
 class CategoryManagementController extends BaseController
 {

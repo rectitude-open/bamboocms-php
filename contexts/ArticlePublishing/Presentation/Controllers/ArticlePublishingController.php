@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Presentation\Controllers;
 
-use App\Http\Controllers\BaseController;
 use Contexts\ArticlePublishing\Application\Coordinators\ArticlePublishingCoordinator;
 use Contexts\ArticlePublishing\Application\DTOs\CreateArticleDTO;
 use Contexts\ArticlePublishing\Application\DTOs\GetArticleListDTO;
@@ -14,6 +13,7 @@ use Contexts\ArticlePublishing\Presentation\Requests\CreateArticleRequest;
 use Contexts\ArticlePublishing\Presentation\Requests\GetArticleListRequest;
 use Contexts\ArticlePublishing\Presentation\Requests\UpdateArticleRequest;
 use Contexts\ArticlePublishing\Presentation\Resources\ArticleResource;
+use Contexts\Shared\Presentation\BaseController;
 
 class ArticlePublishingController extends BaseController
 {

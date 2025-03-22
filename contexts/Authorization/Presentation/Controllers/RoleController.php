@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Presentation\Controllers;
 
-use App\Http\Controllers\BaseController;
 use Contexts\Authorization\Application\Coordinators\RoleCoordinator;
 use Contexts\Authorization\Application\DTOs\Role\CreateRoleDTO;
 use Contexts\Authorization\Application\DTOs\Role\GetRoleListDTO;
@@ -14,6 +13,7 @@ use Contexts\Authorization\Presentation\Requests\Role\GetRoleListRequest;
 use Contexts\Authorization\Presentation\Requests\Role\RoleIdRequest;
 use Contexts\Authorization\Presentation\Requests\Role\UpdateRoleRequest;
 use Contexts\Authorization\Presentation\Resources\RoleResource;
+use Contexts\Shared\Presentation\BaseController;
 
 class RoleController extends BaseController
 {

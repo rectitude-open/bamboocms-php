@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace Contexts\Shared\Presentation;
 
 use App\Http\Resources\ApiResource;
 use Illuminate\Routing\Controller;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Presentation\Controllers;
 
-use App\Http\Controllers\BaseController;
 use Contexts\Authorization\Application\Coordinators\UserIdentityCoordinator;
 use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
@@ -16,6 +15,7 @@ use Contexts\Authorization\Presentation\Requests\User\UpdateRolesRequest;
 use Contexts\Authorization\Presentation\Requests\User\UpdateUserRequest;
 use Contexts\Authorization\Presentation\Requests\User\UserIdRequest;
 use Contexts\Authorization\Presentation\Resources\UserResource;
+use Contexts\Shared\Presentation\BaseController;
 
 class UserIdentityController extends BaseController
 {

@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace Contexts\Shared\Presentation;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class BaseFormRequest extends FormRequest
 {
+    abstract public function rules(): array;
+
     protected function prepareForValidation()
     {
         parent::prepareForValidation();

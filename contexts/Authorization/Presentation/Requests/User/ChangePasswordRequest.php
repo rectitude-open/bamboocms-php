@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Presentation\Requests\User;
 
-use App\Http\Requests\BaseFormRequest;
+use Contexts\Shared\Presentation\BaseFormRequest;
 
 class ChangePasswordRequest extends BaseFormRequest
 {

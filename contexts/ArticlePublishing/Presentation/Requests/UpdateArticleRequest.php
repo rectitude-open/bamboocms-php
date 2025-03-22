@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Presentation\Requests;
 
-use App\Http\Requests\BaseFormRequest;
+use Contexts\Shared\Presentation\BaseFormRequest;
 
 class UpdateArticleRequest extends BaseFormRequest
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\Shared\Presentation;
 
-use App\Http\Resources\ApiResource;
+use Contexts\Shared\Presentation\ApiResource;
 use Illuminate\Routing\Controller;
 
 class BaseController extends Controller

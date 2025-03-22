@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace Contexts\Shared\Presentation;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,7 +21,9 @@ class ApiResource
 
     private array $additional = [];
 
-    public function __construct(private string $type, private mixed $data = null, private ?string $resourceClass = '') {}
+    public function __construct(private string $type, private mixed $data = null, private ?string $resourceClass = '')
+    {
+    }
 
     public static function checkResourceClass(?string $resouceClass = '')
     {

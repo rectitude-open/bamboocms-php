@@ -3,6 +3,8 @@
 ![Do not use](https://img.shields.io/badge/Under%20development-Don't%20use-red)
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![codecov](https://codecov.io/gh/rectitude-open/bamboocms-php/graph/badge.svg?token=OECMR7BR8G)](https://codecov.io/gh/rectitude-open/bamboocms-php)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%205-brightgreen)](https://phpstan.org/)
+[![CI](https://github.com/rectitude-open/bamboocms-php/actions/workflows/ci.yml/badge.svg)](https://github.com/rectitude-open/bamboocms-php/actions/workflows/ci.yml)
 
 This project is an implementation of Domain-Driven Design (DDD) based on the Laravel framework. It retains framework features like Eloquent models and form validation while introducing DDD core patterns such as bounded contexts, domain models, and anti-corruption layers. The goal is to balance technical implementation with business representation, providing PHP developers with a gradual reference for applying DDD.
 
@@ -28,6 +30,6 @@ This project is an implementation of Domain-Driven Design (DDD) based on the Lar
 
 #### 渐进策略
 
--   权衡取消部分 DDD 接口
--   突出对中型项目的适配性，尽量避免过度设计
--   可根据项目复杂度，逐步引入更多的 DDD 模式
+-   逐步引入 DDD 模式，避免过度设计
+-   突出对中型项目的适配性，避免过度复杂性
+-   通过示例代码和文档提供渐进式路径

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Domain\Role\Models;
 
-use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
+use Contexts\Shared\Domain\BaseDomainModel;
 
 class Role extends BaseDomainModel
 {

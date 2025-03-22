@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Domain\Models;
 
-use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
 use Contexts\CategoryManagement\Domain\Events\CategoryCreatedEvent;
+use Contexts\Shared\Domain\BaseDomainModel;
 
 class Category extends BaseDomainModel
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\Shared\Application;
 
-use App\Http\DomainModel\BaseDomainModel;
+use Contexts\Shared\Domain\BaseDomainModel;
 
 class BaseCoordinator
 {

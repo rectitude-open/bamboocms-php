@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
 use App\Exceptions\BizException;
-use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
+use Contexts\Shared\Domain\BaseDomainModel;
 
 class UserIdentity extends BaseDomainModel
 {

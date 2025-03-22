@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\DomainModel;
+namespace Contexts\Shared\Domain;
 
 abstract class BaseDomainModel
 {

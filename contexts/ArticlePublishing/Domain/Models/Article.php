@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Domain\Models;
 
-use App\Http\DomainModel\BaseDomainModel;
 use Carbon\CarbonImmutable;
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
+use Contexts\Shared\Domain\BaseDomainModel;
 
 class Article extends BaseDomainModel
 {

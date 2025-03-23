@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Presentation\Requests\Role;
 
-use Contexts\Shared\Presentation\BaseFormRequest;
+use Contexts\Shared\Presentation\Requests\BaseRequest;
 
-class UpdateRoleRequest extends BaseFormRequest
+class UpdateRoleRequest extends BaseRequest
 {
     public function rules(): array
     {

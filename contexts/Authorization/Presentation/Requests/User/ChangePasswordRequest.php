@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Presentation\Requests\User;
 
-use Contexts\Shared\Presentation\BaseFormRequest;
+use Contexts\Shared\Presentation\Requests\BaseRequest;
 
-class ChangePasswordRequest extends BaseFormRequest
+class ChangePasswordRequest extends BaseRequest
 {
     public function rules(): array
     {

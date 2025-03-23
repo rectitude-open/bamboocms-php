@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Presentation\Requests;
 
-use Contexts\Shared\Presentation\BaseFormRequest;
+use Contexts\Shared\Presentation\Requests\BaseRequest;
 
-class UpdateArticleRequest extends BaseFormRequest
+class UpdateArticleRequest extends BaseRequest
 {
     public function rules(): array
     {

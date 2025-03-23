@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Presentation\Requests\Role;
 
-use Contexts\Shared\Presentation\BaseFormRequest;
+use Contexts\Shared\Presentation\Requests\BaseListRequest;
 
-class GetRoleListRequest extends BaseFormRequest
+class GetRoleListRequest extends BaseListRequest
 {
     public function rules(): array
     {

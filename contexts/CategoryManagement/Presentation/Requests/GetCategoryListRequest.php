@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Presentation\Requests;
 
-use Contexts\Shared\Presentation\BaseFormRequest;
+use Contexts\Shared\Presentation\Requests\BaseRequest;
 
-class GetCategoryListRequest extends BaseFormRequest
+class GetCategoryListRequest extends BaseRequest
 {
     public function rules(): array
     {

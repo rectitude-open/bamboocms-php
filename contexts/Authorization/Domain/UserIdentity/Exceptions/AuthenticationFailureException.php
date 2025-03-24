@@ -6,11 +6,13 @@ namespace Contexts\Authorization\Domain\UserIdentity\Exceptions;
 
 use App\Exceptions\BizException;
 
-class AuthenticationFailureException extends BizException
+final class AuthenticationFailureException extends BizException
 {
-    public static function make(string $message = ''): self
+    public static function make(string $message = ''): static
     {
         $message = $message ?: 'Invalid login credentials or account access restricted';
-        return (new static($message))->code(401);
+
+        /** @var static */
+        return (new self($message))->code(401);
     }
 }

@@ -17,19 +17,19 @@ class BizException extends Exception
 
     protected array $transParams = [];
 
-    public static function make(string $message): self
+    public static function make(string $message): static
     {
         return new static($message);
     }
 
-    public function code(int $code): self
+    public function code(int $code): static
     {
         $this->code = $code;
 
         return $this;
     }
 
-    public function with(array|string $key, $value = null): self
+    public function with(array|string $key, $value = null): static
     {
         if (is_array($key)) {
             $this->transParams = [...$this->transParams, ...$key];
@@ -47,7 +47,7 @@ class BizException extends Exception
         return $this;
     }
 
-    public function logContext(array $context): self
+    public function logContext(array $context): static
     {
         $this->logContext = $context;
 

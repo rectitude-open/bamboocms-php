@@ -10,13 +10,13 @@ use Contexts\Authorization\Domain\Services\UserEmailUniquenessService;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
 use Contexts\Authorization\Domain\UserIdentity\Models\Password;
 use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
-use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 
 beforeEach(function () {
     $this->email = new Email('test@example.com');

@@ -63,7 +63,7 @@ class Role extends BaseDomainModel
 
     public function subspend()
     {
-        $this->transitionStatus(RoleStatus::subspended());
+        $this->transitionStatus(RoleStatus::suspended());
     }
 
     public function delete()

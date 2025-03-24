@@ -99,8 +99,8 @@ it('does not trigger status transition when same status provided', function () {
     $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
     $category->releaseEvents();
 
-    $category->modify(null, RoleStatus::subspended());
-    expect($category->getStatus()->equals(RoleStatus::subspended()))->toBeTrue();
+    $category->modify(null, RoleStatus::suspended());
+    expect($category->getStatus()->equals(RoleStatus::suspended()))->toBeTrue();
     expect($category->releaseEvents())->toBeEmpty();
 });
 
@@ -110,7 +110,7 @@ it('can subspend an category', function () {
 
     $category->subspend();
 
-    expect($category->getStatus()->equals(RoleStatus::subspended()))->toBeTrue();
+    expect($category->getStatus()->equals(RoleStatus::suspended()))->toBeTrue();
     expect($category->releaseEvents())->toBeEmpty(); // No events for subspending
 });
 

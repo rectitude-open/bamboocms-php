@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('label')->default('');
-            $table->tinyInteger('status')->default(0)->comment('0: subspended, 1: active, 2: deleted');
+            $table->tinyInteger('status')->default(0)->comment('0: suspended, 1: active, 2: deleted');
             $table->timestamps();
         });
     }

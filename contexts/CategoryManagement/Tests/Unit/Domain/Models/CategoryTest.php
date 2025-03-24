@@ -89,8 +89,8 @@ it('does not trigger status transition when same status provided', function () {
     $category = Category::create(CategoryId::fromInt(1), 'Label');
     $category->releaseEvents();
 
-    $category->modify(null, CategoryStatus::subspended());
-    expect($category->getStatus()->equals(CategoryStatus::subspended()))->toBeTrue();
+    $category->modify(null, CategoryStatus::suspended());
+    expect($category->getStatus()->equals(CategoryStatus::suspended()))->toBeTrue();
     expect($category->releaseEvents())->toBeEmpty();
 });
 
@@ -100,7 +100,7 @@ it('can subspend an category', function () {
 
     $category->subspend();
 
-    expect($category->getStatus()->equals(CategoryStatus::subspended()))->toBeTrue();
+    expect($category->getStatus()->equals(CategoryStatus::suspended()))->toBeTrue();
     expect($category->releaseEvents())->toBeEmpty(); // No events for subspending
 });
 

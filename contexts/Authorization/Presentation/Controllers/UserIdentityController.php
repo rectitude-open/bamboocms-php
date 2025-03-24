@@ -66,7 +66,7 @@ class UserIdentityController extends BaseController
         $result = app(UserIdentityCoordinator::class)->subspendUser($id);
 
         return $this->success(['id' => $result->getId()->getValue()])
-            ->message('User subspended successfully')
+            ->message('User suspended successfully')
             ->send();
     }
 

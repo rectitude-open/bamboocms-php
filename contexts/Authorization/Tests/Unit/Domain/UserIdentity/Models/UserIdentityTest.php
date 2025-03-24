@@ -246,8 +246,8 @@ it('does not trigger status transition when same status provided', function () {
     );
     $user->releaseEvents();
 
-    $user->modify(null, null, UserStatus::subspended());
-    expect($user->getStatus()->equals(UserStatus::subspended()))->toBeTrue();
+    $user->modify(null, null, UserStatus::suspended());
+    expect($user->getStatus()->equals(UserStatus::suspended()))->toBeTrue();
     expect($user->releaseEvents())->toBeEmpty();
 });
 
@@ -262,7 +262,7 @@ it('can subspend an user', function () {
 
     $user->subspend();
 
-    expect($user->getStatus()->equals(UserStatus::subspended()))->toBeTrue();
+    expect($user->getStatus()->equals(UserStatus::suspended()))->toBeTrue();
     expect($user->releaseEvents())->toBeEmpty(); // No events for subspending
 });
 
@@ -565,7 +565,7 @@ it('records authentication event on successful authentication', function () {
     expect($events[0]->getUserId()->equals(UserId::fromInt(1)))->toBeTrue();
 });
 
-it('throws exception with correct message when authenticating subspended user', function () {
+it('throws exception with correct message when authenticating suspended user', function () {
     $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
@@ -630,5 +630,5 @@ it('includes user summary in exception context for logging', function () {
     expect($logContext)->toHaveKeys(['id', 'email', 'display_name', 'status', 'created_at', 'updated_at']);
     expect($logContext['id'])->toBe(1);
     expect($logContext['email'])->toBe('test@example.com');
-    expect($logContext['status'])->toBe('subspended');
+    expect($logContext['status'])->toBe('suspended');
 });

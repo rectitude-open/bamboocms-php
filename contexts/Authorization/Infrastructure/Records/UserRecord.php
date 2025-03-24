@@ -41,7 +41,7 @@ class UserRecord extends Authenticatable
     protected $fillable = ['display_name', 'status', 'email', 'password', 'created_at'];
 
     public const STATUS_MAPPING = [
-        0 => 'subspended',
+        0 => 'suspended',
         1 => 'active',
         2 => 'deleted',
     ];

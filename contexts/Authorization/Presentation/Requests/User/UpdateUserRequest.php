@@ -14,7 +14,7 @@ class UpdateUserRequest extends BaseRequest
             'id' => ['required', 'integer', 'gt:0'],
             'email' => ['email', 'max:255'],
             'display_name' => ['string', 'max:255'],
-            'status' => ['string', 'in:subspended,active'],
+            'status' => ['string', 'in:suspended,active'],
             'created_at' => ['date', 'date_format:Y-m-d H:i:s'],
         ];
     }

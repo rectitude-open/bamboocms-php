@@ -8,7 +8,7 @@ use App\Exceptions\BizException;
 
 abstract class CommonStatus
 {
-    public const SUBSPENDED = 'subspended';
+    public const SUBSPENDED = 'suspended';
 
     public const ACTIVE = 'active';
 
@@ -22,7 +22,7 @@ abstract class CommonStatus
         }
     }
 
-    public static function subspended(): static
+    public static function suspended(): static
     {
         return new static(static::SUBSPENDED);
     }
@@ -42,7 +42,7 @@ abstract class CommonStatus
         return $this->value === static::ACTIVE;
     }
 
-    public function isSubspended(): bool
+    public function isSuspended(): bool
     {
         return $this->value === static::SUBSPENDED;
     }

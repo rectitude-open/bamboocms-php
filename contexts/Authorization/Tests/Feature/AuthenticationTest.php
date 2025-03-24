@@ -53,7 +53,7 @@ it('cannot login with suspended account', function () {
     $user = UserRecord::factory()->create([
         'email' => 'suspended@email.com',
         'password' => password_hash('password', PASSWORD_ARGON2ID),
-        'status' => UserRecord::mapStatusToRecord(UserStatus::subspended()),
+        'status' => UserRecord::mapStatusToRecord(UserStatus::suspended()),
     ]);
 
     $response = $this->postJson('auth/login', [

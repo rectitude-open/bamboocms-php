@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password')->default('');
             $table->string('remember_token', 100)->nullable();
             $table->string('display_name')->default('');
-            $table->tinyInteger('status')->default(0)->comment('0: subspended, 1: active, 2: deleted');
+            $table->tinyInteger('status')->default(0)->comment('0: suspended, 1: active, 2: deleted');
             $table->timestamps();
         });
     }

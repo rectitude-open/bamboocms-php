@@ -62,7 +62,7 @@ class Category extends BaseDomainModel
 
     public function subspend()
     {
-        $this->transitionStatus(CategoryStatus::subspended());
+        $this->transitionStatus(CategoryStatus::suspended());
     }
 
     public function delete()

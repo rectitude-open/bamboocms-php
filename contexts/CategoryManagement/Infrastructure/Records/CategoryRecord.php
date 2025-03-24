@@ -28,7 +28,7 @@ class CategoryRecord extends BaseRecord
     protected $fillable = ['label', 'status', 'created_at'];
 
     public const STATUS_MAPPING = [
-        0 => 'subspended',
+        0 => 'suspended',
         1 => 'active',
         2 => 'deleted',
     ];

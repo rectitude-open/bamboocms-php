@@ -138,7 +138,7 @@ class UserIdentity extends BaseDomainModel
 
     public function subspend()
     {
-        $this->transitionStatus(UserStatus::subspended());
+        $this->transitionStatus(UserStatus::suspended());
     }
 
     public function delete()

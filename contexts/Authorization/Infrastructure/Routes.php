@@ -2,9 +2,16 @@
 
 declare(strict_types=1);
 
+use Contexts\Authorization\Presentation\Controllers\AuthenticationController;
 use Contexts\Authorization\Presentation\Controllers\RoleController;
 use Contexts\Authorization\Presentation\Controllers\UserIdentityController;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware([])->name('Authentication')->group(function () {
+    Route::controller(AuthenticationController::class)->prefix('auth')->name('Auth.')->group(function () {
+        Route::post('login', 'login')->name('login');
+    });
+});
 
 Route::middleware([])->name('Authorization.')->group(function () {
     Route::controller(UserIdentityController::class)->prefix('users')->name('User.')->group(function () {

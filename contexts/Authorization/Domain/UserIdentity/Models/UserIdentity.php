@@ -56,12 +56,14 @@ class UserIdentity extends BaseDomainModel
     {
         if ($this->status->isActive() === false) {
             throw BizException::make('Invalid login credentials or account access restricted')
+                ->code(401)
                 ->logMessage('User account is not active')
                 ->logContext($this->getUserSummary());
         }
 
         if (! $this->password->verify($plainTextPassword)) {
             throw BizException::make('Invalid login credentials or account access restricted')
+                ->code(401)
                 ->logMessage('Invalid password')
                 ->logContext($this->getUserSummary());
         }

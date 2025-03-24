@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * @property int $id
@@ -31,6 +33,8 @@ use Illuminate\Support\Carbon;
 class UserRecord extends Authenticatable
 {
     use HasFactory;
+    use HasApiTokens;
+    use Notifiable;
 
     protected $table = 'users';
 

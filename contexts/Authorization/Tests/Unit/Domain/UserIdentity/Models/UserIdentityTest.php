@@ -546,3 +546,88 @@ it('can sync to empty role collection', function () {
     // Check if the roleIdCollection is empty
     expect($user->getRoleIdCollection()->count())->toBe(0);
 });
+
+it('records authentication event on successful authentication', function () {
+    $user = $this->userFactory->create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->releaseEvents(); // Clear creation event
+
+    $user->authenticate($this->plainPassword);
+
+    $events = $user->releaseEvents();
+    expect($events)->toHaveCount(1);
+    expect($events[0])->toBeInstanceOf(\Contexts\Authorization\Domain\UserIdentity\Events\UserAuthenticatedEvent::class);
+    expect($events[0]->getUserId()->equals(UserId::fromInt(1)))->toBeTrue();
+});
+
+it('throws exception with correct message when authenticating subspended user', function () {
+    $user = $this->userFactory->create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->subspend();
+
+    $exception = null;
+    try {
+        $user->authenticate($this->plainPassword);
+    } catch (BizException $e) {
+        $exception = $e;
+    }
+
+    expect($exception)->toBeInstanceOf(BizException::class);
+    expect($exception->getMessage())->toBe('Invalid login credentials or account access restricted');
+});
+
+it('throws same generic error for wrong password to prevent user enumeration', function () {
+    $user = $this->userFactory->create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+
+    $exception = null;
+    try {
+        $user->authenticate('wrong_password');
+    } catch (BizException $e) {
+        $exception = $e;
+    }
+
+    expect($exception)->toBeInstanceOf(BizException::class);
+    expect($exception->getMessage())->toBe('Invalid login credentials or account access restricted');
+});
+
+it('includes user summary in exception context for logging', function () {
+    $user = $this->userFactory->create(
+        UserId::fromInt(1),
+        $this->email,
+        $this->password,
+        'DisplayName'
+    );
+    $user->subspend();
+
+    $exception = null;
+    try {
+        $user->authenticate($this->plainPassword);
+    } catch (BizException $e) {
+        $exception = $e;
+    }
+
+    // Get the protected logContext property using reflection
+    $reflectionClass = new ReflectionClass(BizException::class);
+    $logContextProperty = $reflectionClass->getProperty('logContext');
+    $logContextProperty->setAccessible(true);
+    $logContext = $logContextProperty->getValue($exception);
+
+    expect($logContext)->toBeArray();
+    expect($logContext)->toHaveKeys(['id', 'email', 'display_name', 'status', 'created_at', 'updated_at']);
+    expect($logContext['id'])->toBe(1);
+    expect($logContext['email'])->toBe('test@example.com');
+    expect($logContext['status'])->toBe('subspended');
+});

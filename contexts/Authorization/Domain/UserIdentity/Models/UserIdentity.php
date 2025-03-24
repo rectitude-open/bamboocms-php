@@ -11,6 +11,7 @@ use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
 use Contexts\Shared\Domain\BaseDomainModel;
+use Contexts\Authorization\Domain\UserIdentity\Events\UserAuthenticatedEvent;
 
 class UserIdentity extends BaseDomainModel
 {
@@ -26,7 +27,7 @@ class UserIdentity extends BaseDomainModel
         private ?CarbonImmutable $updated_at = null
     ) {
         $this->created_at = $created_at ?? CarbonImmutable::now();
-        $this->roleIdCollection = new RoleIdCollection;
+        $this->roleIdCollection = new RoleIdCollection();
     }
 
     public function hasAnyRole(RoleIdCollection $roleIds): bool
@@ -53,13 +54,19 @@ class UserIdentity extends BaseDomainModel
 
     public function authenticate(string $plainTextPassword): void
     {
-        if ($this->status->equals(UserStatus::deleted())) {
-            throw BizException::make('User is not active')->logContext($this->getUserSummary());
+        if ($this->status->isActive() === false) {
+            throw BizException::make('Invalid login credentials or account access restricted')
+                ->logMessage('User account is not active')
+                ->logContext($this->getUserSummary());
         }
 
         if (! $this->password->verify($plainTextPassword)) {
-            throw BizException::make('Password is not correct')->logContext($this->getUserSummary());
+            throw BizException::make('Invalid login credentials or account access restricted')
+                ->logMessage('Invalid password')
+                ->logContext($this->getUserSummary());
         }
+
+        $this->recordEvent(new UserAuthenticatedEvent($this->id));
     }
 
     public function changePassword(string $newPassword): void
@@ -106,7 +113,7 @@ class UserIdentity extends BaseDomainModel
         array $events = []
     ): self {
         $user = new self($id, $email, $password, $display_name, $status, $created_at, $updated_at);
-        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection;
+        $user->roleIdCollection = $roleIdCollection ?? new RoleIdCollection();
 
         foreach ($events as $event) {
             $user->recordEvent($event);

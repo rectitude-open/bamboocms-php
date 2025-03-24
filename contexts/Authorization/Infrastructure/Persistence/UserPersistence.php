@@ -101,4 +101,18 @@ class UserPersistence implements UserRepository
     {
         return UserRecord::where('email', $email)->exists();
     }
+
+    public function getByEmail(string $email): UserIdentity
+    {
+        $record = UserRecord::where('email', $email)->firstOrFail();
+
+        return $record->toDomain();
+    }
+
+    public function generateLoginToken(UserIdentity $user): string
+    {
+        $record = UserRecord::findOrFail($user->getId()->getValue());
+
+        return $record->createToken('login', ['*'], now()->addDay())->plainTextToken;
+    }
 }

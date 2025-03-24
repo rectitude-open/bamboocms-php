@@ -23,4 +23,8 @@ interface UserRepository
     public function changePassword(UserIdentity $user): void;
 
     public function existsByEmail(string $email): bool;
+
+    public function getByEmail(string $email): UserIdentity;
+
+    public function generateLoginToken(UserIdentity $user): string;
 }

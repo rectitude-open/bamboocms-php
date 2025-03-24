@@ -37,6 +37,21 @@ abstract class CommonStatus
         return new static(static::DELETED);
     }
 
+    public function isActive(): bool
+    {
+        return $this->value === static::ACTIVE;
+    }
+
+    public function isSubspended(): bool
+    {
+        return $this->value === static::SUBSPENDED;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->value === static::DELETED;
+    }
+
     public function transitionTo(CommonStatus $target): static
     {
         $validTransitions = match ($this->value) {

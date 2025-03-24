@@ -24,7 +24,7 @@ interface UserRepository
 
     public function existsByEmail(string $email): bool;
 
-    public function getByEmail(string $email): UserIdentity;
+    public function getByEmailOrThrowAuthFailure(string $email): UserIdentity;
 
     public function generateLoginToken(UserIdentity $user): string;
 }

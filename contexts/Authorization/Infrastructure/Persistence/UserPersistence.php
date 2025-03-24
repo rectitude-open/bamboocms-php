@@ -13,6 +13,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 
 class UserPersistence implements UserRepository
 {
@@ -102,16 +103,28 @@ class UserPersistence implements UserRepository
         return UserRecord::where('email', $email)->exists();
     }
 
-    public function getByEmail(string $email): UserIdentity
+    public function getByEmailOrThrowAuthFailure(string $email): UserIdentity
     {
-        $record = UserRecord::where('email', $email)->firstOrFail();
+        try {
+            $record = UserRecord::where('email', $email)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            throw AuthenticationFailureException::make()
+                ->logMessage('User not found')
+                ->logContext(['email' => $email]);
+        }
 
         return $record->toDomain();
     }
 
     public function generateLoginToken(UserIdentity $user): string
     {
-        $record = UserRecord::findOrFail($user->getId()->getValue());
+        try {
+            $record = UserRecord::findOrFail($user->getId()->getValue());
+        } catch (ModelNotFoundException $e) {
+            throw AuthenticationFailureException::make()
+                ->logMessage('User not found')
+                ->logContext(['user_id' => $user->getId()->getValue()]);
+        }
 
         return $record->createToken('login', ['*'], now()->addDay())->plainTextToken;
     }

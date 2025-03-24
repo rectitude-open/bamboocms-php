@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Domain\UserIdentity\Models;
 
-use App\Exceptions\BizException;
 use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Events\PasswordChangedEvent;
@@ -12,6 +11,7 @@ use Contexts\Authorization\Domain\UserIdentity\Events\RoleAssignedEvent;
 use Contexts\Authorization\Domain\UserIdentity\Events\RoleRemovedEvent;
 use Contexts\Shared\Domain\BaseDomainModel;
 use Contexts\Authorization\Domain\UserIdentity\Events\UserAuthenticatedEvent;
+use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 
 class UserIdentity extends BaseDomainModel
 {
@@ -55,15 +55,13 @@ class UserIdentity extends BaseDomainModel
     public function authenticate(string $plainTextPassword): void
     {
         if ($this->status->isActive() === false) {
-            throw BizException::make('Invalid login credentials or account access restricted')
-                ->code(401)
+            throw AuthenticationFailureException::make()
                 ->logMessage('User account is not active')
                 ->logContext($this->getUserSummary());
         }
 
         if (! $this->password->verify($plainTextPassword)) {
-            throw BizException::make('Invalid login credentials or account access restricted')
-                ->code(401)
+            throw AuthenticationFailureException::make()
                 ->logMessage('Invalid password')
                 ->logContext($this->getUserSummary());
         }

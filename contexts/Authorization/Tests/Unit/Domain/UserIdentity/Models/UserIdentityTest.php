@@ -16,6 +16,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\RoleIdCollection;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
+use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 
 beforeEach(function () {
     $this->email = new Email('test@example.com');
@@ -576,11 +577,11 @@ it('throws exception with correct message when authenticating subspended user', 
     $exception = null;
     try {
         $user->authenticate($this->plainPassword);
-    } catch (BizException $e) {
+    } catch (AuthenticationFailureException $e) {
         $exception = $e;
     }
 
-    expect($exception)->toBeInstanceOf(BizException::class);
+    expect($exception)->toBeInstanceOf(AuthenticationFailureException::class);
     expect($exception->getMessage())->toBe('Invalid login credentials or account access restricted');
 });
 
@@ -599,7 +600,7 @@ it('throws same generic error for wrong password to prevent user enumeration', f
         $exception = $e;
     }
 
-    expect($exception)->toBeInstanceOf(BizException::class);
+    expect($exception)->toBeInstanceOf(AuthenticationFailureException::class);
     expect($exception->getMessage())->toBe('Invalid login credentials or account access restricted');
 });
 

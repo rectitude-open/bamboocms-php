@@ -73,8 +73,8 @@ it('cannot login with non-existent email', function () {
         'password' => 'password',
     ]);
 
-    $response->assertStatus(404);
-    // $response->assertJson([
-    //     'message' => 'Invalid login credentials or account access restricted',
-    // ]);
+    $response->assertStatus(401);
+    $response->assertJson([
+        'message' => 'Invalid login credentials or account access restricted',
+    ]);
 });

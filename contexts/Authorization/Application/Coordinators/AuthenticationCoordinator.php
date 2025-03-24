@@ -31,7 +31,7 @@ class AuthenticationCoordinator extends BaseCoordinator
 
     public function login(LoginDTO $dto)
     {
-        $user = $this->userRepository->getByEmail($dto->email);
+        $user = $this->userRepository->getByEmailOrThrowAuthFailure($dto->email);
         $user->authenticate($dto->password);
 
         $token = $this->userRepository->generateLoginToken($user);

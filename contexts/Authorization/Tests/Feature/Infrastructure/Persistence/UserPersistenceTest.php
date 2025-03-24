@@ -16,6 +16,7 @@ use Contexts\Authorization\Infrastructure\Persistence\UserPersistence;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 
 beforeEach(function () {
     $this->userLabelUniquenessService = mock(UserEmailUniquenessService::class);
@@ -463,7 +464,7 @@ it('can retrieve a user by email', function () {
     $savedUser = $userPersistence->create($createdUser);
 
     // Retrieve the user using getByEmail
-    $retrievedUser = $userPersistence->getByEmail('retrieve-by-email@example.com');
+    $retrievedUser = $userPersistence->getByEmailOrThrowAuthFailure('retrieve-by-email@example.com');
 
     // Assert the retrieved user matches the created one
     expect($retrievedUser->getId()->getValue())->toBe($savedUser->getId()->getValue());
@@ -472,12 +473,12 @@ it('can retrieve a user by email', function () {
     expect($retrievedUser->getPassword()->verify('password123'))->toBeTrue();
 });
 
-it('throws an exception when retrieving a user with non-existent email', function () {
+it('throws an auth failure exception when retrieving a user with non-existent email', function () {
     $userPersistence = new UserPersistence();
 
     // Attempt to retrieve a non-existent user by email
-    $userPersistence->getByEmail('nonexistent-email@example.com');
-})->throws(ModelNotFoundException::class);
+    $userPersistence->getByEmailOrThrowAuthFailure('nonexistent-email@example.com');
+})->throws(AuthenticationFailureException::class);
 
 it('can generate a login token for a user', function () {
     // Create a test user
@@ -511,4 +512,4 @@ it('throws an exception when generating a token for a non-existent user', functi
 
     // Attempt to generate a token for a non-existent user
     $userPersistence->generateLoginToken($nonExistentUser);
-})->throws(ModelNotFoundException::class);
+})->throws(AuthenticationFailureException::class);

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middlewares\AuthenticateMiddleware;
 use Contexts\Shared\Exceptions\NotFoundException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -19,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->api(prepend: [
+            AuthenticateMiddleware::class,
+        ]);
         $middleware->remove([
             ConvertEmptyStringsToNull::class,
         ]);

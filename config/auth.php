@@ -41,7 +41,7 @@ return [
     'guards' => [
         'user' => [
             'driver' => 'sanctum',
-            'provider' => 'users ',
+            'provider' => 'users',
         ],
         // 'user' => [
         //     'driver' => 'sanctum',

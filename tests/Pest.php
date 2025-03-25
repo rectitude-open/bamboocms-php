@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Feature\AuthenticationSupport;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +16,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 |
 */
 
-uses(Tests\TestCase::class, RefreshDatabase::class)->in(__DIR__.'/../contexts/*/Tests/Feature');
-uses(Tests\TestCase::class, RefreshDatabase::class)->in(__DIR__.'/../tests/Feature');
+uses(Tests\TestCase::class, RefreshDatabase::class, AuthenticationSupport::class)->in(__DIR__.'/../contexts/*/Tests/Feature');
+uses(Tests\TestCase::class, RefreshDatabase::class, AuthenticationSupport::class)->in(__DIR__.'/../tests/Feature');
 
 /*
 |--------------------------------------------------------------------------

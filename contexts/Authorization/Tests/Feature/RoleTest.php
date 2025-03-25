@@ -1,11 +1,20 @@
 <?php
 
 declare(strict_types=1);
+use Contexts\Authorization\Domain\Policies\RolePolicy;
 use Contexts\Authorization\Domain\Role\Models\RoleStatus;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 
 beforeEach(function () {
-    $this->loginAsUser();
+    Config::set('policies.authorization', [
+        'context_default' => [
+            'handler' => RolePolicy::class,
+            'rules' => [
+                'roles' => ['admin'],
+            ],
+        ],
+    ]);
+    $this->loginAsAdmin();
 });
 
 it('can create active roles via api', function () {
@@ -59,12 +68,14 @@ it('can get a list of roles', function () {
 });
 
 it('can get a list of roles with sorting', function () {
+    $initialCount = RoleRecord::count();
+
     RoleRecord::factory(3)->create();
 
     $response = $this->get('roles?sorting=[{"id":"id","desc":false}]');
 
     $response->assertStatus(200);
-    $response->assertJsonCount(3, 'data');
+    $response->assertJsonCount(3 + $initialCount, 'data');
 
     $responseIds = collect($response->json('data'))->pluck('id')->all();
     $sortedIds = collect($responseIds)->sort()->values()->all();

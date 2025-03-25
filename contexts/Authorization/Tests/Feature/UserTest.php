@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 
+beforeEach(function () {
+    $this->loginAsUser();
+});
+
 it('can create active users via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',

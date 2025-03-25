@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Middlewares\AuthenticateMiddleware;
 use Contexts\Authorization\Presentation\Controllers\AuthenticationController;
 use Contexts\Authorization\Presentation\Controllers\RoleController;
 use Contexts\Authorization\Presentation\Controllers\UserIdentityController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([])->name('Authentication')->group(function () {
+Route::name('Authentication')->withoutMiddleware(AuthenticateMiddleware::class)->group(function () {
     Route::controller(AuthenticationController::class)->prefix('auth')->name('Auth.')->group(function () {
         Route::post('login', 'login')->name('login');
     });

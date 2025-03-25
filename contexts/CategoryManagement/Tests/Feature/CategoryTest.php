@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+beforeEach(function () {
+    $this->loginAsUser();
+});
+
 it('can create active categories via api', function () {
     $response = $this->postJson('categories', [
         'label' => 'My Category',

@@ -35,6 +35,7 @@ beforeEach(function () {
     $this->roleLabelUniquenessService = mock(RoleLabelUniquenessService::class);
     $this->roleLabelUniquenessService->shouldReceive('ensureUnique')->andReturn(true);
     $this->roleFactory = new RoleFactory($this->roleLabelUniquenessService);
+    $this->loginAsUser();
 });
 
 it('can get default policy handler', function () {

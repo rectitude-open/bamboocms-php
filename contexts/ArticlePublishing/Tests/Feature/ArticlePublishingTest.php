@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
 use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
-use Contexts\Authorization\Infrastructure\Records\UserRecord;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 
 beforeEach(function () {
@@ -16,8 +15,7 @@ beforeEach(function () {
 
     $this->categories = CategoryRecord::factory(2)->create();
 
-    $userRecord = UserRecord::factory()->create();
-    $this->actingAs($userRecord);
+    $this->loginAsUser();
 });
 
 it('can publish aritcle drafts via api', function () {

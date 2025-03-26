@@ -3,9 +3,18 @@
 declare(strict_types=1);
 
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
+use Contexts\Authorization\Domain\Policies\RolePolicy;
 
 beforeEach(function () {
-    $this->loginAsUser();
+    Config::set('policies.authorization', [
+        'context_default' => [
+            'handler' => RolePolicy::class,
+            'rules' => [
+                'roles' => ['admin'],
+            ],
+        ],
+    ]);
+    $this->loginAsAdmin();
 });
 
 it('can create active users via api', function () {

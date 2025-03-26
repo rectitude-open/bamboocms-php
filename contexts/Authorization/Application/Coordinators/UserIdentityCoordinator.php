@@ -19,16 +19,23 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Shared\Application\BaseCoordinator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Contexts\Shared\Policies\CompositePolicy;
+use Contexts\Authorization\Domain\Policies\GlobalPermissionPolicy;
 
 class UserIdentityCoordinator extends BaseCoordinator
 {
     public function __construct(
         private UserRepository $repository,
         private UserIdentityFactory $factory
-    ) {}
+    ) {
+    }
 
     public function create(CreateUserDTO $data): UserIdentity
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.create'),
+        ])->check();
+
         $user = $this->factory->create(
             UserId::null(),
             new Email($data->email),
@@ -42,16 +49,28 @@ class UserIdentityCoordinator extends BaseCoordinator
 
     public function getUser(int $id): UserIdentity
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.get'),
+        ])->check();
+
         return $this->repository->getById(UserId::fromInt($id));
     }
 
     public function getUserList(GetUserListDTO $data): LengthAwarePaginator
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.list'),
+        ])->check();
+
         return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
     }
 
     public function updateUser(int $id, UpdateUserDTO $data): UserIdentity
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.update'),
+        ])->check();
+
         $user = $this->repository->getById(UserId::fromInt($id));
         $user->modify(
             $data->email ? new Email($data->email) : null,
@@ -69,6 +88,10 @@ class UserIdentityCoordinator extends BaseCoordinator
 
     public function subspendUser(int $id)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.subspend'),
+        ])->check();
+
         $user = $this->repository->getById(UserId::fromInt($id));
         $user->subspend();
 
@@ -79,6 +102,10 @@ class UserIdentityCoordinator extends BaseCoordinator
 
     public function deleteUser(int $id)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.delete'),
+        ])->check();
+
         $user = $this->repository->getById(UserId::fromInt($id));
         $user->delete();
 
@@ -89,6 +116,10 @@ class UserIdentityCoordinator extends BaseCoordinator
 
     public function changePassword(int $userId, string $newPassword)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.changePassword'),
+        ])->check();
+
         $user = $this->repository->getById(UserId::fromInt($userId));
         $user->changePassword($newPassword);
 
@@ -97,6 +128,10 @@ class UserIdentityCoordinator extends BaseCoordinator
 
     public function syncRoles(int $userId, array $roleIds): void
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('user.syncRoles'),
+        ])->check();
+
         $newRoles = new RoleIdCollection(
             array_map(fn ($id) => RoleId::fromInt($id), $roleIds)
         );

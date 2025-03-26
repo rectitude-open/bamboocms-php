@@ -251,7 +251,7 @@ it('does not trigger status transition when same status provided', function () {
     expect($user->releaseEvents())->toBeEmpty();
 });
 
-it('can subspend an user', function () {
+it('can suspend an user', function () {
     $user = $this->userFactory->create(
         UserId::fromInt(1),
         $this->email,
@@ -260,10 +260,10 @@ it('can subspend an user', function () {
     );
     $user->releaseEvents();
 
-    $user->subspend();
+    $user->suspend();
 
     expect($user->getStatus()->equals(UserStatus::suspended()))->toBeTrue();
-    expect($user->releaseEvents())->toBeEmpty(); // No events for subspending
+    expect($user->releaseEvents())->toBeEmpty(); // No events for suspending
 });
 
 it('can delete an user', function () {
@@ -273,7 +273,7 @@ it('can delete an user', function () {
         $this->password,
         'DisplayName'
     );
-    $user->subspend();
+    $user->suspend();
     $user->releaseEvents();
 
     $user->delete();
@@ -572,7 +572,7 @@ it('throws exception with correct message when authenticating suspended user', f
         $this->password,
         'DisplayName'
     );
-    $user->subspend();
+    $user->suspend();
 
     $exception = null;
     try {
@@ -611,7 +611,7 @@ it('includes user summary in exception context for logging', function () {
         $this->password,
         'DisplayName'
     );
-    $user->subspend();
+    $user->suspend();
 
     $exception = null;
     try {

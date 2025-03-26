@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 use Contexts\Authorization\Domain\Policies\RolePolicy;
+use Contexts\Authorization\Infrastructure\Records\RoleRecord;
 
 beforeEach(function () {
     Config::set('policies.authorization', [
@@ -100,7 +100,7 @@ it('can update a user via api', function () {
     ]);
 });
 
-it('can subspend a user via api', function () {
+it('can suspend a user via api', function () {
     $response = $this->postJson('users', [
         'email' => 'test@email.com',
         'password' => 'password123',
@@ -112,7 +112,7 @@ it('can subspend a user via api', function () {
 
     $id = $response->json('data.id');
 
-    $response = $this->putJson("users/{$id}/subspend");
+    $response = $this->putJson("users/{$id}/suspend");
 
     $response->assertStatus(200);
 });

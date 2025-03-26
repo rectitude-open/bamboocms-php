@@ -104,19 +104,19 @@ it('does not trigger status transition when same status provided', function () {
     expect($category->releaseEvents())->toBeEmpty();
 });
 
-it('can subspend an category', function () {
+it('can suspend an category', function () {
     $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
     $category->releaseEvents();
 
-    $category->subspend();
+    $category->suspend();
 
     expect($category->getStatus()->equals(RoleStatus::suspended()))->toBeTrue();
-    expect($category->releaseEvents())->toBeEmpty(); // No events for subspending
+    expect($category->releaseEvents())->toBeEmpty(); // No events for suspending
 });
 
 it('can delete an category', function () {
     $category = $this->roleFactory->create(RoleId::fromInt(1), 'Label');
-    $category->subspend();
+    $category->suspend();
     $category->releaseEvents();
 
     $category->delete();

@@ -61,7 +61,7 @@ class Role extends BaseDomainModel
         return $role;
     }
 
-    public function subspend()
+    public function suspend()
     {
         $this->transitionStatus(RoleStatus::suspended());
     }

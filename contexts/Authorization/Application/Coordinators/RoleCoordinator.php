@@ -78,14 +78,14 @@ class RoleCoordinator extends BaseCoordinator
         return $role;
     }
 
-    public function subspendRole(int $id)
+    public function suspendRole(int $id)
     {
         CompositePolicy::allOf([
             new GlobalPermissionPolicy('role.suspend'),
         ])->check();
 
         $role = $this->repository->getById(RoleId::fromInt($id));
-        $role->subspend();
+        $role->suspend();
 
         $this->repository->update($role);
 

@@ -58,10 +58,10 @@ class CategoryManagementController extends BaseController
             ->send();
     }
 
-    public function subspendCategory(CategoryIdRequest $request)
+    public function suspendCategory(CategoryIdRequest $request)
     {
         $id = (int) ($request->validated()['id']);
-        $result = app(CategoryManagementCoordinator::class)->subspendCategory($id);
+        $result = app(CategoryManagementCoordinator::class)->suspendCategory($id);
 
         return $this->success(['id' => $result->getId()->getValue()])
             ->message('Category suspended successfully')

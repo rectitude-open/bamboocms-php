@@ -58,10 +58,10 @@ class RoleController extends BaseController
             ->send();
     }
 
-    public function subspendRole(RoleIdRequest $request)
+    public function suspendRole(RoleIdRequest $request)
     {
         $id = (int) ($request->validated()['id']);
-        $result = app(RoleCoordinator::class)->subspendRole($id);
+        $result = app(RoleCoordinator::class)->suspendRole($id);
 
         return $this->success(['id' => $result->getId()->getValue()])
             ->message('Role suspended successfully')

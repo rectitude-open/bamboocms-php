@@ -167,7 +167,7 @@ it('can filter users with search criteria', function () {
         $password,
         'PHP Tutorial'
     );
-    $user2->subspend();
+    $user2->suspend();
     $userPersistence->create($user2);
 
     $user3Email = new Email('tips@laravel.com');
@@ -177,7 +177,7 @@ it('can filter users with search criteria', function () {
         $password,
         'Laravel Tips'
     );
-    $user3->subspend();
+    $user3->suspend();
     $userPersistence->create($user3);
 
     // Test search by display_name criteria

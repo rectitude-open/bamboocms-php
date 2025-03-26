@@ -80,7 +80,7 @@ it('can update a category', function () {
     ]);
 });
 
-it('can subspend a category', function () {
+it('can suspend a category', function () {
     $response = $this->postJson('categories', [
         'label' => 'My Category',
         'status' => 'active',
@@ -90,7 +90,7 @@ it('can subspend a category', function () {
 
     $id = $response->json('data.id');
 
-    $response = $this->putJson("categories/{$id}/subspend");
+    $response = $this->putJson("categories/{$id}/suspend");
 
     $response->assertStatus(200);
 });

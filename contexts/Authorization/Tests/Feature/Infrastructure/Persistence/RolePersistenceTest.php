@@ -161,7 +161,7 @@ it('can filter roles with search criteria', function () {
         'PHP Tutorial',
         new CarbonImmutable
     );
-    $role2->subspend();
+    $role2->suspend();
     $rolePersistence->create($role2);
 
     $role3 = $this->roleFactory->create(
@@ -169,7 +169,7 @@ it('can filter roles with search criteria', function () {
         'Laravel Tips',
         new CarbonImmutable
     );
-    $role3->subspend();
+    $role3->suspend();
     $rolePersistence->create($role3);
 
     // Test search by label criteria

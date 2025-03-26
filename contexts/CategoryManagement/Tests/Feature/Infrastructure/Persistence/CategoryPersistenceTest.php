@@ -127,7 +127,7 @@ it('can filter categories with search criteria', function () {
         'PHP Tutorial',
         new CarbonImmutable
     );
-    $category2->subspend();
+    $category2->suspend();
     $categoryPersistence->create($category2);
 
     $category3 = Category::create(
@@ -135,7 +135,7 @@ it('can filter categories with search criteria', function () {
         'Laravel Tips',
         new CarbonImmutable
     );
-    $category3->subspend();
+    $category3->suspend();
     $categoryPersistence->create($category3);
 
     // Test search by label criteria

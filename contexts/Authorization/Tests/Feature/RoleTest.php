@@ -141,7 +141,7 @@ it('can update a role', function () {
     ]);
 });
 
-it('can subspend a role', function () {
+it('can suspend a role', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -151,7 +151,7 @@ it('can subspend a role', function () {
 
     $id = $response->json('data.id');
 
-    $response = $this->putJson("roles/{$id}/subspend");
+    $response = $this->putJson("roles/{$id}/suspend");
 
     $response->assertStatus(200);
 });

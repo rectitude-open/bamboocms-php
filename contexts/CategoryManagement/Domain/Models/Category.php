@@ -60,7 +60,7 @@ class Category extends BaseDomainModel
         return $category;
     }
 
-    public function subspend()
+    public function suspend()
     {
         $this->transitionStatus(CategoryStatus::suspended());
     }

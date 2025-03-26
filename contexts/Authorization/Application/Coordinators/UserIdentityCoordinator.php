@@ -9,6 +9,7 @@ use Contexts\Authorization\Application\DTOs\User\CreateUserDTO;
 use Contexts\Authorization\Application\DTOs\User\GetUserListDTO;
 use Contexts\Authorization\Application\DTOs\User\UpdateUserDTO;
 use Contexts\Authorization\Domain\Factories\UserIdentityFactory;
+use Contexts\Authorization\Domain\Policies\GlobalPermissionPolicy;
 use Contexts\Authorization\Domain\Repositories\UserRepository;
 use Contexts\Authorization\Domain\Role\Models\RoleId;
 use Contexts\Authorization\Domain\UserIdentity\Models\Email;
@@ -18,17 +19,15 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Shared\Application\BaseCoordinator;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Contexts\Shared\Policies\CompositePolicy;
-use Contexts\Authorization\Domain\Policies\GlobalPermissionPolicy;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserIdentityCoordinator extends BaseCoordinator
 {
     public function __construct(
         private UserRepository $repository,
         private UserIdentityFactory $factory
-    ) {
-    }
+    ) {}
 
     public function create(CreateUserDTO $data): UserIdentity
     {
@@ -86,14 +85,14 @@ class UserIdentityCoordinator extends BaseCoordinator
         return $user;
     }
 
-    public function subspendUser(int $id)
+    public function suspendUser(int $id)
     {
         CompositePolicy::allOf([
-            new GlobalPermissionPolicy('user.subspend'),
+            new GlobalPermissionPolicy('user.suspend'),
         ])->check();
 
         $user = $this->repository->getById(UserId::fromInt($id));
-        $user->subspend();
+        $user->suspend();
 
         $this->repository->update($user);
 

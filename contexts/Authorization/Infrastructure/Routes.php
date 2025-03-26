@@ -21,7 +21,7 @@ Route::middleware([])->name('Authorization.')->group(function () {
         Route::post('', 'createUser')->name('createUser');
         Route::patch('{id}/password', 'changePassword')->name('changePassword');
         Route::put('{id}/roles', 'updateRoles')->name('updateRoles');
-        Route::put('{id}/subspend', 'subspendUser')->name('subspendUser');
+        Route::put('{id}/suspend', 'suspendUser')->name('suspendUser');
         Route::put('{id}', 'updateUser')->name('updateUser');
         Route::delete('{id}', 'deleteUser')->name('deleteUser');
     });
@@ -30,7 +30,7 @@ Route::middleware([])->name('Authorization.')->group(function () {
         Route::get('', 'getRoleList')->name('getRoleList');
         Route::post('', 'createRole')->name('createRole');
         Route::patch('{id}/password', 'changePassword')->name('changePassword');
-        Route::put('{id}/subspend', 'subspendRole')->name('subspendRole');
+        Route::put('{id}/suspend', 'suspendRole')->name('suspendRole');
         Route::put('{id}', 'updateRole')->name('updateRole');
         Route::delete('{id}', 'deleteRole')->name('deleteRole');
     });

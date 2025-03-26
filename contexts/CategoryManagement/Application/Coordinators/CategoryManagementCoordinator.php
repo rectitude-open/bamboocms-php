@@ -58,10 +58,10 @@ class CategoryManagementCoordinator extends BaseCoordinator
         return $category;
     }
 
-    public function subspendCategory(int $id)
+    public function suspendCategory(int $id)
     {
         $category = $this->repository->getById(CategoryId::fromInt($id));
-        $category->subspend();
+        $category->suspend();
 
         $this->repository->update($category);
 

@@ -136,7 +136,7 @@ class UserIdentity extends BaseDomainModel
         return $user;
     }
 
-    public function subspend()
+    public function suspend()
     {
         $this->transitionStatus(UserStatus::suspended());
     }

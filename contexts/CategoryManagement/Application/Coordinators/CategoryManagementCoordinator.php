@@ -14,15 +14,22 @@ use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 use Contexts\CategoryManagement\Domain\Repositories\CategoryRepository;
 use Contexts\Shared\Application\BaseCoordinator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Contexts\Shared\Policies\CompositePolicy;
+use Contexts\CategoryManagement\Domain\Policies\GlobalPermissionPolicy;
 
 class CategoryManagementCoordinator extends BaseCoordinator
 {
     public function __construct(
         private CategoryRepository $repository
-    ) {}
+    ) {
+    }
 
     public function create(CreateCategoryDTO $data): Category
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('category.create'),
+        ])->check();
+
         $category = Category::create(
             CategoryId::null(),
             $data->label,
@@ -34,16 +41,28 @@ class CategoryManagementCoordinator extends BaseCoordinator
 
     public function getCategory(int $id): Category
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('category.get'),
+        ])->check();
+
         return $this->repository->getById(CategoryId::fromInt($id));
     }
 
     public function getCategoryList(GetCategoryListDTO $data): LengthAwarePaginator
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('category.list'),
+        ])->check();
+
         return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
     }
 
     public function updateCategory(int $id, UpdateCategoryDTO $data): Category
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('category.update'),
+        ])->check();
+
         $category = $this->repository->getById(CategoryId::fromInt($id));
         $category->modify(
             $data->label,
@@ -60,6 +79,10 @@ class CategoryManagementCoordinator extends BaseCoordinator
 
     public function suspendCategory(int $id)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('category.suspend'),
+        ])->check();
+
         $category = $this->repository->getById(CategoryId::fromInt($id));
         $category->suspend();
 
@@ -70,6 +93,10 @@ class CategoryManagementCoordinator extends BaseCoordinator
 
     public function deleteCategory(int $id)
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('category.delete'),
+        ])->check();
+
         $category = $this->repository->getById(CategoryId::fromInt($id));
         $category->delete();
 

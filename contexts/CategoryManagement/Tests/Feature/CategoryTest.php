@@ -1,9 +1,18 @@
 <?php
 
 declare(strict_types=1);
+use Contexts\Authorization\Domain\Policies\RolePolicy;
 
 beforeEach(function () {
-    $this->loginAsUser();
+    Config::set('policies.category_management', [
+        'context_default' => [
+            'handler' => RolePolicy::class,
+            'rules' => [
+                'roles' => ['admin'],
+            ],
+        ],
+    ]);
+    $this->loginAsAdmin();
 });
 
 it('can create active categories via api', function () {

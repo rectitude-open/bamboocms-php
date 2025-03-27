@@ -10,6 +10,8 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Contexts\CategoryManagement\Domain\Gateway\AuthorizationGateway;
+use Contexts\CategoryManagement\Infrastructure\Adapters\AuthorizationAdapter;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -24,8 +26,7 @@ class ServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
-        $this->app->register(new class($this->app) extends RouteServiceProvider
-        {
+        $this->app->register(new class ($this->app) extends RouteServiceProvider {
             public function boot(): void
             {
                 parent::boot();
@@ -37,6 +38,7 @@ class ServiceProvider extends BaseServiceProvider
             }
         });
         $this->app->bind(CategoryRepository::class, CategoryPersistence::class);
+        $this->app->bind(AuthorizationGateway::class, AuthorizationAdapter::class);
     }
 
     public function provides(): array

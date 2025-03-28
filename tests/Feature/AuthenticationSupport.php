@@ -42,4 +42,23 @@ trait AuthenticationSupport
 
         $this->actingAs($userRecord);
     }
+
+    protected function loginAsEditor(array $attributes = []): void
+    {
+        $userRecord = UserRecord::factory()->create([
+            'email' => $attributes['email'] ?? 'logged-in-editor@email.com',
+            'display_name' => $attributes['display_name'] ?? 'Logged In Editor',
+            'password' => password_hash($attributes['password'] ?? 'password', PASSWORD_ARGON2ID),
+            'status' => UserRecord::mapStatusToRecord($attributes['status'] ?? UserStatus::active()),
+        ]);
+
+        $roleRecord = RoleRecord::factory()->create([
+            'label' => 'editor',
+            'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+        ]);
+
+        $userRecord->roles()->attach($roleRecord);
+
+        $this->actingAs($userRecord);
+    }
 }

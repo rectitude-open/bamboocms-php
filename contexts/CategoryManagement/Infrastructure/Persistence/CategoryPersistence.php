@@ -76,4 +76,13 @@ class CategoryPersistence implements CategoryRepository
         $record->update(['status' => CategoryRecord::mapStatusToRecord(CategoryStatus::deleted())]);
         $record->delete();
     }
+
+    public function getByIds(array $categoryIds): array
+    {
+        $records = CategoryRecord::query()->whereIn('id', $categoryIds)->get();
+
+        return $records->map(function ($record) {
+            return $record->toDomain();
+        })->all();
+    }
 }

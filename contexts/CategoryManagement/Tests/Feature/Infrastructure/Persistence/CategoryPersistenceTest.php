@@ -189,3 +189,44 @@ it('throws an exception when deleting a non-existent category', function () {
     // Attempt to delete a non-existent category
     $categoryPersistence->delete(Category::create(CategoryId::fromInt(999), 'Test Category'));
 })->throws(CategoryNotFoundException::class);
+
+it('can get categories by multiple IDs', function () {
+    $categoryPersistence = new CategoryPersistence;
+
+    // Create test categories in the database
+    $category1 = Category::create(CategoryId::null(), 'Category 1');
+    $category2 = Category::create(CategoryId::null(), 'Category 2');
+    $category3 = Category::create(CategoryId::null(), 'Category 3');
+
+    $saved1 = $categoryPersistence->create($category1);
+    $saved2 = $categoryPersistence->create($category2);
+    $saved3 = $categoryPersistence->create($category3);
+
+    // Get categories by IDs
+    $categoryIds = [
+        $saved1->getId()->getValue(),
+        $saved3->getId()->getValue(),
+    ];
+
+    $result = $categoryPersistence->getByIds($categoryIds);
+
+    // Assert we get back exactly 2 categories
+    expect(count($result))->toBe(2);
+
+    // Assert the returned categories match the expected ones
+    expect($result[0]->getId()->getValue())->toBe($saved1->getId()->getValue());
+    expect($result[0]->getLabel())->toBe('Category 1');
+
+    expect($result[1]->getId()->getValue())->toBe($saved3->getId()->getValue());
+    expect($result[1]->getLabel())->toBe('Category 3');
+});
+
+it('returns empty array when no categories match the provided IDs', function () {
+    $categoryPersistence = new CategoryPersistence;
+
+    // Try to get categories with non-existent IDs
+    $result = $categoryPersistence->getByIds([999, 1000]);
+
+    // Should return empty array, not throw exception
+    expect($result)->toBe([]);
+});

@@ -7,28 +7,27 @@ namespace Contexts\ArticlePublishing\Infrastructure\Adapters;
 use Contexts\ArticlePublishing\Domain\Gateway\CategoryGateway;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategory;
 use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
-use Contexts\CategoryManagement\Application\Coordinators\CategoryManagementCoordinator;
+use Contexts\CategoryManagement\Contracts\V1\DTOs\CategoryDTO;
+use Contexts\CategoryManagement\Contracts\V1\Services\CategoryService;
 
 class CategoryAdapter implements CategoryGateway
 {
     public function __construct(
-        private CategoryManagementCoordinator $categoryManagementCoordinator
+        private CategoryService $categoryService,
     ) {}
-
-    public function getArticleCategory(int $categoryId): ArticleCategory
-    {
-        $response = $this->categoryManagementCoordinator->getCategory($categoryId);
-
-        return new ArticleCategory(
-            $response->getId()->getValue(),
-            $response->getLabel()
-        );
-    }
 
     public function getArticleCategories(array $categoryIds): ArticleCategoryCollection
     {
+        $response = $this->categoryService->resolveCategories($categoryIds);
+
         return new ArticleCategoryCollection(
-            array_map(fn ($categoryId) => $this->getArticleCategory($categoryId), $categoryIds)
+            array_map(
+                fn (CategoryDTO $category) => new ArticleCategory(
+                    $category->id,
+                    $category->label,
+                ),
+                $response
+            )
         );
     }
 }

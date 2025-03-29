@@ -3,19 +3,22 @@
 declare(strict_types=1);
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
-use Contexts\ArticlePublishing\Domain\Gateway\AuthorizationGateway;
+use Contexts\Authorization\Domain\Policies\RolePolicy;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 
 beforeEach(function () {
-    $mockAuthGateway = mock(AuthorizationGateway::class);
-    $mockAuthGateway->shouldReceive('canPerformAction')
-        ->with('publish_article')
-        ->andReturn(true);
-    $this->app->instance(AuthorizationGateway::class, $mockAuthGateway);
+    Config::set('policies.article_publishing', [
+        'context_default' => [
+            'handler' => RolePolicy::class,
+            'rules' => [
+                'roles' => ['admin'],
+            ],
+        ],
+    ]);
 
     $this->categories = CategoryRecord::factory(2)->create();
 
-    $this->loginAsUser();
+    $this->loginAsAdmin();
 });
 
 it('can publish aritcle drafts via api', function () {

@@ -10,9 +10,7 @@ use Contexts\Shared\Contracts\BaseAuthorizationPolicy;
 
 class GlobalPermissionPolicy implements BaseAuthorizationPolicy
 {
-    public function __construct(private string $action)
-    {
-    }
+    public function __construct(private string $action) {}
 
     public static function canPerform(string $action)
     {

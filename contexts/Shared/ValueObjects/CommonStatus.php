@@ -8,7 +8,7 @@ use App\Exceptions\BizException;
 
 abstract class CommonStatus
 {
-    public const SUBSPENDED = 'suspended';
+    public const SUSPENDED = 'suspended';
 
     public const ACTIVE = 'active';
 
@@ -16,7 +16,7 @@ abstract class CommonStatus
 
     final public function __construct(private string $value)
     {
-        if (! in_array($value, [static::SUBSPENDED, static::ACTIVE, static::DELETED])) {
+        if (! in_array($value, [static::SUSPENDED, static::ACTIVE, static::DELETED])) {
             throw BizException::make('Invalid status: :status')
                 ->with('status', $value);
         }
@@ -24,7 +24,7 @@ abstract class CommonStatus
 
     public static function suspended(): static
     {
-        return new static(static::SUBSPENDED);
+        return new static(static::SUSPENDED);
     }
 
     public static function active(): static
@@ -44,7 +44,7 @@ abstract class CommonStatus
 
     public function isSuspended(): bool
     {
-        return $this->value === static::SUBSPENDED;
+        return $this->value === static::SUSPENDED;
     }
 
     public function isDeleted(): bool
@@ -55,8 +55,8 @@ abstract class CommonStatus
     public function transitionTo(CommonStatus $target): static
     {
         $validTransitions = match ($this->value) {
-            static::SUBSPENDED => [static::ACTIVE, static::DELETED],
-            static::ACTIVE => [static::SUBSPENDED, static::DELETED],
+            static::SUSPENDED => [static::ACTIVE, static::DELETED],
+            static::ACTIVE => [static::SUSPENDED, static::DELETED],
             default => [],
         };
 

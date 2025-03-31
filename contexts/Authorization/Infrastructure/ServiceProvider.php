@@ -26,6 +26,8 @@ class ServiceProvider extends BaseServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Migrations');
         $this->loadJsonTranslationsFrom(__DIR__.'/Lang');
         $this->mergeConfigFrom(__DIR__.'/Configs/article_publishing.php', 'policies.article_publishing');
+        $this->mergeConfigFrom(__DIR__.'/Configs/authorization.php', 'policies.authorization');
+        $this->mergeConfigFrom(__DIR__.'/Configs/category_management.php', 'policies.category_management');
         // Event::listen(
         //     UserCreatedEvent::class
         // );

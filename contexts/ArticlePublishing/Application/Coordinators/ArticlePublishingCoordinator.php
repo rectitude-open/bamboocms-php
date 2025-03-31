@@ -36,7 +36,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function create(CreateArticleDTO $data): ArticleVisibility
     {
         CompositePolicy::allOf([
-            new GlobalPermissionPolicy('publish_article'),
+            new GlobalPermissionPolicy('article.create'),
         ])->check();
 
         $authorId = $data->authorId
@@ -88,7 +88,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function publishDraft(int $id): void
     {
         CompositePolicy::allOf([
-            new GlobalPermissionPolicy('publish_article'),
+            new GlobalPermissionPolicy('article.publish'),
         ])->check();
 
         $article = $this->repository->getById(ArticleId::fromInt($id));
@@ -101,6 +101,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function getArticle(int $id): ArticleVisibility
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('article.get'),
+        ])->check();
+
         $article = $this->repository->getById(ArticleId::fromInt($id));
 
         $viewer = $this->viewerGateway->getCurrentViewer();
@@ -110,6 +114,10 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
     public function getArticleList(GetArticleListDTO $data): LengthAwarePaginator
     {
+        CompositePolicy::allOf([
+            new GlobalPermissionPolicy('article.list'),
+        ])->check();
+
         $viewer = $this->viewerGateway->getCurrentViewer();
 
         $paginator = $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
@@ -124,7 +132,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function updateArticle(int $id, UpdateArticleDTO $data): ArticleVisibility
     {
         CompositePolicy::allOf([
-            new GlobalPermissionPolicy('publish_article'),
+            new GlobalPermissionPolicy('article.update'),
         ])->check();
 
         $article = $this->repository->getById(ArticleId::fromInt($id));
@@ -149,7 +157,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function archiveArticle(int $id): ArticleVisibility
     {
         CompositePolicy::allOf([
-            new GlobalPermissionPolicy('publish_article'),
+            new GlobalPermissionPolicy('article.archive'),
         ])->check();
 
         $article = $this->repository->getById(ArticleId::fromInt($id));
@@ -165,7 +173,7 @@ class ArticlePublishingCoordinator extends BaseCoordinator
     public function deleteArticle(int $id): ArticleVisibility
     {
         CompositePolicy::allOf([
-            new GlobalPermissionPolicy('publish_article'),
+            new GlobalPermissionPolicy('article.delete'),
         ])->check();
 
         $article = $this->repository->getById(ArticleId::fromInt($id));

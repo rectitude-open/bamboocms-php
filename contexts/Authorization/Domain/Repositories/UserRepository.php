@@ -27,4 +27,6 @@ interface UserRepository
     public function getByEmailOrThrowAuthFailure(string $email): UserIdentity;
 
     public function generateLoginToken(UserIdentity $user): string;
+
+    public function getCurrentUser(): UserIdentity;
 }

@@ -128,4 +128,13 @@ class UserPersistence implements UserRepository
 
         return $record->createToken('login', ['*'], now()->addDay())->plainTextToken;
     }
+
+    public function getCurrentUser(): UserIdentity
+    {
+        if (! auth()->check()) {
+            throw AuthenticationFailureException::make();
+        }
+
+        return auth()->user()->toDomain();
+    }
 }

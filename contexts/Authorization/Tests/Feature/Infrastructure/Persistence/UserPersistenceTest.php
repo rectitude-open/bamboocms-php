@@ -512,3 +512,20 @@ it('throws an exception when generating a token for a non-existent user', functi
     // Attempt to generate a token for a non-existent user
     $userPersistence->generateLoginToken($nonExistentUser);
 })->throws(AuthenticationFailureException::class);
+
+it('can get the current authenticated user', function () {
+    $email = new Email('current-user@example.com');
+    $password = Password::createFromPlainText('password123');
+    $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Current User');
+
+    $userPersistence = new UserPersistence;
+    $savedUser = $userPersistence->create($createdUser);
+
+    $this->actingAs(UserRecord::find($savedUser->getId()->getValue()));
+
+    $currentUser = $userPersistence->getCurrentUser();
+
+    expect($currentUser->getId()->getValue())->toBe($savedUser->getId()->getValue());
+    expect($currentUser->getDisplayName())->toBe('Current User');
+    expect($currentUser->getEmail()->getValue())->toBe('current-user@example.com');
+});

@@ -78,3 +78,36 @@ it('cannot login with non-existent email', function () {
         'message' => 'Invalid login credentials or account access restricted',
     ]);
 });
+
+it('can get user info via api', function () {
+    $user = UserRecord::factory()->create([
+        'email' => 'test@email.com',
+        'password' => password_hash('password', PASSWORD_ARGON2ID),
+        'status' => UserRecord::mapStatusToRecord(UserStatus::active()),
+    ]);
+    $this->actingAs($user);
+
+    $response = $this->getJson('auth/me');
+
+    $response->assertStatus(200);
+    $response->assertJson([
+        'data' => [
+            'user' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'display_name' => $user->display_name,
+            ],
+        ],
+    ]);
+});
+
+it('cannot get user info without authentication', function () {
+    $response = $this->getJson('auth/me');
+
+    $response->assertStatus(401);
+    $response->assertJsonMissing([
+        'data' => [
+            'user' => [],
+        ],
+    ]);
+});

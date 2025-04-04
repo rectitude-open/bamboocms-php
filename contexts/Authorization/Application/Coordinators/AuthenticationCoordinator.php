@@ -32,4 +32,17 @@ class AuthenticationCoordinator extends BaseCoordinator
             'token' => $token,
         ];
     }
+
+    public function me()
+    {
+        $user = $this->userRepository->getCurrentUser();
+
+        return [
+            'user' => [
+                'id' => $user->getId()->getValue(),
+                'email' => $user->getEmail()->getValue(),
+                'display_name' => $user->getDisplayName(),
+            ],
+        ];
+    }
 }

@@ -14,6 +14,12 @@ Route::name('Authentication')->withoutMiddleware(AuthenticateMiddleware::class)-
     });
 });
 
+Route::name('Authentication')->group(function () {
+    Route::controller(AuthenticationController::class)->prefix('auth')->name('Auth.')->group(function () {
+        Route::get('me', 'me')->name('me');
+    });
+});
+
 Route::middleware([])->name('Authorization.')->group(function () {
     Route::controller(UserIdentityController::class)->prefix('users')->name('User.')->group(function () {
         Route::get('{id}', 'getUser')->name('getUser');

@@ -19,4 +19,11 @@ class AuthenticationController extends BaseController
 
         return $this->success($result)->send();
     }
+
+    public function me()
+    {
+        $result = app(AuthenticationCoordinator::class)->me();
+
+        return $this->success($result)->send();
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Infrastructure\Persistence;
 
+use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\Repositories\UserRepository;
 use Contexts\Authorization\Domain\UserIdentity\Exceptions\AuthenticationFailureException;
 use Contexts\Authorization\Domain\UserIdentity\Exceptions\UserNotFoundException;
@@ -116,7 +117,7 @@ class UserPersistence implements UserRepository
         return $record->toDomain();
     }
 
-    public function generateLoginToken(UserIdentity $user): string
+    public function generateLoginToken(UserIdentity $user, CarbonImmutable $expiresAt): string
     {
         try {
             $record = UserRecord::findOrFail($user->getId()->getValue());
@@ -126,7 +127,7 @@ class UserPersistence implements UserRepository
                 ->logContext(['user_id' => $user->getId()->getValue()]);
         }
 
-        return $record->createToken('login', ['*'], now()->addDay())->plainTextToken;
+        return $record->createToken('login', ['*'], $expiresAt)->plainTextToken;
     }
 
     public function getCurrentUser(): UserIdentity

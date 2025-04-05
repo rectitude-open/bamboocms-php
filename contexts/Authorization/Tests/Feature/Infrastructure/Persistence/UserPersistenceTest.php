@@ -486,9 +486,10 @@ it('can generate a login token for a user', function () {
     $createdUser = $this->userFactory->create(UserId::null(), $email, $password, 'Token User');
     $userPersistence = new UserPersistence;
     $savedUser = $userPersistence->create($createdUser);
+    $expiresAt = CarbonImmutable::now()->startOfSecond()->addDay();
 
     // Generate a login token for the user
-    $token = $userPersistence->generateLoginToken($savedUser);
+    $token = $userPersistence->generateLoginToken($savedUser, $expiresAt);
 
     // Assert the token is a non-empty string
     expect($token)->toBeString();
@@ -501,6 +502,7 @@ it('can generate a login token for a user', function () {
     expect($result->tokenable_type)->toBe(UserRecord::class);
     expect($result->name)->toBe('login');
     expect($result->abilities)->toContain('*');
+    expect($result->expires_at)->toEqual($expiresAt);
 });
 
 it('throws an exception when generating a token for a non-existent user', function () {
@@ -508,9 +510,10 @@ it('throws an exception when generating a token for a non-existent user', functi
     $email = new Email('nonexistent-token@example.com');
     $password = Password::createFromPlainText('password123');
     $nonExistentUser = $this->userFactory->create(UserId::fromInt(999), $email, $password, 'NonExistent User');
+    $expiresAt = CarbonImmutable::now()->addDay();
 
     // Attempt to generate a token for a non-existent user
-    $userPersistence->generateLoginToken($nonExistentUser);
+    $userPersistence->generateLoginToken($nonExistentUser, $expiresAt);
 })->throws(AuthenticationFailureException::class);
 
 it('can get the current authenticated user', function () {

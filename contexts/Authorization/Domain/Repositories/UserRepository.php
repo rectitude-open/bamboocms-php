@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Domain\Repositories;
 
+use Carbon\CarbonImmutable;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -26,7 +27,7 @@ interface UserRepository
 
     public function getByEmailOrThrowAuthFailure(string $email): UserIdentity;
 
-    public function generateLoginToken(UserIdentity $user): string;
+    public function generateLoginToken(UserIdentity $user, CarbonImmutable $expiresAt): string;
 
     public function getCurrentUser(): UserIdentity;
 }

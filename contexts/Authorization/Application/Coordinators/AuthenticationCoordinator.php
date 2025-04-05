@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Contexts\Authorization\Application\Coordinators;
 
 use Contexts\Authorization\Application\DTOs\Authentication\LoginDTO;
+use Contexts\Authorization\Domain\Policies\TokenExpirationPolicy;
 use Contexts\Authorization\Domain\Repositories\UserRepository;
 use Contexts\Shared\Application\BaseCoordinator;
 
@@ -19,7 +20,8 @@ class AuthenticationCoordinator extends BaseCoordinator
         $user = $this->userRepository->getByEmailOrThrowAuthFailure($dto->email);
         $user->authenticate($dto->password);
 
-        $token = $this->userRepository->generateLoginToken($user);
+        $expiresAt = TokenExpirationPolicy::resolveExpiration($dto->remember);
+        $token = $this->userRepository->generateLoginToken($user, $expiresAt);
 
         $this->dispatchDomainEvents($user);
 

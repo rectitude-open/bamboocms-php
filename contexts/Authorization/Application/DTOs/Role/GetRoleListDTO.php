@@ -26,7 +26,7 @@ class GetRoleListDTO
             $merged['id'] ?? null,
             $merged['label'] ?? null,
             $merged['status'] ?? null,
-            $merged['created_at_range'] ?? null,
+            $merged['created_at'] ?? null,
             $merged['current_page'] ?? 1,
             $merged['per_page'] ?? 10,
             self::normalizeAndFilterSorting($merged)
@@ -88,13 +88,8 @@ class GetRoleListDTO
     {
         return collect($filters)->mapWithKeys(function ($filter) {
             $key = $filter['id'];
-            if ($key === 'created_at_range') {
-                $value = json_decode($filter['value'], true);
-            } else {
-                $value = $filter['value'];
-            }
 
-            return [$key => $value];
+            return [$key => $filter['value']];
         })->toArray();
     }
 
@@ -109,7 +104,7 @@ class GetRoleListDTO
             'id' => $this->id,
             'label' => $this->label,
             'status' => $this->status,
-            'created_at_range' => $this->createdAtRange,
+            'created_at' => $this->createdAtRange,
         ];
     }
 }

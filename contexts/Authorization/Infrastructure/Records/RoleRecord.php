@@ -80,8 +80,8 @@ class RoleRecord extends BaseRecord
             $query->where('status', $criteria['status']);
         });
 
-        $query->when(isset($criteria['created_at_range']), function ($query) use ($criteria) {
-            [$start, $end] = $criteria['created_at_range'];
+        $query->when(isset($criteria['created_at']), function ($query) use ($criteria) {
+            [$start, $end] = $criteria['created_at'];
             $query->whereBetween('created_at', [$start, $end]);
         });
 

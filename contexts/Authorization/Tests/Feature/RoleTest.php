@@ -26,7 +26,7 @@ it('can create active roles via api', function () {
     $response->assertStatus(201);
 });
 
-it('can get a role', function () {
+it('can get a role via api', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -48,13 +48,13 @@ it('can get a role', function () {
     ]);
 });
 
-it('can not get a role that does not exist', function () {
+it('can not get a role that does not exist via api', function () {
     $response = $this->get('roles/1');
 
     $response->assertStatus(404);
 });
 
-it('can get a list of roles', function () {
+it('can get a list of roles via api', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -67,7 +67,7 @@ it('can get a list of roles', function () {
     $response->assertStatus(200);
 });
 
-it('can get a list of roles with sorting', function () {
+it('can get a list of roles with sorting via api', function () {
     $initialCount = RoleRecord::count();
 
     RoleRecord::factory(3)->create();
@@ -82,7 +82,7 @@ it('can get a list of roles with sorting', function () {
     expect($responseIds)->toBe($sortedIds);
 });
 
-it('can search for roles', function () {
+it('can search for roles via api', function () {
     RoleRecord::factory()->create([
         'label' => 'My Role',
         'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
@@ -114,10 +114,61 @@ it('can search for roles', function () {
             ],
         ],
     ]);
-
 });
 
-it('can update a role', function () {
+it('can search for roles with created_at via api', function () {
+    RoleRecord::factory(3)->create([
+        'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+        'created_at' => now()->subDays(7),
+    ]);
+    RoleRecord::factory()->create([
+        'label' => 'Role1',
+        'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+        'created_at' => now()->subDays(5),
+    ]);
+    RoleRecord::factory()->create([
+        'label' => 'Role2',
+        'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+        'created_at' => now()->subDays(2),
+    ]);
+
+    RoleRecord::factory(3)->create([
+        'status' => RoleRecord::mapStatusToRecord(RoleStatus::active()),
+        'created_at' => now()->subDays(1),
+    ]);
+
+    $response = $this->get('roles?filters=[{"id":"created_at","value":["'.now()->subDays(5)->format('Y-m-d').'","'.now()->subDays(1)->format('Y-m-d').'"]}]');
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(2, 'data');
+    $response->assertJson([
+        'data' => [
+            [
+                'label' => 'Role2',
+            ],
+            [
+                'label' => 'Role1',
+            ],
+        ],
+    ]);
+
+    $response = $this->get('roles?created_at[]='.now()->subDays(5)->format('Y-m-d').'&created_at[]='.now()->subDays(1)->format('Y-m-d'));
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(2, 'data');
+    $response->assertJson([
+        'data' => [
+            [
+                'label' => 'Role2',
+            ],
+            [
+                'label' => 'Role1',
+            ],
+        ],
+    ]);
+});
+
+it('can update a role via api', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -141,7 +192,7 @@ it('can update a role', function () {
     ]);
 });
 
-it('can suspend a role', function () {
+it('can suspend a role via api', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',
@@ -156,7 +207,7 @@ it('can suspend a role', function () {
     $response->assertStatus(200);
 });
 
-it('can delete a role', function () {
+it('can delete a role via api', function () {
     $response = $this->postJson('roles', [
         'label' => 'My Role',
         'status' => 'active',

@@ -187,7 +187,7 @@ it('can filter roles with search criteria', function () {
     $result = $rolePersistence->paginate(1, 10, ['label' => 'Django']);
     expect($result->total())->toBe(0);
 
-    // Test search by created_at_range criteria
+    // Test search by created_at criteria
     $role4 = $this->roleFactory->create(
         RoleId::null(),
         'Past Role',
@@ -196,7 +196,7 @@ it('can filter roles with search criteria', function () {
     $rolePersistence->create($role4);
 
     $result = $rolePersistence->paginate(1, 10, [
-        'created_at_range' => ['2021-01-01', '2021-01-02'],
+        'created_at' => ['2021-01-01', '2021-01-02'],
     ]);
 
     expect($result->total())->toBe(1); // Should find the role created on 2021-01-01

@@ -10,8 +10,10 @@ use Contexts\CategoryManagement\Domain\Models\CategoryId;
 use Contexts\CategoryManagement\Domain\Models\CategoryStatus;
 use Contexts\CategoryManagement\Infrastructure\RecordFactories\CategoryRecordFactory;
 use Contexts\Shared\Infrastructure\BaseRecord;
+use Contexts\Shared\Infrastructure\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
 
 /**
@@ -23,6 +25,9 @@ use Illuminate\Support\Carbon;
  */
 class CategoryRecord extends BaseRecord
 {
+    use HasFactory;
+    use HasSortingScopeTrait;
+
     protected $table = 'categories';
 
     protected $fillable = ['label', 'status', 'created_at'];

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\CategoryManagement\Presentation\Requests;
 
-use Contexts\Shared\Presentation\Requests\BaseRequest;
+use Contexts\Shared\Presentation\Requests\BaseListRequest;
 
-class GetCategoryListRequest extends BaseRequest
+class GetCategoryListRequest extends BaseListRequest
 {
     public function rules(): array
     {
@@ -14,10 +14,11 @@ class GetCategoryListRequest extends BaseRequest
             'id' => ['integer', 'gt:0'],
             'label' => ['string', 'max:255'],
             'status' => ['string', 'in:suspended,active'],
-            'created_at_range' => ['array', 'size:2'],
-            'created_at_range.*' => ['date'],
-            'current_page' => ['integer', 'gt:0'],
-            'per_page' => ['integer', 'gt:0'],
+            'created_at' => ['array', 'size:2'],
+            'created_at.*' => ['date_format:Y-m-d'],
+            ...$this->paginationRule(),
+            ...$this->filtersRule(),
+            ...$this->sortingRule(),
         ];
     }
 }

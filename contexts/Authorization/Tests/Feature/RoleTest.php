@@ -80,6 +80,13 @@ it('can get a list of roles with sorting via api', function () {
     $responseIds = collect($response->json('data'))->pluck('id')->all();
     $sortedIds = collect($responseIds)->sort()->values()->all();
     expect($responseIds)->toBe($sortedIds);
+
+    $response = $this->get('users?sorting=[{"id":"id","desc":true}]');
+    $response->assertStatus(200);
+
+    $responseIds = collect($response->json('data'))->pluck('id')->all();
+    $sortedIds = collect($responseIds)->sortDesc()->values()->all();
+    expect($responseIds)->toBe($sortedIds);
 });
 
 it('can search for roles via api', function () {

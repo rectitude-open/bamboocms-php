@@ -13,6 +13,7 @@ use Contexts\Shared\Infrastructure\BaseRecord;
 use Contexts\Shared\Infrastructure\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
 
 /**
@@ -24,6 +25,7 @@ use Illuminate\Support\Carbon;
  */
 class RoleRecord extends BaseRecord
 {
+    use HasFactory;
     use HasSortingScopeTrait;
 
     protected $table = 'roles';

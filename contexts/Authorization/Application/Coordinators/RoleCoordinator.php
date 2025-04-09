@@ -55,7 +55,12 @@ class RoleCoordinator extends BaseCoordinator
             new GlobalPermissionPolicy('role.list'),
         ])->check();
 
-        return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria(), $data->toSorting());
+        return $this->repository->paginate(
+            $data->currentPage,
+            $data->perPage,
+            $data->toCriteria(),
+            $data->toSorting()
+        );
     }
 
     public function updateRole(int $id, UpdateRoleDTO $data): Role

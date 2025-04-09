@@ -71,9 +71,12 @@ class ArticlePersistence implements ArticleRepository
         return $record->toDomain($article->getEvents());
     }
 
-    public function paginate(int $currentPage = 1, int $perPage = 10, array $criteria = []): LengthAwarePaginator
+    public function paginate(int $currentPage = 1, int $perPage = 10, array $criteria = [], array $sorting = []): LengthAwarePaginator
     {
-        $paginator = ArticleRecord::query()->search($criteria)->paginate($perPage, ['*'], 'current_page', $currentPage);
+        $paginator = ArticleRecord::query()
+            ->search($criteria)
+            ->sorting($sorting)
+            ->paginate($perPage, ['*'], 'current_page', $currentPage);
 
         $paginator->getCollection()->transform(function ($record) {
             return $record->toDomain();

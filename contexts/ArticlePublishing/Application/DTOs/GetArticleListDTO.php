@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Application\DTOs;
 
-class GetArticleListDTO
+use Contexts\Shared\Application\BaseGetListDTO;
+
+class GetArticleListDTO extends BaseGetListDTO
 {
+    protected const ALLOWED_SORT_FIELDS = ['id', 'created_at'];
+
     public function __construct(
         public readonly ?string $id,
         public readonly ?string $title,
@@ -15,20 +19,29 @@ class GetArticleListDTO
         public readonly ?array $createdAtRange,
         public readonly int $currentPage,
         public readonly int $perPage,
+        public readonly ?array $sorting
     ) {}
 
     public static function fromRequest(array $data): self
     {
+        $merged = array_merge($data, self::convertFiltersToCriteria($data['filters'] ?? []));
+
         return new self(
-            $data['id'] ?? null,
-            $data['title'] ?? null,
-            $data['status'] ?? null,
-            $data['category_id'] ?? null,
-            $data['author_id'] ?? null,
-            $data['created_at_range'] ?? null,
-            $data['current_page'] ?? 1,
-            $data['per_page'] ?? 10,
+            $merged['id'] ?? null,
+            $merged['title'] ?? null,
+            $merged['status'] ?? null,
+            $merged['category_id'] ?? null,
+            $merged['author_id'] ?? null,
+            $merged['created_at_range'] ?? null,
+            $merged['current_page'] ?? 1,
+            $merged['per_page'] ?? 10,
+            self::normalizeAndFilterSorting($merged)
         );
+    }
+
+    public function toSorting(): array
+    {
+        return $this->sorting;
     }
 
     public function toCriteria(): array

@@ -120,7 +120,12 @@ class ArticlePublishingCoordinator extends BaseCoordinator
 
         $viewer = $this->viewerGateway->getCurrentViewer();
 
-        $paginator = $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
+        $paginator = $this->repository->paginate(
+            $data->currentPage,
+            $data->perPage,
+            $data->toCriteria(),
+            $data->toSorting()
+        );
 
         $paginator->getCollection()->transform(function (Article $article) use ($viewer) {
             return (new VisibilityPolicy($viewer))->fromArticle($article);

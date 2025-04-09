@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Contexts\ArticlePublishing\Presentation\Requests;
 
-use Contexts\Shared\Presentation\Requests\BaseRequest;
+use Contexts\Shared\Presentation\Requests\BaseListRequest;
 
-class GetArticleListRequest extends BaseRequest
+class GetArticleListRequest extends BaseListRequest
 {
     public function rules(): array
     {
@@ -16,10 +16,11 @@ class GetArticleListRequest extends BaseRequest
             'status' => ['string', 'in:draft,published'],
             'category_id' => ['integer', 'gt:0'],
             'author_id' => ['integer', 'gt:0'],
-            'created_at_range' => ['array', 'size:2'],
-            'created_at_range.*' => ['date'],
-            'current_page' => ['integer', 'gt:0'],
-            'per_page' => ['integer', 'gt:0'],
+            'created_at' => ['array', 'size:2'],
+            'created_at.*' => ['date_format:Y-m-d'],
+            ...$this->paginationRule(),
+            ...$this->filtersRule(),
+            ...$this->sortingRule(),
         ];
     }
 }

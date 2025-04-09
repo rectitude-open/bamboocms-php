@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Contexts\ArticlePublishing\Domain\Events\ArticlePublishedEvent;
+use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Contexts\Authorization\Domain\Policies\RolePolicy;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 
@@ -141,6 +142,31 @@ it('can get a list of articles via api', function () {
     $response = $this->get('articles');
 
     $response->assertStatus(200);
+});
+
+it('can get a list of articles with sorting via api', function () {
+    $initialCount = ArticleRecord::count();
+
+    $articles = ArticleRecord::factory(3)->create();
+    $articles->each(function ($article) {
+        $article->categories()->attach($this->categories->pluck('id')->toArray());
+    });
+
+    $response = $this->get('articles?sorting=[{"id":"id","desc":false}]');
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(3 + $initialCount, 'data');
+
+    $responseIds = collect($response->json('data'))->pluck('id')->all();
+    $sortedIds = collect($responseIds)->sort()->values()->all();
+    expect($responseIds)->toBe($sortedIds);
+
+    $response = $this->get('articles?sorting=[{"id":"id","desc":true}]');
+    $response->assertStatus(200);
+
+    $responseIds = collect($response->json('data'))->pluck('id')->all();
+    $sortedIds = collect($responseIds)->sortDesc()->values()->all();
+    expect($responseIds)->toBe($sortedIds);
 });
 
 it('can update an article via api', function () {

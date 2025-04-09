@@ -11,11 +11,13 @@ use Contexts\ArticlePublishing\Domain\Models\ArticleCategoryCollection;
 use Contexts\ArticlePublishing\Domain\Models\ArticleId;
 use Contexts\ArticlePublishing\Domain\Models\ArticleStatus;
 use Contexts\ArticlePublishing\Domain\Models\AuthorId;
-use Contexts\Authorization\Infrastructure\Factories\ArticleFactory;
+use Contexts\ArticlePublishing\Infrastructure\Factories\ArticleFactory;
 use Contexts\CategoryManagement\Infrastructure\Records\CategoryRecord;
 use Contexts\Shared\Infrastructure\BaseRecord;
+use Contexts\Shared\Infrastructure\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -30,6 +32,8 @@ use Illuminate\Support\Carbon;
  */
 class ArticleRecord extends BaseRecord
 {
+    use HasFactory;
+    use HasSortingScopeTrait;
     use SoftDeletes;
 
     protected $table = 'articles';

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Contexts\Authorization\Infrastructure\Factories;
+namespace Contexts\ArticlePublishing\Infrastructure\Factories;
 
 use Contexts\ArticlePublishing\Infrastructure\Records\ArticleRecord;
 use Illuminate\Database\Eloquent\Factories\Factory;

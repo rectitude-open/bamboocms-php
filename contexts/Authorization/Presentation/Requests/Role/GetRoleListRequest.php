@@ -16,8 +16,7 @@ class GetRoleListRequest extends BaseListRequest
             'status' => ['string', 'in:suspended,active'],
             'created_at' => ['array', 'size:2'],
             'created_at.*' => ['date_format:Y-m-d'],
-            'current_page' => ['integer', 'gt:0'],
-            'per_page' => ['integer', 'gt:0'],
+            ...$this->paginationRule(),
             ...$this->filtersRule(),
             ...$this->sortingRule(),
         ];

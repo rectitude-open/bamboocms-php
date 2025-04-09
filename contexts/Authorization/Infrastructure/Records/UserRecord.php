@@ -13,6 +13,7 @@ use Contexts\Authorization\Domain\UserIdentity\Models\UserId;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserIdentity;
 use Contexts\Authorization\Domain\UserIdentity\Models\UserStatus;
 use Contexts\Authorization\Infrastructure\RecordFactories\UserRecordFactory;
+use Contexts\Shared\Infrastructure\Traits\HasSortingScopeTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,6 +35,7 @@ class UserRecord extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasSortingScopeTrait;
     use Notifiable;
 
     protected $table = 'users';

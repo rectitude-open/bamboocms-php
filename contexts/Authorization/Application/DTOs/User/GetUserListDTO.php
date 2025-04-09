@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Contexts\Authorization\Application\DTOs\User;
 
-class GetUserListDTO
+use Contexts\Shared\Application\BaseGetListDTO;
+
+class GetUserListDTO extends BaseGetListDTO
 {
+    protected const ALLOWED_SORT_FIELDS = ['id', 'created_at'];
+
     public function __construct(
         public readonly ?string $id,
         public readonly ?string $email,
@@ -14,19 +18,28 @@ class GetUserListDTO
         public readonly ?array $createdAtRange,
         public readonly int $currentPage,
         public readonly int $perPage,
+        public readonly ?array $sorting
     ) {}
 
     public static function fromRequest(array $data): self
     {
+        $merged = array_merge($data, self::convertFiltersToCriteria($data['filters'] ?? []));
+
         return new self(
-            $data['id'] ?? null,
-            $data['email'] ?? null,
-            $data['display_name'] ?? null,
-            $data['status'] ?? null,
-            $data['created_at_range'] ?? null,
-            $data['current_page'] ?? 1,
-            $data['per_page'] ?? 10,
+            $merged['id'] ?? null,
+            $merged['email'] ?? null,
+            $merged['display_name'] ?? null,
+            $merged['status'] ?? null,
+            $merged['created_at_range'] ?? null,
+            $merged['current_page'] ?? 1,
+            $merged['per_page'] ?? 10,
+            self::normalizeAndFilterSorting($merged)
         );
+    }
+
+    public function toSorting(): array
+    {
+        return $this->sorting;
     }
 
     public function toCriteria(): array

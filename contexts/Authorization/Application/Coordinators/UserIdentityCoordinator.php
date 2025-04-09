@@ -61,7 +61,12 @@ class UserIdentityCoordinator extends BaseCoordinator
             new GlobalPermissionPolicy('user.list'),
         ])->check();
 
-        return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria());
+        return $this->repository->paginate(
+            $data->currentPage,
+            $data->perPage,
+            $data->toCriteria(),
+            $data->toSorting()
+        );
     }
 
     public function updateUser(int $id, UpdateUserDTO $data): UserIdentity

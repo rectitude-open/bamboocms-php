@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Contexts\Authorization\Domain\Policies\RolePolicy;
 use Contexts\Authorization\Infrastructure\Records\RoleRecord;
+use Contexts\Authorization\Infrastructure\Records\UserRecord;
 
 beforeEach(function () {
     Config::set('policies.authorization', [
@@ -72,6 +73,28 @@ it('can get a list of users via api', function () {
     $response = $this->get('users');
 
     $response->assertStatus(200);
+});
+
+it('can get a list of users with sorting via api', function () {
+    $initialCount = UserRecord::count();
+
+    UserRecord::factory(3)->create();
+
+    $response = $this->get('users?sorting=[{"id":"id","desc":false}]');
+
+    $response->assertStatus(200);
+    $response->assertJsonCount(3 + $initialCount, 'data');
+
+    $responseIds = collect($response->json('data'))->pluck('id')->all();
+    $sortedIds = collect($responseIds)->sort()->values()->all();
+    expect($responseIds)->toBe($sortedIds);
+
+    $response = $this->get('users?sorting=[{"id":"id","desc":true}]');
+    $response->assertStatus(200);
+
+    $responseIds = collect($response->json('data'))->pluck('id')->all();
+    $sortedIds = collect($responseIds)->sortDesc()->values()->all();
+    expect($responseIds)->toBe($sortedIds);
 });
 
 it('can update a user via api', function () {

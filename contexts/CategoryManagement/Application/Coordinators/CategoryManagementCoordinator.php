@@ -53,7 +53,12 @@ class CategoryManagementCoordinator extends BaseCoordinator
             new GlobalPermissionPolicy('category.list'),
         ])->check();
 
-        return $this->repository->paginate($data->currentPage, $data->perPage, $data->toCriteria(), $data->toSorting());
+        return $this->repository->paginate(
+            $data->currentPage,
+            $data->perPage,
+            $data->toCriteria(),
+            $data->toSorting()
+        );
     }
 
     public function updateCategory(int $id, UpdateCategoryDTO $data): Category

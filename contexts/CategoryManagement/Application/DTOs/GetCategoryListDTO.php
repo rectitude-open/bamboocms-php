@@ -14,7 +14,7 @@ class GetCategoryListDTO extends BaseGetListDTO
         public readonly ?string $id,
         public readonly ?string $label,
         public readonly ?string $status,
-        public readonly ?array $createdAtRange,
+        public readonly ?array $createdAt,
         public readonly int $currentPage,
         public readonly int $perPage,
         public readonly ?array $sorting
@@ -28,7 +28,7 @@ class GetCategoryListDTO extends BaseGetListDTO
             $merged['id'] ?? null,
             $merged['label'] ?? null,
             $merged['status'] ?? null,
-            $merged['created_at_range'] ?? null,
+            $merged['created_at'] ?? null,
             $merged['current_page'] ?? 1,
             $merged['per_page'] ?? 10,
             self::normalizeAndFilterSorting($merged)
@@ -46,7 +46,7 @@ class GetCategoryListDTO extends BaseGetListDTO
             'id' => $this->id,
             'label' => $this->label,
             'status' => $this->status,
-            'created_at_range' => $this->createdAtRange,
+            'created_at' => $this->createdAt,
         ];
     }
 }

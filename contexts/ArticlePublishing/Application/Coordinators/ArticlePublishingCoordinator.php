@@ -63,9 +63,9 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             ArticleId::null(),
             $data->title,
             $data->body,
-            $this->categoryGateway->getArticleCategories($data->category_ids),
+            $this->categoryGateway->getArticleCategories($data->categoryIds),
             $authorId,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         return $this->repository->create($article);
@@ -77,9 +77,9 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             ArticleId::null(),
             $data->title,
             $data->body,
-            $this->categoryGateway->getArticleCategories($data->category_ids),
+            $this->categoryGateway->getArticleCategories($data->categoryIds),
             $authorId,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         return $this->repository->create($article);
@@ -145,9 +145,9 @@ class ArticlePublishingCoordinator extends BaseCoordinator
             $data->title,
             $data->body,
             $data->status ? ArticleStatus::fromString($data->status) : null,
-            $this->categoryGateway->getArticleCategories($data->category_ids),
-            $data->author_id ? AuthorId::fromInt($data->author_id) : null,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $this->categoryGateway->getArticleCategories($data->categoryIds),
+            $data->authorId ? AuthorId::fromInt($data->authorId) : null,
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         $this->repository->update($article);

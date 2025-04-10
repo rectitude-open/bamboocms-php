@@ -32,7 +32,7 @@ class CategoryManagementCoordinator extends BaseCoordinator
         $category = Category::create(
             CategoryId::null(),
             $data->label,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         return $this->repository->create($category);
@@ -71,7 +71,7 @@ class CategoryManagementCoordinator extends BaseCoordinator
         $category->modify(
             $data->label,
             $data->status ? CategoryStatus::fromString($data->status) : null,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         $this->repository->update($category);

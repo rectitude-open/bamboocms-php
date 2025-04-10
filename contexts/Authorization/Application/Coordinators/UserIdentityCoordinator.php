@@ -39,8 +39,8 @@ class UserIdentityCoordinator extends BaseCoordinator
             UserId::null(),
             new Email($data->email),
             Password::createFromPlainText($data->password),
-            $data->display_name,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->displayName,
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         return $this->repository->create($user);
@@ -78,9 +78,9 @@ class UserIdentityCoordinator extends BaseCoordinator
         $user = $this->repository->getById(UserId::fromInt($id));
         $user->modify(
             $data->email ? new Email($data->email) : null,
-            $data->display_name,
+            $data->displayName,
             $data->status ? UserStatus::fromString($data->status) : null,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         $this->repository->update($user);

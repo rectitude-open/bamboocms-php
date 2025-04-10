@@ -9,8 +9,8 @@ class CreateUserDTO
     public function __construct(
         public readonly string $email,
         public readonly string $password,
-        public readonly string $display_name,
-        public readonly ?string $created_at
+        public readonly string $displayName,
+        public readonly ?string $createdAt
     ) {}
 
     public static function fromRequest(array $data): self

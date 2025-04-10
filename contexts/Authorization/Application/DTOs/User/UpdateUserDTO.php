@@ -8,9 +8,9 @@ class UpdateUserDTO
 {
     public function __construct(
         public readonly ?string $email,
-        public readonly ?string $display_name,
+        public readonly ?string $displayName,
         public readonly ?string $status,
-        public readonly ?string $created_at
+        public readonly ?string $createdAt
     ) {}
 
     public static function fromRequest(array $data): self

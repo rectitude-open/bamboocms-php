@@ -10,9 +10,9 @@ class CreateArticleDTO
         public readonly string $title,
         public readonly string $body,
         public readonly string $status,
-        public readonly array $category_ids,
+        public readonly array $categoryIds,
         public readonly int $authorId,
-        public readonly ?string $created_at
+        public readonly ?string $createdAt
     ) {}
 
     public static function fromRequest(array $data): self

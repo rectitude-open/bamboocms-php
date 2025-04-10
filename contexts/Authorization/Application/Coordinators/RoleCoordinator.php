@@ -34,7 +34,7 @@ class RoleCoordinator extends BaseCoordinator
         $role = $this->factory->create(
             RoleId::null(),
             $data->label,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         return $this->repository->create($role);
@@ -73,7 +73,7 @@ class RoleCoordinator extends BaseCoordinator
         $role->modify(
             $data->label,
             $data->status ? RoleStatus::fromString($data->status) : null,
-            $data->created_at ? CarbonImmutable::parse($data->created_at) : null
+            $data->createdAt ? CarbonImmutable::parse($data->createdAt) : null
         );
 
         $this->repository->update($role);
